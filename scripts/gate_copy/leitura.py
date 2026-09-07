@@ -14,8 +14,7 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-import yaml
-
+from .frontmatter import ler_front_matter
 from .texto import normalizar, normalizar_codigo
 
 @dataclass
@@ -171,7 +170,7 @@ def ler_conceito(caminho: str) -> Conceito:
     m = re.search(r"^---\s*\n(.*?)\n---\s*\n", texto, re.DOTALL | re.MULTILINE)
     if not m:
         raise PacoteInvalido("conceito.md sem front matter YAML válido")
-    dados = yaml.safe_load(m.group(1)) or {}
+    dados = ler_front_matter(m.group(1)) or {}
     if not isinstance(dados, dict):
         raise PacoteInvalido("conceito.md com front matter que não é um mapa")
     return Conceito(dados=dados)

@@ -13,15 +13,34 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 from typing import Any, Dict, Optional, Sequence
-
-import yaml
 
 from .motor import rodar
 
+_AVISO_PYYAML_IMPRESSO = False
+
 
 def _carregar_yaml_opcional(caminho: Optional[str]) -> Optional[Dict[str, Any]]:
+    """Le um YAML da esteira (`--gates`/`--taticas`), se houver.
+
+    Sem `pyyaml` instalado (Mac limpo, primeira instalacao do gate): imprime
+    um aviso em stderr (uma vez) e devolve None, pra o chamador seguir com os
+    limiares e taticas embutidos, sem nunca quebrar o gate por causa disso.
+    """
+    global _AVISO_PYYAML_IMPRESSO
     if not caminho or not os.path.isfile(caminho):
+        return None
+    try:
+        import yaml  # type: ignore
+    except ImportError:
+        if not _AVISO_PYYAML_IMPRESSO:
+            print(
+                "pyyaml não instalado: rodando com os limiares e táticas embutidos "
+                "(instale com: python3 -m pip install --user pyyaml)",
+                file=sys.stderr,
+            )
+            _AVISO_PYYAML_IMPRESSO = True
         return None
     with open(caminho, "r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
