@@ -11,7 +11,7 @@
 - lettering: LEAD: esse mês | KEY: QUANTOS AGENDAMENTOS
 - garrafal: PERDEU
 - insert: nenhum
-- por que: molde "pergunta com custo" da casa. A pessoa faz a conta na cabeça e a resposta vem no bloco seguinte, que nomeia a hora em que a mensagem chega sem ninguém no celular.
+- por que: molde "pergunta com custo" do modelo mestre. A pessoa faz a conta na cabeça e a resposta vem no bloco seguinte, que nomeia a hora em que a mensagem chega sem ninguém no celular.
 
 ## Hook B
 - id: contrarian

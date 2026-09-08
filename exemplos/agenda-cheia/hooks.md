@@ -40,6 +40,6 @@
 ## As perguntas do corpo
 
 A calibração de `references/calibracao-jheni.md` mostrou que a pergunta não vive só no bloco 1:
-nos anúncios da casa ela reaparece na virada, antes do exemplo e na ponte. Nesta peça a pergunta
+nos anúncios do estudo de caso ela reaparece na virada, antes do exemplo e na ponte. Nesta peça a pergunta
 do corpo é a **pergunta demonstrativa** do bloco 3, "Tá vendo esse atendente aqui?", que aponta a
 tela e obriga a olhar antes de a lista começar.

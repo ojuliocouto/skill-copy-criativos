@@ -310,6 +310,11 @@ MARCADORES_DE_PONTE: Tuple[str, ...] = (
     "fazer isso na prática", "topa aprender", "quer aprender",
     "quer transformar", "você precisa se inscrever", "eu tenho um convite",
     "num treinamento", "numa imersão", "na operação", "na nova edição",
+    # serviço e produto físico (a skill é de anúncio pra qualquer produto):
+    "na consulta", "na avaliação", "no diagnóstico", "na visita", "no orçamento",
+    "na loja", "no teste grátis", "no plano gratuito", "a gente desenha",
+    "a gente mede", "eu resolvo com você", "a gente olha junto", "a gente revisa",
+    "eu analiso", "na primeira sessão", "no showroom", "na demonstração",
 )
 
 # Marcadores de ENTREGA do bloco de oferta (regra do dono da metodologia,
@@ -325,6 +330,12 @@ MARCADORES_DE_OFERTA: Tuple[str, ...] = (
     "onde eu te mostro", "onde voce constroi", "onde voce aprende",
     "onde eu te ensino", "imersao", "aula gratuita", "mentoria",
     "treinamento", "sai de la", "ja sai com",
+    # serviço e produto físico:
+    "a gente desenha", "a gente mede", "a gente olha", "a gente revisa",
+    "eu analiso", "voce recebe por escrito", "sem compromisso", "visita tecnica",
+    "avaliacao gratuita", "consulta gratuita", "diagnostico gratuito", "orcamento",
+    "teste gratis", "primeira sessao", "amostra", "projeto", "entrega em",
+    "voce leva pra casa", "instalado", "montado",
 )
 
 # Marcadores de ACESSO do bloco de oferta: diz COMO a pessoa chega na
@@ -333,6 +344,10 @@ MARCADORES_DE_OFERTA: Tuple[str, ...] = (
 MARCADORES_DE_ACESSO_DA_OFERTA: Tuple[str, ...] = (
     "gratuita", "gratuito", "de graca", "toca em", "clica", "link",
     "inscreve", "entra",
+    # serviço e produto físico:
+    "chama no whatsapp", "chama a gente", "chama", "agenda", "marca a sua",
+    "marca uma", "pede", "solicita", "manda mensagem", "fala com a gente",
+    "vem na loja", "experimenta", "sem cartao", "sem compromisso", "aqui embaixo",
 )
 
 CORES_GARRAFAL = {"casa", "quente", "teal_do_fundo", "rosado_do_fundo"}

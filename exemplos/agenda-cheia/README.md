@@ -47,7 +47,7 @@ O hook aprovado na v2 **não mudou** na v3. O que mudou foi tudo o que vem depoi
 ### v2 para v3: o corpo, calibrado pelos anúncios já gravados
 
 A v2 tinha um corpo de duas provas: um insert do atendente e o print da Dra. Renata. Passava, e era
-magro. A calibração contra treze anúncios reais da casa (`references/calibracao-jheni.md`) mostrou
+magro. A calibração contra treze anúncios reais do estudo de caso (`references/calibracao-jheni.md`) mostrou
 que o corpo que funciona na prática tem outra forma: **enumeração com um insert por item, respiro
 de apresentadora entre os itens, mecanismo nomeado e ponte com molde**.
 
@@ -62,11 +62,11 @@ de apresentadora entre os itens, mecanismo nomeado e ponte com molde**.
 | fecho do CTA | "Sai de lá com o seu marcando." | "Bora montar o seu." |
 | gate | zero reprovações, 1 aviso | zero reprovações, zero avisos |
 
-Quatro moldes da casa entraram, e cada um tem endereço em `references/metodo-de-copy.md`:
+Quatro moldes do método entraram, e cada um tem endereço em `references/metodo-de-copy.md`:
 
 1. **Pergunta demonstrativa abrindo a prova** ("Tá vendo esse atendente aqui?"). Nos anúncios reais
    a pergunta aparece muito mais no corpo do que na abertura, e aponta a tela antes da lista.
-2. **Enumeração com um insert por item**, com as marcações faladas da casa ("E aqui ele…", "E no
+2. **Enumeração com um insert por item**, com as marcações faladas do método ("E aqui ele…", "E no
    dia ele ainda…"), mais a frase de continuação "Não para por aí." no bloco de respiro.
 3. **Mecanismo no molde "isso só é possível quando…"**, que nomeia a condição em vez de repetir o
    benefício.
@@ -191,7 +191,7 @@ python3 scripts/planejar_blocos.py --modo pago --campanha frio \
 Três inserts seguidos estouram a densidade. Com os blocos 3, 5 e 6 colados, a janela do corpo (3 a
 15s) fica em 77% de cobertura de insert, contra a faixa de 45 a 55%. **O bloco 4 existe por duas
 razões ao mesmo tempo**: ele derruba a densidade para 54% e é onde cabe a identificação e a frase
-de continuação que faz a lista soar falada. Nos anúncios reais da casa esse respiro está lá,
+de continuação que faz a lista soar falada. Nos anúncios reais do estudo de caso esse respiro está lá,
 marcado como um "de frente" entre um item e o outro.
 
 ### Densidade de insert por janela
@@ -297,7 +297,7 @@ faixa. Nenhum dos três é motivo pra tirar o bloco: sem ele o CTA reprova por f
 
 - **A prova é uma lista de três, não um parágrafo.** "Responde em segundos", "confirma o horário",
   "manda lembrete". Três verbos, três blocos, três inserts. É o padrão que mais aparece nos
-  anúncios reais da casa e o que a `references/calibracao-jheni.md` mediu.
+  anúncios reais do estudo de caso e o que a `references/calibracao-jheni.md` mediu.
 - **O bloco de respiro carrega trabalho.** O bloco 4 não é pausa: ele diz para quem a peça é
   ("isso é pra quem atende sem recepção") e anuncia que a lista continua ("não para por aí"),
   enquanto segura a densidade de insert dentro da faixa.

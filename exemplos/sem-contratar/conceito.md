@@ -22,4 +22,4 @@ Brief: mentoria Agenda Cheia, apresentada pela Carla em primeira pessoa. Tráfeg
 pra aula gratuita: CTA sem escassez, preço nem data. Ângulo "sem o sacrifício esperado". Provas
 autorizadas: mais de duzentas clínicas atendidas e a Dra. Renata, que dobrou os agendamentos em um
 mês. Assets passados: gravação de tela do atendente respondendo às onze da noite (Drive) e print
-da agenda da Dra. Renata (Drive). Formato completo do molde da casa (265 palavras, cerca de 63s).
+da agenda da Dra. Renata (Drive). Formato completo do modelo mestre (265 palavras, cerca de 63s).

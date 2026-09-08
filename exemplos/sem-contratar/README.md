@@ -1,8 +1,9 @@
-# Exemplo: `sem_contratar` (formato COMPLETO, o padrão da casa)
+# Exemplo: `sem_contratar` (formato COMPLETO, num serviço)
 
 Este é o exemplo do **formato completo** do `references/modelo-mestre.md`: 14 blocos, 265
-palavras, cerca de 64 segundos finais. É o tamanho dos ads reais da casa (220 a 300 palavras). O
-outro exemplo, `exemplos/agenda-cheia/`, é o formato curto (30s) do mesmo produto.
+palavras, cerca de 64 segundos finais, numa oferta de serviço. É a faixa do formato completo (220
+a 300 palavras). O outro exemplo, `exemplos/agenda-cheia/`, é o formato curto (30s) do mesmo
+produto.
 
 Brief: mentoria fictícia Agenda Cheia, apresentadora Carla, tráfego frio pra aula gratuita, ângulo
 "sem o sacrifício esperado" (dona de clínica que já contratou secretária e ainda perde
@@ -27,7 +28,7 @@ agendamento). Preset em `references/preset-oferta-exemplo.md`.
 - **Duração 64s** contra a faixa de referência de 15 a 30s: é o formato completo, declarado em
   `conceito.md` (`formato: completo`).
 - **Densidade de insert 100% no corpo e 68% no fecho**: a demonstração enumerada é insert por
-  item, como nos ads da casa. Quem monta pode abrir janelas de apresentadora dentro dos blocos de
+  item, como nos ads do estudo de caso. Quem monta pode abrir janelas de apresentadora dentro dos blocos de
   demonstração (a fala continua a mesma).
 - **Seis assets `criar:captura`**: o briefing passou só a gravação do atendente e o print; os
   outros são propostas a aprovar com a cliente antes de produzir.

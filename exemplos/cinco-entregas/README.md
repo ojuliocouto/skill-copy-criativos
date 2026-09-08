@@ -1,14 +1,14 @@
 # Exemplo real: `cinco_entregas`
 
-**Este exemplo reproduz uma peça REAL, gravada, aprovada e no ar.** Ele reconstrói o anúncio
-"cinco entregas" da Escola de Automação, gravado na voz do apresentador da casa e aprovado pelo
-cliente. Por reproduzir uma peça de campo, ele passa com **zero reprovações mas carrega 13 avisos
-assumidos**, entre eles uma duração final de **40,43s** (a faixa publicada é 15 a 30s) e uma
-densidade de insert de **99%** na janela do corpo (a faixa é 45 a 55%).
+**Este é o caso REAL de um infoproduto de I.A**, e ele serve pra ver a peça aprovada rodando com a
+esteira, **não como modelo de nicho**. Ele reconstrói uma peça de verdade, gravada, aprovada e no
+ar, na voz do apresentador daquele produto. Por reproduzir uma peça de campo, ele passa com **zero
+reprovações mas carrega 13 avisos assumidos**, entre eles uma duração final de **40,43s** (a faixa
+publicada é 15 a 30s) e uma densidade de insert de **99%** na janela do corpo (a faixa é 45 a 55%).
 
-**Se você quer o exemplo LIMPO, ele é o outro:** `exemplos/agenda-cheia/`. Aquele é fictício, tem
-seis blocos, e passa com zero reprovações e um único aviso declarado. Use ele para aprender o
-formato.
+**Se você quer o exemplo LIMPO, eles são os outros dois:** `exemplos/agenda-cheia/` (formato
+curto, dez blocos, três avisos declarados) e `exemplos/sem-contratar/` (formato completo, catorze
+blocos). Os dois são fictícios. Use eles para aprender o formato.
 
 Use **este** para entender outra coisa: por que uma peça aprovada pode carregar aviso, e como
 declarar cada aviso em vez de esconder. Aviso não é reprovação, e peça de campo raramente cabe

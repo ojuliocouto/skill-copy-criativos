@@ -133,12 +133,16 @@ conta. O corpo da peça inteiro é a resposta dessa conta. Detalhe e exemplos em
 **Direção visual típica**: apresentador de frente com lettering e garrafal, ou insert de tela real
 já no primeiro frame. Nunca rosto parado sem elemento gráfico.
 
-**Exemplo**: *"Sua clínica perde cliente justamente na hora que está mais cheia? Pensa comigo."*
+**Exemplos**: serviço (clínica): *"Sua clínica perde cliente justamente na hora que está mais
+cheia? Pensa comigo."* Produto físico (móveis planejados): *"Quanto mais caro o planejado, mais
+espaço sobrando na sua cozinha? Repara comigo."*
 
-#### Os seis moldes de abertura que a casa usa
+#### Os seis moldes de abertura
 
-Vêm da calibração contra os anúncios já gravados (`references/calibracao-jheni.md`, seção 2.1). O
-nome do produto aparece como `<produto>` porque o molde é reaproveitável e o produto não.
+Os moldes abaixo valem para qualquer produto ou serviço. O molde é reaproveitável; a frase não. As
+frases literais de um produto real estão no estudo de caso
+(`references/calibracao-jheni.md`, seção 2.1), e servem para ver o molde em ação, nunca para
+copiar.
 
 | molde | forma | quando usar |
 |---|---|---|
@@ -149,29 +153,27 @@ nome do produto aparece como `<produto>` porque o molde é reaproveitável e o p
 | **custo/confronto** | escada de números ou aviso de risco | o público está perdendo dinheiro agora e não sabe |
 | **notícia ou descoberta** | "Agora eu entendi por que [gente como você] parou de [X]" | a conclusão é curiosa e a causa é o corpo inteiro |
 
-Exemplos reais de cada molde, com o número do anúncio de origem:
+Um exemplo de cada molde, alternando serviço e produto físico:
 
-- **pergunta de custo**: "Quantas vendas a sua empresa perdeu esse mês por causa do mal
-  atendimento no whatsapp?" (AD3)
-- **demonstrativo**: "Isso que você tá vendo na tela é o relatório que o Claude me enviou" (AD3);
-  "esses quatro times do Claude, aqui embaixo, fazem por mim" (AD5); "Tá vendo esse sisteminha
-  aqui em cima?" (AD4); "Adivinha quanto eu pago de hospedagem pra tudo que eu publico? ZERO."
-  (AD11)
-- **afirmação forte**: "A gente faturou quase 10 milhões no digital nos últimos 24 meses." (AD6);
-  "Essa é uma função esquecida dentro do Claude que pouquíssimos empresários sabem usar." (AD4);
-  "Talvez você discorde de mim, mas… Agências de marketing já estão sendo substituídas por IA."
-  (AD8)
-- **custo/confronto**: "Aqui vai uma verdade difícil de escutar…" (AD7); "O mesmo designer que
-  cobrava 100… 150 reais por arte, hoje não consegue cobrar 50 reais por entrega." (AD9);
-  "você precisa saber disso antes que seja tarde demais" (AD2)
-- **notícia ou descoberta**: "Agora eu entendi por que alguns empresários pararam de pagar
-  hospedagem…" (AD12)
-- **filtro condicional** (variante de afirmação forte que já carrega a identificação): "Se você tem
-  uma empresa que usa o WhatsApp pra vender, isso aqui te interessa." (AD1); "Se você é dono de
-  agência e quer… faturar mais sem contratar mais ninguém…" (AD10)
+- **pergunta de custo** (serviço, contabilidade): "Quanto imposto sua empresa pagou a mais no ano
+  passado sem ninguém conferir?"
+- **demonstrativo** (produto físico, móveis planejados): "Tá vendo esse canto morto? Adivinha
+  quanto ele vira de armário. Tudo."
+- **afirmação forte** (serviço, clínica): "A maior parte das mensagens da sua clínica chega fora do
+  horário de atendimento."
+- **custo/confronto** (produto físico, móveis planejados): "Vou dizer uma coisa impopular:
+  planejado caro nem sempre é planejado bom."
+- **notícia ou descoberta** (serviço, contabilidade): "Agora eu entendi por que tanta empresa
+  pequena paga imposto a mais e nunca descobre."
+- **filtro condicional** (variante de afirmação forte que já carrega a identificação; produto
+  físico): "Se você vai reformar a cozinha esse ano, presta atenção aqui."
+
+Um catálogo maior, com os quatro nichos de exemplo lado a lado, está em
+`references/modelo-mestre.md`, parte 1.
 
 **A regra do dono da metodologia continua valendo por cima da tabela**: dos três hooks do
-conceito, um é pergunta ou paradoxo, mesmo que os anúncios da casa abram mais por afirmação.
+conceito, um é pergunta ou paradoxo, mesmo quando os moldes de afirmação parecem mais naturais
+para a oferta.
 
 **Erro comum**: hook institucional ou morno ("Você conhece o X?"), saudação, apresentação, marca nas
 primeiras palavras, e promessa antes da prova quando existe demo disponível.
@@ -188,7 +190,9 @@ falhou.
 **Direção visual típica**: apresentador sozinho com garrafal, ou lettering de placa com a palavra da
 dor.
 
-**Exemplo**: *"Cliente na cadeira, WhatsApp tocando. Quem espera vai marcar em outra clínica."*
+**Exemplos**: serviço (clínica): *"Cliente na cadeira, WhatsApp tocando. Quem espera vai marcar
+em outra clínica."* Produto físico (móveis planejados): *"Armário novo, e a panela grande continua
+no chão. O projeto não perguntou o que você guarda."*
 
 **Erro comum**: descrever o sintoma que todo concorrente já descreve, sem chegar na causa. E
 adjetivo no lugar de cena: "é frustrante" não é dor, "sexta à noite e você ainda fazendo isso" é.
@@ -203,24 +207,25 @@ nomeado com número e contexto, ou volume de gente).
 O padrão que mais funciona é a **enumeração**: 3 a 5 itens, um por bloco, **cada item com o próprio
 insert**, com ritmo de lista falada. Nunca reuse o mesmo take em dois blocos do mesmo anúncio.
 
-**Como a casa junta prova e enumeração** (calibrado em `references/calibracao-jheni.md`, seção
-2.2): o papel `P` **repete**, um bloco por item, e cada bloco carrega um insert diferente. Nos
-anúncios gravados isso está literal na marcação de cena, com um vídeo por item. Quatro marcações
-que fazem a lista soar falada em vez de lida:
+**Como prova e enumeração se juntam**: o papel `P` **repete**, um bloco por item, e cada bloco
+carrega um insert diferente. Quatro marcações fazem a lista soar falada em vez de lida:
 
-1. **Reticências no fim do item**, que escrevem a pausa dentro do texto: "Primeiro… foram os
-   designers." (AD8), "Hospedagem dos meus sites… não pago mais." (AD13).
-2. **Ordinal como pilar**, quando os itens são riscos: "Primeiro. / Segundo. / Terceiro." (AD2).
-3. **Ancoragem espacial**, quando cada item tem tela própria: "Aqui eu tenho: / Tem também meu / E
-   por último" (AD5), e o "E aqui eu tenho…" repetido quatro vezes no AD12.
-4. **Frase de continuação entre itens**, curtíssima e sem conteúdo novo: "E não para por aí."
-   (AD3), "E no final, ele ainda monta…" (AD3), "E mais:" (AD2, AD10, AD13), "E de quebra…"
-   (AD1, AD7), "E o melhor:" (AD1).
+1. **Reticências no fim do item**, que escrevem a pausa dentro do texto: "A parede morta… virou
+   despensa."
+2. **Ordinal como pilar**, quando os itens são riscos ou passos: "Primeiro. / Segundo. /
+   Terceiro."
+3. **Ancoragem espacial**, quando cada item tem tela ou cena própria: "Aqui eu tenho: / Tem
+   também / E por último".
+4. **Frase de continuação entre itens**, curtíssima e sem conteúdo novo: "E não para por aí.", "E
+   mais:", "E de quebra…", "E o melhor:".
+
+As quatro marcações foram observadas num produto real e estão com as frases literais no estudo de
+caso (`references/calibracao-jheni.md`, seção 2.2).
 
 Dois cuidados de medida, porque enumeração longa quebra a peça: cada bloco com insert pede o
 mínimo de duração do insert, e a **densidade de insert por janela** tem faixa. Enumeração de 3
 itens quase sempre precisa de um bloco de apresentador **entre** os itens para a densidade caber,
-e a casa faz exatamente isso (no AD5 há um "de frente" entre um time e outro). Rode
+e é isso que os anúncios do estudo de caso fazem. Rode
 `scripts/planejar_blocos.py` antes de escrever, não depois.
 
 **Fórmula de prova social**: *pessoa em situação difícil + o que ela fez + resultado com número e
@@ -230,8 +235,9 @@ conseguiram X").
 
 **Direção visual típica**: insert com enquadramento declarado, um por bloco, com o KEY no painel.
 
-**Exemplo**: *"A Dra. Renata ligou o dela e dobrou os agendamentos em um mês, sem contratar
-ninguém."*
+**Exemplos**: serviço (clínica): *"A Dra. Renata ligou o dela e dobrou os agendamentos em um
+mês, sem contratar ninguém."* Produto físico (móveis planejados): *"Esse é o mesmo canto, quatro
+semanas depois. Cabe a despensa inteira."*
 
 **Erro comum**: número sem dono, prova inventada, "vários clientes" no lugar de um caso, e um insert
 genérico servindo dois blocos.
@@ -249,28 +255,27 @@ Em frio, apresente o mecanismo como revelação. Em quente, reforce como diferen
 **Direção visual típica**: apresentador sozinho (é onde a garrafal vive), ou insert apontando o
 elemento que faz a diferença.
 
-**Exemplo**: *"Você na cadeira, ele no WhatsApp. Quanto mais cheia a clínica, mais agendamento
-entra."*
+**Exemplos**: serviço (clínica): *"Você na cadeira, ele no WhatsApp. Quanto mais cheia a
+clínica, mais agendamento entra."* Produto físico (móveis planejados): *"O projeto sai antes da
+compra da chapa. É por isso que sobra ambiente, e não material."*
 
-#### Os três moldes de mecanismo da casa
+#### Os três moldes de mecanismo
 
-1. **O responsável nomeado.** Aponta a peça exata que faz funcionar, com nome próprio: "E o
-   responsável por isso é uma simples conexão entre o Claude e um serviço chamado Cloudflare."
-   (AD11); "O ouro é quando você usa essa função conectada aos dados do WhatsApp da sua empresa."
-   (AD4); "Quando você sabe usar a I.A do jeito certo, você só define a estratégia e ele executa
-   por você." (AD9). Forma curta e reaproveitável: **"isso só é possível quando [condição]"**.
-2. **Negar o gênio.** É o quebra-complexidade, e ele tem forma fixa: o apresentador nega ser
-   especial antes de dizer que a pessoa consegue. "Será que somos gênios da tecnologia por ter
-   construído tudo isso? Nada disso." (AD6); "E eu não fiz isso porque eu sou um gênio da
-   tecnologia." (AD13); "Isso não é difícil, e qualquer empresário é capaz de fazer se tiver o
-   direcionamento certo." (AD7).
+1. **O responsável nomeado.** Aponta a peça exata que faz funcionar, com nome próprio.
+   Serviço (clínica): "O responsável por isso é uma ligação simples entre o WhatsApp e a agenda."
+   Produto físico (móveis planejados): "O que resolve é o projeto sair antes da compra da chapa, e
+   não depois." Forma curta e reaproveitável: **"isso só é possível quando [condição]"**.
+2. **Negar o gênio.** É o quebra-complexidade, e ele tem forma fixa: quem apresenta nega ser
+   especial antes de dizer que a pessoa consegue. Serviço (contabilidade): "E não é truque de
+   contador. Qualquer empresa consegue, se alguém olhar o regime a tempo." Infoproduto
+   (confeitaria): "E não é talento. Eu não nasci confeiteira. Eu só aprendi a temperatura certa."
 3. **A escala.** Depois da última prova, encolhe o que mostrou para abrir o tamanho do resto:
-   "Isso é só 1% do que você pode construir pra sua empresa." (AD3); "E isso é só um exemplo."
-   (AD11). Vem sempre no mesmo lugar: última frase do `M`, logo antes da ponte.
+   "E essa foi só a cozinha. O mesmo projeto resolveu o quarto e a área de serviço." Vem sempre no
+   mesmo lugar: última frase do `M`, logo antes da ponte.
 
-E uma regra de vocabulário que mora aqui: **jargão traduzido na mesma frase**. "A base disso são as
-skills. Que nada mais são do que o manual de procedimento de uma tarefa do seu negócio, só que
-escrito pra IA ler e executar." (AD7). Sem a tradução colada, corte a palavra.
+E uma regra de vocabulário que mora aqui: **jargão traduzido na mesma frase**. "Regime tributário,
+que é a regra que decide quanto a sua empresa paga de imposto." Sem a tradução colada, corte a
+palavra.
 
 **Erro comum**: pular o mecanismo e ir da prova direto para a oferta. Sem mecanismo, a promessa vira
 pedido de fé, e a pessoa atribui o resultado à sorte de quem apareceu na prova.
@@ -284,18 +289,20 @@ Frequentemente vem como contraste de dois mundos: quem está fazendo e quem não
 
 **Direção visual típica**: apresentador sozinho, ou lettering com o nome do público.
 
-**Exemplo**: *"Isso é pra quem atende com a agenda na mão e perde horário sem perceber."*
+**Exemplos**: serviço (clínica): *"Isso é pra quem atende com a agenda na mão e perde horário
+sem perceber."* Produto físico (móveis planejados): *"Isso é pra quem vai reformar uma vez e não
+quer descobrir o erro depois de instalado."*
 
 #### Dois moldes válidos, e um proibido
 
 - **Cena** (o molde do exemplo acima): descreve o dia da pessoa e ela se reconhece.
-- **Condicional mais prescrição**, que é o molde dominante nos anúncios da casa: *"Se você [é ou
-  tem X] e quer [Y]… você precisa [Z]."* Exemplos reais: "Se você é empresário e quer conectar o
-  Claude no WhatsApp do seu negócio, você precisa saber disso antes que seja tarde demais." (AD2);
-  "Se você é dono de agência e quer… faturar mais sem contratar mais ninguém… Você precisa usar a
-  I.A pra criar skills." (AD10); "Se você é empresário… eu consigo reduzir pelo menos 10 mil reais
-  do seu custo hoje." (AD12). Duas leituras: esse molde costuma **carregar o hook junto** (vira o
-  bloco `H+I`), e no AD10 ele é a espinha do anúncio inteiro, repetido três vezes e escalando.
+- **Condicional mais prescrição**, que é o molde mais reaproveitável: *"Se você [é ou tem X] e
+  quer [Y]… você precisa [Z]."* Serviço (contabilidade): "Se você tira dinheiro da empresa sem
+  saber se pode, você precisa de um fechamento mensal, não de um contador de dezembro." Produto
+  físico (móveis planejados): "Se você já mediu a parede três vezes e continua na dúvida, o
+  problema não é a trena." Duas leituras: esse molde costuma **carregar o hook junto** (vira o
+  bloco `H+I`), e ele aguenta ser repetido e escalado ao longo da peça inteira, uma condição por
+  bloco.
 
 **Erro comum**: listar público como se fosse segmentação de mídia ("empresários, autônomos e
 profissionais liberais"). A categoria sozinha não identifica ninguém: ou ela vem presa a uma
@@ -328,10 +335,14 @@ passo. Você sai com ele respondendo."* (o quê: aula gratuita do Agenda Cheia; 
 gente monta; o que ganha: o atendente respondendo; como acessa: gratuita, mais o "toca em saiba
 mais" do CTA seguinte)
 
-**Exemplo, quente, evento com ingresso**: *"São dois dias, do zero, na Operação Claude Code. Mesmo
-que você nunca tenha criado nada antes, a gente monta juntos."* (o quê: Operação Claude Code; o que
-será feito: a gente monta; o que ganha: sai com as cinco entregas prontas, já mostradas na
-enumeração; como acessa: o "toca em saiba mais e garante seu ingresso" do CTA seguinte)
+**Exemplo, quente, produto físico com orçamento**: *"É a visita técnica do Móveis Sob Medida. O
+projetista mede na sua frente e você sai com o orçamento na mão, sem compromisso."* (o quê: a
+visita técnica; o que será feito: o projetista mede e desenha; o que ganha: o orçamento na mão;
+como acessa: o "toca aqui e escolhe o dia" do CTA seguinte)
+
+Os cinco tipos de acesso (aula gratuita, consulta ou avaliação, orçamento, compra direta com preço,
+teste grátis) e o que cada um pode dizer estão em `references/modelo-mestre.md`, seção "Oferta por
+tipo de acesso".
 
 **Marcadores que o gate procura** (`MARCADORES_DE_OFERTA`, `scripts/gate_copy/limiares.py`): "você
 sai com", "a gente monta", "eu te mostro", "você aprende", "passo a passo", "na prática", "do
@@ -356,39 +367,37 @@ A ponte pode ser um bloco próprio ou a **última frase** do bloco anterior ao C
 funcionam: "é isso que", "é esse ... que eu monto com você", "eu te mostro", "na aula", "no
 treinamento", "na mentoria", "no evento", "dentro do".
 
-#### Os moldes de ponte da casa, com as frases reais
+#### Os moldes de ponte
 
-Calibrado contra treze anúncios gravados (`references/calibracao-jheni.md`, seção 2.5): **os treze
-têm ponte, e oito usam um de dois moldes só.** O nome do produto aparece como `<produto>`.
+Sete moldes, e dois deles resolvem a maioria das peças. O nome da oferta aparece como `<oferta>`
+porque o molde é reaproveitável e a oferta não. As frases literais de um produto real estão no
+estudo de caso (`references/calibracao-jheni.md`, seção 2.5), onde treze anúncios têm ponte e oito
+usam só estes dois primeiros moldes.
 
-**Molde 1, dêitico mais ensino ou acesso** (4 dos 13). A frase aponta com "isso", "essa" ou "esse"
-o que acabou de aparecer na tela, e emenda onde a pessoa aprende aquilo.
+**Molde 1, dêitico mais ensino ou acesso.** A frase aponta com "isso", "essa" ou "esse" o que
+acabou de aparecer na tela, e emenda onde a pessoa recebe aquilo.
 
-- "E é exatamente isso que vou te ensinar na nova edição do `<produto>`." (AD1)
-- "São soluções como essa que eu vou te ensinar na nova edição do `<produto>`." (AD2)
-- "Esse é o tipo de conteúdo que você tem acesso na `<produto>`." (AD3)
-- "E é isso que eu vou te ensinar na nova edição do `<produto>`." (AD9)
+- "E é exatamente isso que eu monto com você na `<oferta>`." (serviço, clínica)
+- "É esse projeto que a gente desenha com você na `<oferta>`." (produto físico, móveis planejados)
+- "É exatamente esse fechamento que a gente faz na `<oferta>`." (serviço, contabilidade)
+- "É esse acabamento que eu te ensino na `<oferta>`." (infoproduto, confeitaria)
 
-**Molde 2, pergunta de adesão com "Então"** (4 dos 13). A ponte vira pergunta, e o "Então" é a
-dobradiça que abre o CTA. É a forma mais forte quando a peça já provou tudo o que tinha para
-provar.
+**Molde 2, pergunta de adesão com "Então".** A ponte vira pergunta, e o "Então" é a dobradiça que
+abre o CTA. É a forma mais forte quando a peça já provou tudo o que tinha para provar.
 
-- "Topa aprender a criar seu primeiro time de I.A junto comigo?" (AD13)
-- "Topa aprender a fazer isso na prática e, de quebra, ganhar algumas dessas skills…?" (AD7)
-- "Quer aprender a fazer isso na prática? Então seja rápido." (AD11)
-- "Quer transformar qualquer função dentro da sua empresa em um time que trabalha 24h por dia pra
-  você?" (AD5)
+- "Topa resolver isso junto comigo? Então [...]" (qualquer nicho)
+- "Quer aprender a fazer essa borda em dois minutos? Então [...]" (infoproduto, confeitaria)
+- "Quer parar de pagar imposto a mais? Então [...]" (serviço, contabilidade)
 
-**Os cinco moldes restantes**, um anúncio cada, e todos servem:
+**Os cinco moldes restantes**, todos válidos:
 
-- **condicional de fecho**: "E se você quer as três coisas… você precisa se inscrever no
-  `<produto>`." (AD10)
-- **troca declarada**: "A única coisa que você precisa me dar em troca são dois dias da sua
-  atenção." (AD12)
-- **convite datado**: "A hora de se adaptar é agora. E pra isso eu tenho um convite." (AD8)
-- **promessa de entrega**: "Nós vamos começar do zero e vamos entregar, pra você, o conteúdo
-  necessário pra criar seus próprios times de I.A." (AD6)
-- **escala mais anúncio do evento**: "Mas, isso é só 1% do que é possível ser feito." (AD4)
+- **condicional de fecho**: "E se você quer as três coisas, você precisa [...]"
+- **troca declarada**: "A única coisa que eu peço em troca são [prova do preset] minutos da sua
+  atenção."
+- **convite**: "A hora de resolver isso é agora. E pra isso eu tenho um convite."
+- **promessa de entrega**: "A gente começa do zero e entrega pra você [o resultado concreto]."
+- **escala mais anúncio da oferta**: "E isso é só o começo do que dá pra fazer."
+
 
 Duas regras de forma que valem para qualquer molde:
 
@@ -403,7 +412,8 @@ incluem as formas curtas dos moldes acima.
 
 **Direção visual típica**: fim de um bloco de prova ou de oferta, sem elemento novo na tela.
 
-**Exemplo**: *"É esse atendente que eu monto com você na aula."*
+**Exemplos**: serviço (clínica): *"É esse atendente que eu monto com você na aula."* Produto
+físico (móveis planejados): *"É esse projeto que a gente desenha com você na visita."*
 
 **Erro comum**: ponte genérica que não cita nada do que apareceu ("e tem muito mais te esperando").
 Ponte é específica ou não é ponte.
@@ -418,7 +428,9 @@ loop, pergunta ou pedido de envio.
 
 **Direção visual típica**: lettering com verbo de ação e seta, logo e legenda juntos na base.
 
-**Exemplo**: *"Toca em saiba mais e entra na aula do Agenda Cheia. Sai de lá com o seu marcando."*
+**Exemplos**: serviço (clínica): *"Toca em saiba mais e entra na aula do Agenda Cheia. Sai de lá
+com o seu marcando."* Produto físico (móveis planejados): *"Toca aqui embaixo e agenda sua visita.
+O projetista vai até você."*
 
 **Erro comum**: duas ações no mesmo CTA, CTA vago, e fecho de urgência dupla e vazia (duas frases
 empilhadas em que a segunda só repete a primeira).
@@ -441,6 +453,16 @@ empilhadas em que a segunda só repete a primeira).
 Escolha a sequência **antes** de escrever a tabela de blocos, e declare no campo opcional
 `sequencia` do `conceito.md`.
 
+Uma linha por modo, pra decidir rápido:
+
+- **Frio** (`frio`, `captacao`, `perpetuo_frio`): a peça constrói a crença antes de pedir qualquer
+  coisa, o miolo é longo, e o CTA não tem escassez, preço nem data.
+- **Quente, carrinho ou lote** (`carrinho`, `lote`, `remarketing`): o contexto já existe, a peça é
+  curta, e o tempo vai todo pra oferta e pra decisão, com escassez legítima.
+- **Orgânico** (`modo: organico`, qualquer campanha): mesma espinha do frio, mas o `C` não pede
+  clique: ele fecha em loop, pergunta pra comentário ou pedido de envio (ver
+  `references/modelo-mestre.md`, seção "Fechamento orgânico").
+
 ### Frio (`frio`, `captacao`, `perpetuo_frio`)
 
 ```
@@ -455,8 +477,8 @@ sem conhecer o caminho). A segunda serve no nível 3, quando a pessoa já procur
 decide é ver a coisa funcionando.
 
 A terceira e a quarta vieram da calibração contra os anúncios gravados
-(`references/calibracao-jheni.md`, seção 3.2) e são as duas mais usadas na casa. Duas coisas
-importam nelas:
+(`references/calibracao-jheni.md`, seção 3.2) e são as duas mais usadas naquele material. Duas
+coisas importam nelas:
 
 - **`P` repete, um bloco por item, com insert próprio em cada.** Não é exceção, é o formato.
 - **Entre os itens entra um bloco sem insert.** Ele existe por dois motivos ao mesmo tempo: segurar
@@ -475,6 +497,17 @@ H  P  O+T  C           prova, oferta com a ponte na última frase, ação
 
 Curta de propósito. O contexto já existe, então a peça gasta o tempo na oferta e na decisão:
 proporção 20 / 20 / 60.
+
+### Orgânico (`modo: organico`)
+
+```
+H  D  P  M  I  C           mesma espinha do frio, e o C fecha sem clique
+H  P  P  P  M  C           demonstração seguida, quando existe cena ou tela pra mostrar
+```
+
+O `O` (oferta) e o `T` (ponte) continuam válidos no orgânico, mas eles não apontam pra um clique:
+apontam pro que a pessoa leva assistindo até o fim. O `C` é loop, pergunta pra comentário ou pedido
+de envio, nunca "link na bio" como ação principal.
 
 ### Como expandir sem quebrar
 
@@ -504,9 +537,9 @@ consertar ainda é barato.
       qual dos 5 níveis a pessoa está?
 - [ ] **O gancho combina 2 elementos?** Um elemento só é frase, não é gancho.
 - [ ] **Ao menos um dos três hooks é pergunta ou paradoxo?** Afirmação previsível não para ninguém.
-- [ ] **Tem ao menos uma pergunta no CORPO?** Nos treze anúncios da casa, doze têm, e ela aparece
-      sempre em um de três lugares: na virada, antes do exemplo ("Quer um exemplo?", "Sabe
-      porque?") ou na própria ponte. Peça sem pergunta nenhuma é palestra.
+- [ ] **Tem ao menos uma pergunta no CORPO?** Nos treze anúncios do estudo de caso, doze têm, e
+      ela aparece sempre em um de três lugares: na virada, antes do exemplo ("Quer um exemplo?",
+      "Sabe porque?") ou na própria ponte. Peça sem pergunta nenhuma é palestra.
 - [ ] **A ponte usa um dos moldes?** Dêitico mais ensino, pergunta de adesão com "Então", ou um dos
       cinco restantes. Se ela não aponta nada do que apareceu na tela, reescreve.
 - [ ] **Tem prova CONCRETA?** Tela real da coisa funcionando, ou caso com nome, número e contexto.

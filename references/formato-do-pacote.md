@@ -393,9 +393,9 @@ aceleração).
 | frase | nenhuma com mais de 20 palavras | brief (legenda de 2 linhas, R5.2 não publica número); valor de partida | reprova |
 | frase | acima de 14 palavras | idem | aviso |
 | envelhecimento | data, preço, edição, lote numerado na fala ou lettering | decisão 19 e R6.4 | reprova fora de `carrinho` e `lote`; aviso dentro |
-| algarismo na fala | "8 mil" na fala | voz da casa: por extenso na fala, algarismo no lettering | aviso |
+| algarismo na fala | "8 mil" na fala | voz falada BR: por extenso na fala, algarismo no lettering | aviso |
 | antítese paralela | "não é X. É Y." | `feedback-antitese-paralela-cara-de-ia` | aviso |
 | direção vaga | âncora com menos de 3 palavras, ou com "algo", "genérico", "qualquer", "imagens de", "vídeo de" | o casamento com o arquivo é por âncora exata | reprova |
 | primeiro insert | começa entre 5 e 10s finais | R3.2 | aviso |
 | segundo insert | começa entre 12 e 20s finais quando a peça passa de 15s | R3.2 | aviso |
-| duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência. Essa faixa é a da ESTEIRA, não da casa: os ads reais rodam **220 a 300 palavras (52 a 71s finais) no formato completo**, e **110 a 130 palavras (26 a 31s) só no formato curto**, quando o cliente pede peça curta (`references/modelo-mestre.md`). O aviso de duração acima de 30s é ASSUMIDO no formato completo, não motivo pra cortar parte do molde | R6.1 (avisa, não reprova) | aviso |
+| duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência. Essa faixa é a da ESTEIRA: no formato completo os anúncios rodam **220 a 300 palavras (52 a 71s finais) no formato completo**, e **110 a 130 palavras (26 a 31s) só no formato curto**, quando o cliente pede peça curta (`references/modelo-mestre.md`). O aviso de duração acima de 30s é ASSUMIDO no formato completo, não motivo pra cortar parte do molde | R6.1 (avisa, não reprova) | aviso |

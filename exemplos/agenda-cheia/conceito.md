@@ -26,7 +26,7 @@ duzentas clínicas ficou de fora do roteiro por falta de espaço na faixa de dur
 Esta é a terceira versão, e ela foi remontada com os moldes de
 `references/calibracao-jheni.md`. O corpo deixou de ser uma prova só e virou **enumeração de três
 itens com um insert por item** (bloco 3, 5 e 6), separados por um bloco de apresentadora que
-carrega a identificação e a frase de continuação. O mecanismo ganhou o molde da casa
+carrega a identificação e a frase de continuação. O mecanismo ganhou o molde do estudo de caso
 ("isso só é possível quando…") no bloco 7, e a ponte ganhou o molde de dêitico mais ensino
 ("é exatamente isso que eu te ensino na aula") no fim do bloco 8.
 

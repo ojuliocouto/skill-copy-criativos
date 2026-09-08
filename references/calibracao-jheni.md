@@ -1,14 +1,17 @@
-# Calibração pelos ads reais da copywriter da casa
+# Estudo de caso: como uma copywriter experiente aplica o molde
 
-Material interno. Este arquivo existe para **calibrar o método** contra copy que já foi escrita,
-aprovada e gravada, em vez de contra a intuição de quem escreve a skill. A fonte é um documento de
-28 slots de anúncio para uma imersão de dois dias, em quatro formatos (humano, áudio mais inserts,
-IA, caixinha de perguntas) e nove conceitos.
+Este arquivo é um **estudo de caso**, não o padrão a seguir. A fonte é um produto real e único (um
+curso de I.A para empresário), com 28 slots de anúncio para uma imersão de dois dias, escritos por
+uma copywriter experiente. Ele existe para você **ver o molde de `references/modelo-mestre.md` em
+ação** numa oferta de verdade, com as decisões literais que ela tomou.
+
+**Não copie frase daqui.** As frases servem a um produto, um avatar e uma campanha específicos. O
+que viaja é a forma: quantos moldes de ponte existem, onde a pergunta aparece, como a enumeração é
+marcada. O conteúdo fica neste arquivo.
 
 **Regra de uso:** só trechos curtos, no máximo uma frase por citação, sempre com o número do ad.
-Nenhum ad é reproduzido inteiro aqui, e nada deste arquivo é copiado para o método nem para os
-exemplos com nome de aluno, de cliente ou de caso real. O repositório é público para os alunos: o
-que sai daqui para o resto da skill é **molde**, nunca conteúdo.
+Nenhum ad é reproduzido inteiro aqui, e nada deste arquivo entra num pacote de cliente com nome de
+aluno, de cliente ou de caso real.
 
 **Honestidade sobre a amostra:** dos 28 slots, **13 estão escritos por inteiro** (AD1 a AD13) e
 **15 são esboço** (AD14 a AD28: uma linha de ideia, marcação de tela, ou só um ponto de
@@ -97,7 +100,7 @@ um de três lugares: na virada, antes de um exemplo, ou na ponte.
   sisteminha aqui em cima?" (AD4)
 - na ponte: as sete listadas em 2.5
 
-Ou seja: no material dela a pergunta é **motor de corpo**, não abridor. Duas coisas seguem daí, e
+Ou seja: neste caso a pergunta é **motor de corpo**, não abridor. Duas coisas seguem daí, e
 estão na seção 3.
 
 Dois moldes de abertura que se repetem e valem nome próprio:
@@ -329,5 +332,5 @@ Comparação com `references/metodo-de-copy.md`, item a item.
   linha de preset que a autorize. Esta é a única coisa no material que o método **não** copia.
 - **Formatos vazios.** IA e caixinha de perguntas estão numerados e sem uma palavra. Não há o que
   calibrar ali, e nada foi inventado para preencher.
-- **Amostra pequena.** Treze ads, uma oferta, um apresentador, uma campanha. Tudo aqui é molde de
-  uma casa, não lei de mercado. Quando entrar outra leva, esta seção é reescrita com o número novo.
+- **Amostra pequena.** Treze ads, uma oferta, um apresentador, uma campanha. Tudo aqui é o molde de um
+  produto só, não lei de mercado. Quando entrar outra leva, esta seção é reescrita com o número novo.

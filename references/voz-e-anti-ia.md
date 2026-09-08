@@ -1,8 +1,13 @@
-# Voz falada e gate anti-IA
+# Voz falada BR de anúncio, e o gate anti-IA
 
 Esta skill escreve fala, não texto. A pessoa não lê a peça: ela ouve alguém falando com ela.
 Tudo abaixo existe porque copy escrita como texto soa como IA quando vira voz, e copy com cara de
-IA foi rejeitada de forma consistente pelo dono da metodologia ao longo de dezenas de peças.
+IA foi rejeitada de forma consistente ao longo de dezenas de peças.
+
+Nada aqui é a voz de um apresentador específico. É a voz falada do português do Brasil aplicada a
+anúncio: serve para clínica, loja, escritório, e-commerce, curso ou SaaS, e vale por cima de
+qualquer decisão de método ou de tela. Quem apresenta tem maneirismos próprios, e eles entram por
+cima destas regras, nunca no lugar delas.
 
 O critério final é um teste de voz alta, e está no fim deste arquivo. Se a frase não passa nele,
 não importa quantas regras ela cumpra.
@@ -51,10 +56,10 @@ A frase de efeito com simetria perfeita é bonita e vazia, e quem escuta sente o
 sentir o argumento. **A troca**: uma afirmação concreta e verificável sobre o que a coisa faz, de
 preferência com um detalhe que só quem conhece o produto saberia.
 
-- Ruim: "Todo mundo quer contratar. Ninguém pensou em criar."
-- Bom: "Ele trabalha no horário que você marcar, mesmo com seu computador desligado."
+- Ruim: "Todo mundo quer atender rápido. Ninguém pensou em atender sozinho."
+- Bom: "Ele responde no horário que você marcar, mesmo com a clínica fechada."
 
-O detalhe específico ("mesmo com seu computador desligado") é o que faz a frase valer. O gate
+O detalhe específico ("mesmo com a clínica fechada") é o que faz a frase valer. O gate
 avisa quando encontra o molde; o aviso não reprova, mas ele quase sempre está certo.
 
 ### Urgência dupla e vazia
@@ -69,8 +74,8 @@ frio, urgência inventada é ao mesmo tempo cara de IA e reprovação de gate.
 ### Jargão sem tradução
 
 Palavra técnica que o avatar não usa no dia dele não entra. Se o conceito exige a palavra, ela
-vem com a tradução colada na mesma frase: "uma skill, que é uma habilidade que você ensina uma
-vez e ela repete sozinha". Sem a tradução, corte a palavra e descreva o que a coisa faz.
+vem com a tradução colada na mesma frase: "regime tributário, que é a regra que decide quanto a
+sua empresa paga de imposto". Sem a tradução, corte a palavra e descreva o que a coisa faz.
 
 Vale para as palavras internas da própria produção: "esteira", "entregável", "recorte", "pipeline",
 "stack". Elas servem para conversar sobre o trabalho, nunca dentro da peça.

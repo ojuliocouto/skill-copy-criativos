@@ -1,9 +1,13 @@
 # copy-criativos
 
-A Claude Code skill that writes the **copy for short-form video creatives** (paid ads and organic
-pieces for Reels, Shorts, TikTok, Stories and feed) directly in the annotated script format that a
-video assembly pipeline can consume. The copy leaves the copywriter's hands ready to become a
-finished piece, with no editing rework.
+A Claude Code skill that writes **video ad copy for any product or service, paid or organic**:
+a clinic, a brick-and-mortar shop, an e-commerce store, a real-estate agency, a SaaS, a local
+service, an online course in any field. It delivers the copy for Reels, Shorts, TikTok, Stories
+and feed directly in the annotated script format that a video assembly pipeline can consume, so
+the copy leaves the copywriter's hands ready to become a finished piece with no editing rework.
+
+The structure is craft, not house style: the master template has slots, and your client's product
+is what fills them.
 
 It was built alongside a deterministic 9:16 assembly engine with measured gates, but the ideas
 travel and the skill is self-contained: every visual rule of the edit has a copy consequence, and
@@ -15,9 +19,17 @@ of the copy it produces. This README is the only English document in the reposit
 
 ## What it is
 
-- A **master template** (`references/modelo-mestre.md`): the house's sentence-by-sentence template,
-  9 parts extracted from thirteen real, recorded ads. Fill in its gaps, in order, before breaking
-  the copy into blocks; skipping a part is what makes an otherwise-passing ad feel "off".
+- A **master template** (`references/modelo-mestre.md`): the general structure of a video ad in 9
+  parts, each with its principle, a neutral sentence mould with slots, and worked examples across
+  four different fictional niches (an aesthetics clinic, a fitted-furniture shop, an accountancy
+  practice, an online baking course). It also covers demonstration when there is no screen to
+  record, the offer by access type (free class, consultation, quote, direct purchase, SaaS trial)
+  and organic closings. Fill in its gaps with your client's product, in order, before breaking the
+  copy into blocks; skipping a part is what makes an otherwise-passing ad feel "off".
+- A **case study** (`references/calibracao-jheni.md`): thirteen real, recorded ads for one single
+  product, ad by ad, with the literal hook, enumeration, mechanism, bridge and CTA moulds the
+  method imported. It is there to show the template in action. **No sentence from it goes into a
+  client's piece.**
 - A **method** (`references/metodo-de-copy.md`): three layers (angle, invisible structure, format),
   an avatar diagnosis by temperature and awareness level, the anatomy of an ad broken into block
   roles (including the mandatory offer block right before the CTA), the valid sequences per
@@ -33,9 +45,9 @@ of the copy it produces. This README is the only English document in the reposit
 - A **planner** (`scripts/planejar_blocos.py`): tells you how many words fit in each block and
   whether insert density per window closes, before you spend any writing on a shape that cannot
   work.
-- **Two reference packages**: a clean one that passes with three declared warnings (the assumed
-  cost of the mandatory offer block before the CTA), and a real one rebuilt from an approved ad
-  that carries thirteen acknowledged warnings.
+- **Three reference packages**: a full-format one for a service, a short-format one for the same
+  product, and a real approved ad for an online course, rebuilt with its thirteen acknowledged
+  warnings.
 
 ## What it is NOT
 
@@ -46,6 +58,8 @@ of the copy it produces. This README is the only English document in the reposit
   not exist.
 - It is opinionated for Brazilian Portuguese spoken copy. Rules like "no em dashes" and "numbers
   spelled out in speech, digits in letterings" are deliberate.
+- It is not a skill for one company's ads. The case study is a case study; copying its sentences
+  into a client's piece is a mistake the audit checklist explicitly catches.
 
 ## Onboarding: what you need before your first run
 
@@ -77,8 +91,8 @@ cd ~/.claude/skills/copy-criativos
 python3 scripts/gate_copy.py exemplos/agenda-cheia
 ```
 
-You should see the per-block summary and zero `REPROVAÇÕES` (the three `AVISOS` listed are declared
-on purpose, the cost of the mandatory offer block before the CTA). If you get an import error, fix
+You should see the per-block summary and zero `REPROVAÇÕES` (the `AVISOS` listed are declared on
+purpose, the cost of the mandatory offer block before the CTA). If you get an import error, fix
 that before writing anything: a broken gate means delivering without proof.
 
 ## Installation
@@ -100,7 +114,8 @@ asking for "copy de criativo", "roteiro de anúncio em vídeo", "hooks" or "matr
    on the accumulated timeline and cannot be worked out on paper.
 1. **Onboarding check.** The skill refuses to write without avatar, promise, mode, channel and, for
    paid, campaign type. It also expects an approved angle, an offer preset, and the asset list.
-2. **Role sequence, then the block table.** Before any writing, the piece is laid out as a sequence
+2. **Fill the master template with the client's product, part by part.** Only then the role
+   sequence and the block table. Before any writing, the piece is laid out as a sequence
    of block roles (`H` hook, `D` pain, `P` proof with insert, `M` mechanism, `I` identification, `O`
    offer, `T` bridge, `C` CTA), declared in `conceito.md`. Cold traffic runs `H D P M T C` or
    `H P I M T C`; warm runs `H P O T C`. Only then is the script drafted as a table (block, role,
@@ -166,6 +181,8 @@ python3 -m pytest scripts/tests -q
 
 ```
 SKILL.md                          trigger, glossary, prerequisites, onboarding, process, rules, handoff
+references/modelo-mestre.md       the general 9-part structure of a video ad, with examples in four niches
+references/calibracao-jheni.md    case study: thirteen recorded ads for one product, ad by ad
 references/metodo-de-copy.md      the METHOD: three layers, avatar diagnosis, block roles, valid sequences, structure checklist
 references/regras-da-tela.md      one line per edit rule that changes the copy, with its source
 references/formato-do-pacote.md   the 8-file package contract, field by field, plus the gate table
@@ -178,19 +195,26 @@ scripts/gate_copy.py              thin CLI wrapper
 scripts/gate_copy/                the gate: readers, text normalisation, one module per rule family
 scripts/planejar_blocos.py        block planner: words per block, timeline, density per window
 scripts/tests/                    tests (a valid package plus one mutation per rule)
-exemplos/agenda-cheia/            the clean reference package: zero rejections, one declared warning
+exemplos/sem-contratar/           the full-format reference package (service): zero rejections
+exemplos/agenda-cheia/            the short-format reference package: zero rejections, three declared warnings
 exemplos/cinco-entregas/          a real approved ad rebuilt: zero rejections, 13 acknowledged warnings
 ```
 
-### The two examples
+### The three examples
 
-They have different jobs. **`exemplos/agenda-cheia/`** is fictional, six blocks long, and passes
-with **zero rejections and one declared warning**: copy it while you are learning the format. Its
-README also compares it against a first version that the methodology owner rejected, for a generic
-hook and a CTA with no bridge. **`exemplos/cinco-entregas/`** rebuilds a
-**real ad that ran and was approved**, so it carries **13 acknowledged warnings** (a 40.7s runtime and
-99% insert density in the body window among them): read it to understand why an approved piece can
-carry warnings, and how to declare them honestly instead of hiding them.
+They have different jobs.
+
+- **`exemplos/sem-contratar/`** is the **full format on a service**: a fictional mentoring offer for
+  aesthetics-clinic owners, 14 blocks, 265 words, about 64 final seconds. It walks the whole
+  9-part template, part by part, skipping none.
+- **`exemplos/agenda-cheia/`** is the **short format on the same product**: ten blocks, about 30
+  seconds, passing with **zero rejections and three declared warnings**. Copy it while you are
+  learning the format. Its README also compares it against a first version that was rejected, for
+  a generic hook and a CTA with no bridge.
+- **`exemplos/cinco-entregas/`** rebuilds a **real approved ad for an online course**, so it
+  carries **13 acknowledged warnings** (a 40.4s runtime and 99% insert density in the body window
+  among them). Read it to understand why an approved piece can carry warnings and how to declare
+  them honestly instead of hiding them. It is a case, not a niche model.
 
 ### The package (one directory per concept)
 
@@ -211,8 +235,10 @@ Default output directory: `./copy/<concept>/`, relative to your working director
 ## Security
 
 The repository contains no credentials, tokens, account ids or client data. Every path referenced
-by `SKILL.md` lives inside the skill directory itself. The clean example is entirely fictional; the
-real example uses public brand names and proof already authorised for public advertising.
+by `SKILL.md` lives inside the skill directory itself. The four example niches in the references
+are fictional and carry `[prova do preset]` placeholders instead of invented numbers; the two clean
+packages are entirely fictional; the real example uses public brand names and proof already
+authorised for public advertising.
 
 ## License
 

@@ -1,6 +1,6 @@
 ---
 name: copy-criativos
-description: "Escreve a COPY de criativos em vídeo (anúncio pago e peça orgânica: Reels, Shorts, TikTok, Stories, feed) já no formato anotado que uma esteira de montagem consome: roteiro bloco a bloco com direção de insert, LEAD e KEY, mais hooks com tática nomeada, garrafais, letterings, CTA por modo, origem dos assets e a matriz 3x2x2. A copy sai da mão do copywriter pronta pra virar peça sem retrabalho de edição. Triggers: copy de criativo, roteiro de anúncio em vídeo, roteiro anotado, hooks, matriz de criativos, pacote de copy, /copy-criativos."
+description: "Escreve a COPY de anúncio em vídeo pra QUALQUER produto ou serviço (clínica, loja física, e-commerce, imobiliária, SaaS, serviço local, infoproduto), em tráfego pago ou orgânico (Reels, Shorts, TikTok, Stories, feed), já no formato anotado que uma esteira de montagem consome: roteiro bloco a bloco com direção de insert, LEAD e KEY, mais hooks com tática nomeada, garrafais, letterings, CTA por modo, origem dos assets e a matriz 3x2x2. A copy sai da mão do copywriter pronta pra virar peça sem retrabalho de edição. Triggers: copy de criativo, roteiro de anúncio em vídeo, roteiro anotado, hooks, matriz de criativos, pacote de copy, /copy-criativos."
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 pairs-with:
   - skill: creative-method-creator
@@ -9,9 +9,13 @@ pairs-with:
     reason: "optional: true. Esteira de montagem que consome o roteiro.txt deste pacote sem reescrever uma palavra. Sem ela, o pacote continua sendo copy pronta pra produção manual, e o gate roda com os limiares embutidos."
 ---
 
-# Copy de criativos em vídeo
+# Copy de anúncio em vídeo
 
-Esta skill escreve a copy de UM CONCEITO por vez e entrega um PACOTE (um diretório com 8
+Esta skill escreve **copy de anúncio em vídeo pra qualquer produto ou serviço, pago ou orgânico**.
+Clínica, loja física, e-commerce, imobiliária, SaaS, serviço local, infoproduto de qualquer área:
+a estrutura é a mesma, o que muda é o produto que entra nas lacunas.
+
+Ela escreve a copy de UM CONCEITO por vez e entrega um PACOTE (um diretório com 8
 arquivos), não um texto solto. O arquivo central é o `roteiro.txt`, no formato anotado
 `[direção | LEAD: <lead> | KEY: <key>] fala`. A fronteira é essa: a copy termina no
 `roteiro.txt`; quem monta o vídeo começa nele e nunca reescreve uma palavra.
@@ -21,28 +25,28 @@ legenda) e as coloca na fala; nunca o contrário.** Lettering que a voz não diz
 garrafal escolhida por caber está proibida.
 
 Esta skill é autossuficiente. Tudo que ela precisa está dentro deste diretório: as regras, os
-números, o gate, os dois exemplos e os modelos. Ela não depende de nenhuma outra skill nem de
+números, o gate, os três exemplos e os modelos. Ela não depende de nenhuma outra skill nem de
 nenhum repositório externo.
 
 ---
 
-## Quem é quem e o que é o quê
+## Glossário (4 nomes que aparecem nas regras)
 
-O material desta skill nasceu de uma operação real, e alguns nomes aparecem nas regras como fonte
-histórica. Você não precisa conhecer nenhuma dessas pessoas para usar a skill.
+O material desta skill nasceu de uma operação real, e quatro nomes sobraram nas regras como fonte
+histórica. Você não precisa conhecer nenhum deles para usar a skill em qualquer nicho.
 
-| nome | o que é | o que fazer com isso |
-|---|---|---|
-| **Júlio** | dono da metodologia e da esteira de montagem original | onde uma regra diz que ele aprovou ou rejeitou algo, leia "**o cliente que aprova**". No seu projeto, quem aprova é o seu cliente |
-| **Léo** | gestor de tráfego da operação original | dele vêm a regra **3-2-2** (cada conceito sai em 3 hooks, 2 legendas, 2 formatos) e a **biblioteca dos 78 ângulos**, que está inteira em `references/angulos-e-estrutura.md` |
-| **Thales** | apresentador das peças de exemplo | a régua de **2,9 palavras por segundo** foi medida na voz dele. **Remeça na voz do seu apresentador** e ajuste `palavras_por_segundo` no `conceito.md`: todos os mínimos de bloco saem desse número |
-| **Jheni** | copywriter da operação original | dela vem o método de **hook demonstrativo**: quando existe tela pra mostrar, a tela abre a peça e a prova vem antes da promessa |
-| **Escola de Automação** e **Operação Claude Code** | a empresa e o evento das peças de exemplo | são o cliente e a oferta do exemplo `exemplos/cinco-entregas/`. No seu projeto, troque pelo seu |
-| **GalerIA** | o banco de assets daquela casa | aparece como valor de `origem: galeria` em `assets.md`. Leia como "o banco de assets do cliente" |
-| **esteira**, **creative-studio** | o motor de montagem que consome o `roteiro.txt` | **opcional**. Sem ele, o pacote continua válido: é copy pronta, com direção de tela declarada, para quem for editar |
-| **decisão N** | registro numerado de decisões do piloto da esteira | o número serve só de rastreio. O texto relevante de cada uma já está em `references/regras-da-tela.md`; você não precisa procurar o registro original |
+- **Jheni**: a copywriter do estudo de caso (`references/calibracao-jheni.md`). O que sai de lá é
+  molde, nunca frase: **nenhuma frase do estudo de caso entra numa peça de cliente**.
+- **Thales**: o apresentador do exemplo real. A régua de **2,9 palavras por segundo** foi medida na
+  voz dele; **remeça na voz do seu** e ajuste `palavras_por_segundo` no `conceito.md`.
+- **Léo**: de onde vêm a regra **3-2-2** (3 hooks, 2 legendas, 2 formatos) e a biblioteca dos **78
+  ângulos**, inteira em `references/angulos-e-estrutura.md`.
+- **esteira** (`creative-studio`): o motor de montagem que consome o `roteiro.txt`. **Opcional**:
+  sem ele o pacote continua sendo copy pronta pra produção manual, e o gate roda com os limiares
+  embutidos.
 
-Em todo o resto deste arquivo, "o cliente" significa quem aprova a copy do seu lado.
+Onde uma regra diz que alguém aprovou ou rejeitou algo, leia "**o cliente que aprova**". No seu
+projeto, quem aprova é o seu cliente.
 
 ---
 
@@ -66,8 +70,9 @@ cd ~/.claude/skills/copy-criativos
 python3 scripts/gate_copy.py exemplos/agenda-cheia
 ```
 
-Tem que sair o resumo por bloco e **"Pacote aprovado, sem reprovações nem avisos."** Se sair um
-erro de import, resolva isso agora: gate quebrado significa entrega sem prova.
+Tem que sair o resumo por bloco e **zero reprovações** (os avisos listados são os três assumidos
+do exemplo). Se sair um erro de import, resolva isso agora: gate quebrado significa entrega sem
+prova.
 
 ---
 
@@ -107,7 +112,7 @@ Tudo dentro deste diretório:
 
 | arquivo | o que tem |
 |---|---|
-| `references/modelo-mestre.md` | **preencha o molde ANTES de quebrar em blocos.** O template frase a frase da casa, em 9 partes, extraído de treze ads reais. Preencher as lacunas dele, na ordem, é o passo 2 do processo abaixo; só depois disso a copy vira sequência de papéis e tabela de blocos |
+| `references/modelo-mestre.md` | **preencha o molde ANTES de quebrar em blocos.** A estrutura geral de um anúncio em vídeo, em 9 partes, com exemplos em quatro nichos diferentes, mais demonstração sem tela, oferta por tipo de acesso e fechamento orgânico. Preencher as lacunas dele com o produto do cliente, na ordem, é o passo 2 do processo abaixo |
 | `references/metodo-de-copy.md` | **leia depois do modelo mestre.** O MÉTODO: as 3 camadas, o diagnóstico do avatar (temperatura e nível de consciência), a anatomia do anúncio em papéis de bloco, as sequências válidas e o checklist de estrutura. `regras-da-tela.md` diz o que a tela aguenta; este diz o que a copy faz |
 | `references/regras-da-tela.md` | a lista completa do que a edição faz com o seu texto, uma linha por regra, com o número de origem. É a fonte das regras resumidas abaixo |
 | `references/formato-do-pacote.md` | o contrato dos 8 arquivos, campo a campo, e a tabela de números do gate (seção 9) |
@@ -116,23 +121,27 @@ Tudo dentro deste diretório:
 | `references/voz-e-anti-ia.md` | a voz falada BR e o gate anti-IA: o que está banido e o teste de voz alta |
 | `references/modelo-preset-oferta.md` | o modelo em branco do preset de oferta |
 | `references/preset-oferta-exemplo.md` | um preset preenchido, fictício, que alimenta o exemplo limpo |
-| `references/calibracao-jheni.md` | **calibração**: os anúncios já escritos e gravados da casa, ad a ad, com os moldes de hook, de enumeração, de mecanismo, de ponte e de CTA que o método importou. Material interno, e o que sai dele para o método é molde, nunca conteúdo |
+| `references/calibracao-jheni.md` | **estudo de caso**: os anúncios de UM produto real (curso de I.A para empresário), ad a ad, com os moldes de hook, de enumeração, de mecanismo, de ponte e de CTA que o método importou. Serve pra ver o molde em ação. **Nenhuma frase de lá entra numa peça de cliente** |
 
-E os dois exemplos, que têm papéis diferentes:
+E os três exemplos, que têm papéis diferentes:
 
-- **`exemplos/agenda-cheia/`: o exemplo LIMPO.** Peça fictícia de dez blocos que passa no gate com
-  **zero reprovações e três avisos assumidos** (custo declarado do bloco de oferta obrigatório
-  antes do CTA). É o que você imita quando está aprendendo o formato. O `README.md` de lá mostra a
-  tabela de blocos, as contas que fecharam a peça, e as três correções que trouxeram o pacote até
-  aqui: a v1 reprovada pelo dono da metodologia (hook genérico e CTA sem ponte), a v3 remontada com
-  os moldes de `references/calibracao-jheni.md` (enumeração com um insert por item, respiro entre
-  os itens, mecanismo nomeado e ponte com molde) e a v4, que acrescentou o bloco de oferta (papel
-  `O`) entre a ponte e o CTA.
-- **`exemplos/cinco-entregas/`: o exemplo REAL.** Reconstrução de uma peça de verdade, aprovada e
-  no ar, com dez blocos. Passa com zero reprovações, mas carrega **13 avisos assumidos** (entre
-  eles duração de 40,43s e densidade de insert de 99% na janela do corpo), porque a peça real é assim
-  e a copy não mente sobre ela. É o que você lê quando quer entender por que uma peça aprovada
-  pode carregar aviso, e como declarar isso.
+- **`exemplos/sem-contratar/`: o formato COMPLETO, num serviço.** Peça fictícia de 14 blocos, 265
+  palavras, cerca de 64 segundos finais, de uma mentoria para donas de clínica de estética. É o
+  molde de `references/modelo-mestre.md` inteiro, parte por parte, sem pular nenhuma. Leia este
+  quando a peça for de conversão e precisar construir crença antes da oferta.
+- **`exemplos/agenda-cheia/`: o formato CURTO, no mesmo produto.** Dez blocos, cerca de 30
+  segundos, passa no gate com **zero reprovações e três avisos assumidos** (custo declarado do
+  bloco de oferta obrigatório antes do CTA). É o que você imita quando está aprendendo o formato.
+  O `README.md` de lá mostra a tabela de blocos, as contas que fecharam a peça, e as correções que
+  trouxeram o pacote até aqui: a v1 reprovada (hook genérico e CTA sem ponte), a v3 remontada com
+  os moldes do método (enumeração com um insert por item, respiro entre os itens, mecanismo nomeado
+  e ponte com molde) e a v4, que acrescentou o bloco de oferta (papel `O`) entre a ponte e o CTA.
+- **`exemplos/cinco-entregas/`: o caso REAL, num infoproduto.** Reconstrução de uma peça de
+  verdade, aprovada e no ar, com dez blocos. Passa com zero reprovações, mas carrega **13 avisos
+  assumidos** (entre eles duração de 40,43s e densidade de insert de 99% na janela do corpo),
+  porque a peça real é assim e a copy não mente sobre ela. É o que você lê quando quer entender
+  por que uma peça aprovada pode carregar aviso, e como declarar isso. **Não é modelo de nicho**:
+  é a peça de um infoproduto de I.A rodando com a esteira.
 
 ---
 
@@ -185,7 +194,7 @@ Tudo abaixo é em tempo FINAL, que é onde a montagem mede. A conversão única 
 | blocos vizinhos sem insert | somados, 25 palavras no máximo (6,0s), mesmo com KEY | AVISA, porque o lettering cobre só parte do bloco |
 | peça pago frio e orgânico (faixa da ESTEIRA) | 15 a 30s finais = 64 a 126 palavras | R6.1; remarketing 6 a 15s = 26 a 63 palavras; acima disso é AVISO, não reprovação |
 | peça de carrinho ou lote | sem faixa própria: usa a de frio como referência, e o número vira aviso | as faixas declaradas são só `frio` e `remarketing` |
-| peça no formato completo (padrão da CASA, `references/modelo-mestre.md`) | 220 a 300 palavras = 52 a 71s finais | as 9 partes do modelo mestre inteiras; o aviso de duração acima de 30s (linha acima) é ASSUMIDO aqui, nunca motivo pra cortar parte do molde |
+| peça no formato completo (`references/modelo-mestre.md`) | 220 a 300 palavras = 52 a 71s finais | as 9 partes do modelo mestre inteiras; o aviso de duração acima de 30s (linha acima) é ASSUMIDO aqui, nunca motivo pra cortar parte do molde |
 | peça no formato curto | 110 a 130 palavras = 26 a 31s finais | só quando o cliente pede peça curta; mantém TODAS as 9 partes do modelo mestre, cada uma em uma frase |
 | hook | até 5s de fala natural (14 palavras a 2,9 por segundo; o gate arredonda pra cima, então 15 ainda passa); problema ou promessa nas 4 primeiras palavras | R1.3 e R2.6 |
 | hook, forma | **ao menos um dos 3 hooks é pergunta ou paradoxo** que a pessoa precise resolver | afirmação previsível não faz ninguém parar; o gate AVISA quando nenhum dos três tem |
@@ -335,9 +344,13 @@ Conferir os 5 itens do onboarding. Recusar sem avatar, promessa, modo e canal.
 
 ### Passo 2: preencher o modelo mestre, depois a SEQUÊNCIA DE PAPÉIS e a tabela de blocos
 
-**Primeiro o modelo mestre, sempre.** Preencha `references/modelo-mestre.md` parte por parte, na
-ordem das 9 partes: é o template frase a frase da casa, e ad que pula uma parte sai "esquisito"
-mesmo passando no gate. Só depois de preenchido é que ele vira a fila de papéis.
+**Primeiro o modelo mestre, sempre.** Preencha `references/modelo-mestre.md` **com o produto do
+cliente, parte a parte**, na ordem das 9 partes: anúncio que pula uma parte sai "esquisito" mesmo
+passando no gate. Escreva as frases do zero, na linguagem do avatar daquele produto: os exemplos
+do arquivo são de quatro nichos fictícios e servem de referência de FORMA, nunca de texto pronto.
+Se o produto não tem tela pra mostrar, use a seção "Demonstração quando não tem tela"; escolha o
+tipo de acesso da oferta na seção "Oferta por tipo de acesso"; em modo orgânico, feche pela seção
+"Fechamento orgânico". Só depois de preenchido é que o molde vira a fila de papéis.
 
 **Depois a sequência.** Antes de escrever fala, escreva a fila de papéis que a peça vai
 seguir, do `references/metodo-de-copy.md` (seções 3 e 4): `H` hook, `D` dor ou diagnóstico, `P`
@@ -489,6 +502,8 @@ configuração o gate rodou. Nada de "pronto" sem o output do gate colado na ent
 - [ ] Existe ponte antes do CTA, ligada à prova ou ao benefício do bloco anterior?
 - [ ] CTA bate com o modo e a campanha?
 - [ ] Nenhum número ou prova fora do preset da oferta?
+- [ ] **Nenhuma frase copiada do estudo de caso** (`references/calibracao-jheni.md`) nem dos
+  exemplos dos references? O molde viaja, a frase não.
 - [ ] Zero travessão, acentuação completa, voz falada BR, nenhuma frase com cara de IA?
   (`references/voz-e-anti-ia.md`)
 - [ ] O gate rodou e o output está na entrega?
