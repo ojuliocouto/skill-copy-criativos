@@ -1,0 +1,14 @@
+[carla de frente + lettering | LEAD: esse mês | KEY: QUANTOS AGENDAMENTOS] Quantos agendamentos sua clínica perdeu esse mês por mensagem que ninguém respondeu?
+[inserção de vídeo: conversa do whatsapp chegando às onze da noite sem resposta | LEAD: quem espera | KEY: OUTRA CLÍNICA] E olha que você já tem secretária. Só que a mensagem chega na folga, no almoço, onze da noite, no domingo. Quem espera vai marcar em outra clínica.
+[inserção de vídeo: atendente de i.a na tela do whatsapp da clínica | LEAD: na tela | KEY: ATENDENTE] Isso que você tá vendo na tela é o atendente que eu coloquei no WhatsApp da minha clínica.
+[inserção de vídeo: atendente respondendo no whatsapp às onze da noite | LEAD: onze da noite | KEY: RESPONDEU NA HORA] Onze da noite, cliente perguntou preço. Ele respondeu na hora, tirou a dúvida e ofereceu horário.
+[inserção de vídeo: atendente marcando o horário na agenda da clínica | LEAD: a cliente escolheu | KEY: MARCOU NA AGENDA] A cliente escolheu o horário e ele marcou direto na agenda. Ninguém da equipe encostou no celular.
+[inserção de vídeo: atendente mandando lembrete da consulta no whatsapp | LEAD: e no dia | KEY: MANDA O LEMBRETE] E no dia ele ainda manda o lembrete. A cadeira não fica vazia por esquecimento. E isso é só um exemplo.
+[carla de frente pra câmera] Ele responde dúvida de procedimento, reagenda, avisa quando abre vaga. E eu não montei isso porque entendo de tecnologia. Sabe por quê?
+[inserção de vídeo: atendente sendo configurado por conversa com as regras da clínica | LEAD: porque o atendente | KEY: APRENDE COM AS CONVERSAS] Porque o atendente aprende com as conversas que a sua clínica já tem. Você diz o que ele pode responder e ele faz o resto.
+[carla de frente pra câmera] Se você atende com o celular na mão e já cansou de contratar gente pra isso, isso é pra você.
+[inserção de vídeo: print da agenda cheia da dra renata | LEAD: a Dra. Renata | KEY: DOBROU OS AGENDAMENTOS] Mais de duzentas clínicas já passaram por isso comigo. A Dra. Renata dobrou os agendamentos em um mês, sem contratar ninguém.
+[carla de frente pra câmera] E é exatamente isso que eu monto com você na aula.
+[inserção de vídeo: carla montando o atendente na tela da aula | LEAD: na prática | KEY: AULA GRATUITA] Na aula gratuita do Agenda Cheia eu te mostro, na prática, como ligar o atendente no seu WhatsApp. O que ele responde, como marca na agenda e como avisa a cliente.
+[inserção de vídeo: atendente pronto respondendo no fim da aula | LEAD: você sai | KEY: O SEU RESPONDENDO] Você sai de lá com o seu já respondendo, mesmo sem entender nada de I.A.
+[carla de frente + lettering + logo do agenda cheia | LEAD: toca em saiba mais | KEY: ENTRA NA AULA] Então toca em saiba mais, entra na aula e bora montar o seu.

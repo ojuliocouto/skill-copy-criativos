@@ -49,6 +49,7 @@ marcas:
   - Operação Claude Code
   - Claude Code
   - Claude
+oferta: Operação Claude Code
 sequencia: H,P,P,P,M,P,P,P,O+T,C
 palavras_por_segundo: 2.9
 aceleracao: 1.45
@@ -58,10 +59,11 @@ Brief: <o que o cliente passou, em 3 a 6 linhas: oferta, prova autorizada, asset
 ```
 
 **Sobre o campo `sequencia`**: ele é opcional na escrita, mas o que ele descreve não é opcional na
-peça. O gate **cobra `T` imediatamente antes de `C`** (ponte antes do CTA, reprovação) e **avisa
-quando não existe nenhum `P`** (peça sem prova concreta). Declarar a sequência é o que torna a
-auditoria possível bloco a bloco: dá pra apontar qual bloco carrega qual papel, e qual papel está
-faltando quando a peça não fecha.
+peça. O gate **cobra `T` antes de `C`** (ponte antes do CTA, reprovação), **cobra um bloco `O`
+entre a prova e o CTA** (bloco de oferta: o quê, o que será feito, o que a pessoa ganha, como
+acessa; reprovação, "CTA sem bloco de oferta") e **avisa quando não existe nenhum `P`** (peça sem
+prova concreta). Declarar a sequência é o que torna a auditoria possível bloco a bloco: dá pra
+apontar qual bloco carrega qual papel, e qual papel está faltando quando a peça não fecha.
 
 Campos e domínios:
 
@@ -78,7 +80,8 @@ Campos e domínios:
 | `campanha` | sim | `frio`, `captacao`, `perpetuo_frio`, `carrinho`, `lote`, `remarketing` |
 | `objetivo` | não | `frio` ou `carrinho`; sem ele o gate deriva: `carrinho` e `lote` viram `carrinho`, o resto vira `frio` |
 | `marcas` | sim | lista dos nomes que R2.5 proíbe nos 3 primeiros segundos (marca, produto, evento) |
-| `sequencia` | não | a fila de PAPÉIS dos blocos, separada por vírgula: `H` hook, `D` dor ou diagnóstico, `P` prova com insert, `M` mecanismo ou virada, `I` identificação, `O` oferta, `T` ponte, `C` CTA (ver `references/metodo-de-copy.md`). Dois papéis no mesmo bloco se escrevem juntos: `P+T`, `O+T`. Sequências de partida: `H,D,P,M,T,C` e `H,P,I,M,T,C` em frio, `H,P,O,T,C` em quente |
+| `oferta` | não | nome do produto ou da aula; sem ele, `checar_oferta` usa a primeira entrada de `marcas` |
+| `sequencia` | não | a fila de PAPÉIS dos blocos, separada por vírgula: `H` hook, `D` dor ou diagnóstico, `P` prova com insert, `M` mecanismo ou virada, `I` identificação, `O` oferta, `T` ponte, `C` CTA (ver `references/metodo-de-copy.md`). Dois papéis no mesmo bloco se escrevem juntos: `P+T`, `O+T`. Sequências de partida: `H,D,P,M,T,O,C` e `H,P,I,M,P+T,O,C` em frio, `H,P,O+T,C` em quente |
 | `palavras_por_segundo` | não | padrão 2.9 (medido no ad21v2: 174 palavras em 60,155s de voz natural) |
 | `aceleracao` | não | padrão 1.45 (decisão 23) |
 
@@ -149,7 +152,7 @@ continua o mesmo.
 | `id` | id da tática em `references/taticas-de-hook.md` (são 29); os 3 ids são distintos |
 | `tatica`, `cluster` | nome e cluster da mesma tabela; o cluster tem que estar liberado pro `objetivo` (frio: `interrupcao_padrao` e `curiosidade`; carrinho: os dois mais `promocional`) |
 | `cru` | `sim` ou `não`; ao menos um `sim` (R1.5); hook cru tem `lettering: nenhum` |
-| `fala` | até 5,0s de fala natural (`diversidade.hook_fala_max_s`), ou seja, até 14 palavras a 2,9 p/s; o Hook A tem a MESMA fala do bloco 1 do roteiro |
+| `fala` | até 5s de fala natural (14 palavras a 2,9 por segundo; o gate arredonda pra cima, então 15 ainda passa) (`diversidade.hook_fala_max_s`); o Hook A tem a MESMA fala do bloco 1 do roteiro |
 | `ancora` | a palavra ou par de palavras que nomeia o PROBLEMA ou a PROMESSA; tem que aparecer na fala dentro das primeiras 4 palavras (1,2s a 2,9 p/s, R2.6) |
 | `lettering` | `LEAD: ... \| KEY: ...` ou `nenhum` |
 | `logo_ancorado` | opcional, `sim` ou `não`; `sim` declara que a marca dita dentro dos 3s entra com o logo do EVENTO ancorado na fala (decisão 11) |
@@ -162,8 +165,9 @@ outra seção `##` do arquivo (nota, histórico, variação descartada) é **ign
 O que reprova em qualquer hook: marca dentro das primeiras 12 palavras (3s finais a 1,45x, R2.5)
 sem `logo_ancorado: sim`; marca entre as 3 primeiras palavras mesmo com logo ancorado ("nunca
 abre com marca", regra do brief, valor de partida sem medição própria); frase de apresentação
-("eu sou o", "meu nome é", "aqui é o") nas duas primeiras frases; cluster fora do objetivo; mais
-de 14 palavras. O que avisa: marca dentro dos 3s COM `logo_ancorado: sim` (fica registrado, e
+("eu sou o", "meu nome é", "aqui é o") nas duas primeiras frases; cluster fora do objetivo; acima
+de até 5s de fala natural (14 palavras a 2,9 por segundo; o gate arredonda pra cima, então 15
+ainda passa). O que avisa: marca dentro dos 3s COM `logo_ancorado: sim` (fica registrado, e
 quem monta confere a âncora); antítese paralela ("não é X. É Y."), que tem cara de IA.
 
 ---
@@ -207,10 +211,10 @@ dias"): o gate casa os dois.
 ```markdown
 # Letterings: cinco_entregas
 
-| bloco | LEAD | KEY | âncora na fala | forma | palavras do KEY |
+| bloco | LEAD | KEY | âncora na fala | forma | conteúdo/tempo |
 |---|---|---|---|---|---|
 | 1 | em dois dias | 5 ENTREGAS PRONTAS | prontas | placa | 2 |
-| 2 | entrega cinco | UM SQUAD | squad | placa | 2 |
+| 2 | entrega cinco | UM SQUAD | squad | placa | 1/2 |
 | 10 | toca em saiba mais | GARANTE SEU INGRESSO | garante | seta_cta | 3 |
 ```
 
@@ -219,17 +223,24 @@ roteiro (o roteiro manda; a tabela é a leitura); toda palavra do KEY está na f
 (algarismo casa com o número por extenso); `forma` em `placa_h1`, `placa_h2`, `placa_h4` (os três estilos de placa do rodízio), `coluna`,
 `carimbo`, `seta_cta`; LEAD com até 4 palavras, e LEAD fora da fala é **aviso**, não reprovação.
 
-**O KEY tem duas contagens diferentes, e elas não dão o mesmo número.**
+**O KEY tem duas contagens diferentes, e elas não dão o mesmo número: a coluna `conteúdo/tempo`
+declara as duas.**
 
-1. **Para o limite de 2 palavras**, contam só as palavras de CONTEÚDO. Algarismo e palavra
-   funcional (de, do, da, no, na, em, que, e, um, uma, pra, com, sem) não contam. O KEY do CTA é a
-   única exceção ao limite: ele aceita 3 palavras de conteúdo (verbo + objeto, decisão 7).
-2. **Para o tempo de leitura da seção 9**, contam TODAS as palavras não numéricas do KEY,
-   inclusive as funcionais.
+1. **Conteúdo (primeiro número, o limite de 2 palavras)**, contam só as palavras de CONTEÚDO.
+   Algarismo e palavra funcional (de, do, da, no, na, em, que, e, um, uma, pra, com, sem) não
+   contam. O KEY do CTA é a única exceção ao limite: ele aceita 3 palavras de conteúdo (verbo +
+   objeto, decisão 7).
+2. **Tempo (segundo número, o tempo de leitura da seção 9)**, contam TODAS as palavras não
+   numéricas do KEY, inclusive as funcionais.
+
+A coluna aceita **um número só** quando as duas contas dão o mesmo valor (`UM SQUAD`: conteúdo 1,
+tempo 2, então "1/2"; `5 ENTREGAS PRONTAS`: conteúdo e tempo iguais a 2, então só "2"), ou o
+formato **"a/b"** (conteúdo/tempo) quando divergem. O gate aceita as duas formas e **AVISA** quando
+o número declarado não bate com o que ele calcula.
 
 Exemplo: `SKILLS DO ZERO` vale **2** para o limite (skills, zero) e **3** para o tempo (skills, do,
-zero), o que leva o mínimo da placa de 2,8s para **3,05s**, ou seja 13 palavras de fala em vez de
-12. `PÁGINA NO AR` e `8 MIL` seguem a mesma lógica.
+zero), então a coluna declara "2/3", o que leva o mínimo da placa de 2,8s para **3,05s**, ou seja
+13 palavras de fala em vez de 12. `PÁGINA NO AR` e `8 MIL` seguem a mesma lógica.
 
 **Rodízio de forma**: a mesma forma não deve aparecer em dois blocos vizinhos com lettering, e o
 gate **AVISA** quando aparece (não reprova). "Placa" não é forma única: `placa_h1` depois de
@@ -265,6 +276,17 @@ aparecer na tela.
 O gate procura marcadores como "é isso que", "é esse ... que eu monto com você", "eu te mostro",
 "na aula", "no treinamento", "na mentoria". **Benefício e depois "toca em saiba mais" do nada
 REPROVA**: sem ponte, quem assiste não sabe o que ganha clicando.
+
+**Bloco de oferta, obrigatório antes do CTA** (regra do dono da metodologia,
+`references/metodo-de-copy.md`, papel `O`): entre o último bloco com insert de prova e o CTA (ou no
+próprio bloco imediatamente anterior ao CTA, ou na primeira frase do CTA) precisa existir um bloco
+que (a) nomeie a oferta (o campo `oferta` do `conceito.md`, ou uma das `marcas`) e (b) carregue um
+marcador de ENTREGA (`MARCADORES_DE_OFERTA` em `scripts/gate_copy/limiares.py`: "você sai com", "a
+gente monta", "eu te mostro", "você aprende", "passo a passo", "na prática", "do zero", entre
+outros). Sem isso, **REPROVA**: "CTA sem bloco de oferta: antes de pedir a ação, diga o que é a
+aula/produto, o que será feito, o que a pessoa ganha e como acessa". Além disso, o gate **AVISA**
+quando esse bloco não diz COMO acessar (nenhum de "gratuita", "gratuito", "de graça", "toca em",
+"clica", "link", "inscreve", "entra" no bloco de oferta nem no CTA).
 
 | modo e campanha | `tipo` | exige | proíbe |
 |---|---|---|---|
@@ -346,6 +368,9 @@ aceleração).
 | o que | limiar | origem | veredito |
 |---|---|---|---|
 | ponte antes do CTA | a frase que diz o que o clique entrega, no bloco anterior ao CTA ou na primeira frase do CTA | reprova |
+| bloco de oferta antes do CTA | um bloco que nomeia a oferta e diz a entrega, entre a prova e o CTA (ou no bloco anterior ao CTA, ou na primeira frase do CTA) | regra do dono da metodologia, `references/metodo-de-copy.md` papel O | reprova |
+| bloco de oferta sem dizer o acesso | nenhum marcador de acesso (gratuita, clica, link, inscreve, entra) no bloco de oferta nem no CTA | idem | aviso |
+| coluna conteúdo/tempo de `letterings.md` não bate com o calculado | seção 5 | correção de leitura | aviso |
 | nenhum dos 3 hooks é pergunta ou paradoxo | forma do hook | aviso |
 | forma de lettering repetida em bloco vizinho | rodízio de formas | aviso |
 | carimbo em bloco sem insert | carimbo é lettering de apoio | aviso |
@@ -373,4 +398,4 @@ aceleração).
 | direção vaga | âncora com menos de 3 palavras, ou com "algo", "genérico", "qualquer", "imagens de", "vídeo de" | o casamento com o arquivo é por âncora exata | reprova |
 | primeiro insert | começa entre 5 e 10s finais | R3.2 | aviso |
 | segundo insert | começa entre 12 e 20s finais quando a peça passa de 15s | R3.2 | aviso |
-| duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência | R6.1 (avisa, não reprova) | aviso |
+| duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência. Essa faixa é a da ESTEIRA, não da casa: os ads reais rodam **220 a 300 palavras (52 a 71s finais) no formato completo**, e **110 a 130 palavras (26 a 31s) só no formato curto**, quando o cliente pede peça curta (`references/modelo-mestre.md`). O aviso de duração acima de 30s é ASSUMIDO no formato completo, não motivo pra cortar parte do molde | R6.1 (avisa, não reprova) | aviso |

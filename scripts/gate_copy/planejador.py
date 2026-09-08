@@ -43,6 +43,22 @@ from .regras.roteiro import _tempo_de_insert_na_janela
 
 TIPOS_VALIDOS = ("I", "L", "LC", "A", "P", "C")
 
+# Tabela de conversão papel -> forma (references/metodo-de-copy.md, seção 3,
+# e SKILL.md passo 0): o papel diz o que o bloco FAZ na argumentação, a
+# forma diz o que aparece na TELA. Um papel combinado ("P+T", "O+T": a
+# ponte entra na última frase de outro papel) usa a forma do papel base
+# (a parte antes do "+"); o "+T" não muda a forma do bloco.
+MAPA_PAPEL_PARA_FORMA: Dict[str, str] = {
+    "H": "L",  # hook: placa no gancho
+    "D": "L",  # dor ou diagnostico
+    "P": "I",  # prova: insert
+    "I": "A",  # identificacao: apresentador sozinho
+    "M": "A",  # mecanismo ou virada: apresentador sozinho
+    "O": "L",  # oferta
+    "T": "P",  # ponte: apresentador sozinho ligando o corpo ao CTA
+    "C": "C",  # CTA
+}
+
 _NOMES_TIPO = {
     "I": "insert",
     "L": "lettering em placa",
@@ -74,6 +90,31 @@ def validar_tipos(tipos: Sequence[str]) -> List[str]:
     return list(tipos)
 
 
+def derivar_forma_de_papeis(papeis: Sequence[str]) -> List[str]:
+    """Converte uma sequência de PAPÉIS (`H`, `D`, `P`, `I`, `M`, `O`, `T`,
+    `C`, ou combinações como `P+T`) na FORMA da peça (`I`, `L`, `LC`, `A`,
+    `P`, `C`), usando `MAPA_PAPEL_PARA_FORMA`. Levanta `ValueError`
+    (mensagem em PT-BR, acionável) se algum papel não estiver na tabela.
+
+    Numa combinação (`X+T`), a forma do bloco é a do papel BASE (a parte
+    antes do "+"): a ponte entra na última frase do bloco, sem trocar o que
+    aparece na tela."""
+    formas: List[str] = []
+    invalidos: List[str] = []
+    for papel in papeis:
+        base = papel.split("+", 1)[0].strip().upper()
+        if base not in MAPA_PAPEL_PARA_FORMA:
+            invalidos.append(papel)
+            continue
+        formas.append(MAPA_PAPEL_PARA_FORMA[base])
+    if invalidos:
+        raise ValueError(
+            "papel invalido: " + ", ".join(sorted(set(invalidos)))
+            + ". Faça: use só H, D, P, I, M, O, T ou C (ou uma combinação como P+T) em --papeis"
+        )
+    return formas
+
+
 def checar_ponte_do_plano(tipos: Sequence[str]) -> List[str]:
     """Avisa quando o bloco logo antes de um "C" não é "P" nem "I" (regra
     do dono da metodologia: CTA sem ponte)."""
@@ -86,6 +127,26 @@ def checar_ponte_do_plano(tipos: Sequence[str]) -> List[str]:
             avisos.append(
                 "plano sem ponte antes do CTA (bloco " + str(i + 1) + "). Faça: use P "
                 "(bloco de ponte) ou I (insert com a fala da ponte) imediatamente antes do C"
+            )
+    return avisos
+
+
+def checar_oferta_do_plano(papeis: Sequence[str]) -> List[str]:
+    """Avisa quando o papel logo antes de um "C" não carrega "O" (sozinho
+    ou combinado, como "O+T"): regra do dono da metodologia, seção 3 e 4
+    de `references/metodo-de-copy.md` (bloco de oferta obrigatório antes
+    do CTA). Opera no alfabeto de PAPÉIS (`--papeis`), não no de forma."""
+    avisos: List[str] = []
+    for i, papel in enumerate(papeis):
+        if papel.strip().upper() != "C":
+            continue
+        anterior = papeis[i - 1] if i > 0 else None
+        componentes = [c.strip().upper() for c in anterior.split("+")] if anterior else []
+        if "O" not in componentes:
+            avisos.append(
+                "plano sem bloco O de oferta antes do CTA (bloco " + str(i + 1) + "). Faça: "
+                "acrescente um papel O (oferta) imediatamente antes do C, sozinho ou "
+                "combinado (O+T)"
             )
     return avisos
 
@@ -228,6 +289,53 @@ def calcular_densidade(blocos: Sequence[Bloco], limiares: Dict[str, Any] = LIMIA
     return resultado
 
 
+def checar_vizinhos_sem_insert(blocos: Sequence[Bloco], limiares: Dict[str, Any] = LIMIARES) -> List[str]:
+    """Blocos vizinhos sem insert cuja soma de duração final passa do mesmo
+    teto que o gate mede depois em `regras.duracoes.checar_duracoes`
+    (`retencao.avatar_sozinho_max_s`, R3.3). Sem essa checagem no
+    planejador, a forma da peça só ia acusar esse aviso depois de a copy já
+    estar escrita."""
+    avisos: List[str] = []
+    maximo = float(limiares["retencao_avatar_sozinho_max_s"])
+    for a, b in zip(blocos, blocos[1:]):
+        if a.e_insert or b.e_insert:
+            continue
+        soma = a.duracao_final + b.duracao_final
+        if soma > maximo:
+            avisos.append(
+                "blocos %d e %d sem insert somam %.2fs; teto %.1fs. Faça: intercale um "
+                "insert ou encurte um deles" % (a.numero, b.numero, soma, maximo)
+            )
+    return avisos
+
+
+def capacidade_de_garrafais(tipos: Sequence[str]) -> int:
+    """Quantos blocos da FORMA comportam garrafal (decisão 8,
+    `references/formato-do-pacote.md` seção 4): o bloco 1 (o gancho, que
+    aceita qualquer forma) mais cada bloco "A" ou "P" fora do bloco 1
+    (fora do gancho a garrafal só cabe em bloco de apresentador SOZINHO,
+    sem insert e sem KEY). Reportado ANTES de escrever, porque a peça
+    pede 2 a 3 garrafais no total (R4, `garrafais.md`), e uma forma com
+    menos de 2 blocos capazes já nasce apertada."""
+    if not tipos:
+        return 0
+    capacidade = 1  # bloco 1, o gancho
+    capacidade += sum(1 for i, t in enumerate(tipos, start=1) if i != 1 and t in ("A", "P"))
+    return capacidade
+
+
+def checar_capacidade_de_garrafais(tipos: Sequence[str]) -> List[str]:
+    """Avisa quando a forma comporta menos de 2 blocos pra garrafal."""
+    capacidade = capacidade_de_garrafais(tipos)
+    if capacidade < 2:
+        return [
+            "forma comporta só %d bloco pra garrafal (bloco 1 + blocos A/P sem KEY); "
+            "a peça pede 2 a 3 garrafais no total. Faça: intercale um bloco A ou P "
+            "sem KEY pra abrir uma segunda posição" % capacidade
+        ]
+    return []
+
+
 def planejar(
     tipos: Sequence[str],
     pps: float = 2.9,
@@ -286,21 +394,26 @@ def planejar(
     blocos_simulados = _simular(tipos, palavras_simulacao, pps, aceleracao)
     total_final_s = sum(b.duracao_final for b in blocos_simulados)
     densidade = calcular_densidade(blocos_simulados, limiares)
+    avisos_vizinhos = checar_vizinhos_sem_insert(blocos_simulados, limiares)
 
     blocos_simulados_minimo: Optional[List[Bloco]] = None
     densidade_minimo: Optional[Dict[str, Dict[str, Any]]] = None
     total_final_s_minimo: Optional[float] = None
+    avisos_vizinhos_minimo: Optional[List[str]] = None
     if palavras is None:
         palavras_minimo = [l.min_palavras for l in linhas]
         blocos_simulados_minimo = _simular(tipos, palavras_minimo, pps, aceleracao)
         total_final_s_minimo = sum(b.duracao_final for b in blocos_simulados_minimo)
         densidade_minimo = calcular_densidade(blocos_simulados_minimo, limiares)
+        avisos_vizinhos_minimo = checar_vizinhos_sem_insert(blocos_simulados_minimo, limiares)
 
     alvo_cabe: Optional[bool] = None
     if alvo_s is not None:
         alvo_cabe = soma_min_s <= alvo_s <= soma_max_s
 
     avisos_plano = checar_ponte_do_plano(tipos)
+    capacidade_garrafais = capacidade_de_garrafais(tipos)
+    avisos_garrafais = checar_capacidade_de_garrafais(tipos)
 
     return {
         "linhas": linhas,
@@ -318,12 +431,24 @@ def planejar(
         "densidade_minimo": densidade_minimo,
         "usando_palavras_informadas": palavras is not None,
         "avisos_plano": avisos_plano,
+        "avisos_vizinhos": avisos_vizinhos,
+        "avisos_vizinhos_minimo": avisos_vizinhos_minimo,
+        "capacidade_garrafais": capacidade_garrafais,
+        "avisos_garrafais": avisos_garrafais,
     }
 
 
 def formatar_relatorio(resultado: Dict[str, Any]) -> str:
     """Texto pronto pra CLI (`planejar_blocos.py`), em PT-BR."""
     linhas_txt: List[str] = []
+    linhas_txt.append(
+        "CAPACIDADE DE GARRAFAIS: %d bloco(s) (bloco 1 + blocos A/P sem KEY)"
+        % resultado.get("capacidade_garrafais", 0)
+    )
+    if resultado.get("avisos_garrafais"):
+        for aviso in resultado["avisos_garrafais"]:
+            linhas_txt.append("  AVISO: " + aviso)
+    linhas_txt.append("")
     if resultado.get("avisos_plano"):
         linhas_txt.append("AVISOS DO PLANO:")
         for aviso in resultado["avisos_plano"]:
@@ -374,6 +499,14 @@ def formatar_relatorio(resultado: Dict[str, Any]) -> str:
             saida.append(base)
         return saida
 
+    def _avisos_vizinhos_txt(avisos: Optional[Sequence[str]]) -> List[str]:
+        saida: List[str] = []
+        if avisos:
+            saida.append("AVISOS (blocos vizinhos sem insert):")
+            for aviso in avisos:
+                saida.append("  - " + aviso)
+        return saida
+
     if not usando_palavras:
         # Sem roteiro real: mostra as duas simulações (mínimo, so de
         # referência do pior caso; ponto médio, a recomendação final).
@@ -384,6 +517,10 @@ def formatar_relatorio(resultado: Dict[str, Any]) -> str:
         linhas_txt.append("")
         linhas_txt.append("DENSIDADE DE INSERT POR JANELA (no mínimo):")
         linhas_txt.extend(_densidade_txt(resultado["densidade_minimo"]))
+        avisos_txt = _avisos_vizinhos_txt(resultado.get("avisos_vizinhos_minimo"))
+        if avisos_txt:
+            linhas_txt.append("")
+            linhas_txt.extend(avisos_txt)
 
         linhas_txt.append("")
         linhas_txt.append("SIMULAÇÃO NO PONTO MÉDIO (recomendação final, parecida com um roteiro real):")
@@ -392,6 +529,10 @@ def formatar_relatorio(resultado: Dict[str, Any]) -> str:
         linhas_txt.append("")
         linhas_txt.append("DENSIDADE DE INSERT POR JANELA (recomendação final, ponto médio):")
         linhas_txt.extend(_densidade_txt(resultado["densidade"]))
+        avisos_txt = _avisos_vizinhos_txt(resultado.get("avisos_vizinhos"))
+        if avisos_txt:
+            linhas_txt.append("")
+            linhas_txt.extend(avisos_txt)
     else:
         linhas_txt.append("")
         linhas_txt.append("SIMULAÇÃO (" + rotulo_usada + "), início de cada bloco em segundos finais:")
@@ -400,5 +541,9 @@ def formatar_relatorio(resultado: Dict[str, Any]) -> str:
         linhas_txt.append("")
         linhas_txt.append("DENSIDADE DE INSERT POR JANELA:")
         linhas_txt.extend(_densidade_txt(resultado["densidade"]))
+        avisos_txt = _avisos_vizinhos_txt(resultado.get("avisos_vizinhos"))
+        if avisos_txt:
+            linhas_txt.append("")
+            linhas_txt.extend(avisos_txt)
 
     return "\n".join(linhas_txt)

@@ -67,6 +67,16 @@ class Conceito:
         return list(marcas)
 
     @property
+    def oferta(self) -> str:
+        """Nome do produto ou da aula (campo opcional `oferta:`). Sem ele,
+        `checar_oferta` (regras/cta.py) usa a primeira entrada de `marcas`."""
+        oferta = self.dados.get("oferta")
+        if oferta:
+            return str(oferta)
+        marcas = self.marcas
+        return marcas[0] if marcas else ""
+
+    @property
     def objetivo(self) -> str:
         objetivo = self.dados.get("objetivo")
         if objetivo:
@@ -118,6 +128,7 @@ class LetteringLinha:
     key: str
     ancora_na_fala: str
     forma: str
+    conteudo_tempo: str = ""
 
 
 @dataclass
@@ -378,6 +389,7 @@ def ler_letterings(caminho: str) -> List[LetteringLinha]:
                 key=celulas[2],
                 ancora_na_fala=celulas[3],
                 forma=normalizar_codigo(celulas[4]),
+                conteudo_tempo=celulas[5].strip() if len(celulas) > 5 else "",
             )
         )
     return resultado

@@ -21,9 +21,9 @@
 | 11 | agenda_cheia_reels_sem_avatar_shocking_statement_laranja_v1 | shocking_statement | laranja | sem_avatar | não |
 | 12 | agenda_cheia_reels_sem_avatar_shocking_statement_amarela_v1 | shocking_statement | amarela | sem_avatar | não |
 
-As doze peças saem do **mesmo roteiro de nove blocos** (`roteiro.txt`), com o bloco 1 trocado pela
-fala do hook da linha. A sequência de papéis (`H,D,P,I,P,P,M,P+T,C`) e os quatro inserts não mudam
-entre as variações: o que a matriz testa é hook, legenda e formato, nunca o corpo.
+As doze peças saem do **mesmo roteiro de dez blocos** (`roteiro.txt`), com o bloco 1 trocado pela
+fala do hook da linha. A sequência de papéis (`H,D,P,I,P,P,M,P+T,O,C`) e os quatro inserts não
+mudam entre as variações: o que a matriz testa é hook, legenda e formato, nunca o corpo.
 
 No formato `sem_avatar` os blocos 4 e 7, que são de apresentadora sozinha, viram placa de lettering
 com a mesma fala em voz off. O respiro entre os itens da enumeração continua existindo, porque é

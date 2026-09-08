@@ -95,6 +95,25 @@ da forma do bloco.
 > (`I` insert, `L` lettering em placa, `LC` coluna ou carimbo, `A` apresentador sozinho, `P` ponte,
 > `C` CTA) diz o que aparece na TELA. A tabela de blocos carrega as duas colunas: `papel` e `forma`.
 
+**Tabela de conversão papel -> forma** (a mesma `MAPA_PAPEL_PARA_FORMA` de
+`scripts/gate_copy/planejador.py`, usada por `derivar_forma_de_papeis` e pelo `--papeis` de
+`scripts/planejar_blocos.py`): passe a sequência de papéis pro planejador e ele deriva a forma
+sozinho, sem precisar converter na mão.
+
+| papel | forma |
+|---|---|
+| `H` (hook) | `L` (lettering em placa) |
+| `D` (dor ou diagnóstico) | `L` |
+| `P` (prova) | `I` (insert) |
+| `I` (identificação) | `A` (apresentador sozinho) |
+| `M` (mecanismo ou virada) | `A` |
+| `O` (oferta) | `L` |
+| `T` (ponte) | `P` (ponte, apresentador sozinho ligando o corpo ao CTA) |
+| `C` (CTA) | `C` |
+
+Numa combinação (`X+T`, `O+T`), a forma do bloco é a do papel BASE (a parte antes do `+`): a ponte
+entra na última frase do bloco, sem trocar o que aparece na tela.
+
 ### `H`: hook
 
 **O que faz**: para o dedo em três segundos e abre uma conta que a pessoa precisa fechar.
@@ -284,18 +303,45 @@ condição e a uma prescrição, ou vem como cena.
 
 ### `O`: oferta
 
-**O que faz**: diz o que a pessoa leva, em quanto tempo, e derruba a objeção principal na mesma
-frase. Formato, duração, entregáveis citáveis, e o "mesmo que" que remove o pré-requisito.
+**O que faz**: entre a prova (ou a ponte) e o CTA, diz **o que é a oferta, o que será feito, o que
+a pessoa ganha e como ela acessa**. É regra do dono da metodologia, depois de reprovar um ad que ia
+da prova mais ponte direto pro CTA: "aqui você encaixa já trazendo o que é a aula, o que será
+feito, o que a pessoa ganha e o que ela precisa fazer pra ter acesso". **Sem esse bloco, o gate
+reprova** (`checar_oferta`, `scripts/gate_copy/regras/cta.py`).
+
+Os quatro itens obrigatórios, na mesma frase ou em frases vizinhas do mesmo bloco:
+
+1. **O que é.** Nomeia a oferta pelo nome (o produto ou a aula, campo `oferta` do `conceito.md`,
+   ou uma das `marcas`).
+2. **O que será feito.** O verbo da entrega: "a gente monta", "eu te mostro", "você constrói".
+3. **O que a pessoa ganha.** O resultado concreto que ela leva, ligado ao que a prova já mostrou.
+4. **Como acessa.** Gratuita, ingresso, inscrição: a palavra que diz o caminho até a oferta (pode
+   morar no próprio CTA seguinte, quando o verbo de ação já cobre isso).
 
 Data, preço, edição e lote numerado **só existem em campanha de carrinho ou lote**. Em frio, a
 oferta é o que a pessoa aprende ou recebe, sem número comercial nenhum.
 
 **Direção visual típica**: apresentador com lettering, logo do produto ou evento declarado.
 
-**Exemplo**: *"São dois dias, do zero, mesmo que você nunca tenha criado uma automação."*
+**Exemplo, frio, aula gratuita**: *"Na aula gratuita do Agenda Cheia a gente monta o seu, passo a
+passo. Você sai com ele respondendo."* (o quê: aula gratuita do Agenda Cheia; o que será feito: a
+gente monta; o que ganha: o atendente respondendo; como acessa: gratuita, mais o "toca em saiba
+mais" do CTA seguinte)
 
-**Erro comum**: oferta em frio com preço e prazo, e bullets genéricos que qualquer concorrente
-também entrega.
+**Exemplo, quente, evento com ingresso**: *"São dois dias, do zero, na Operação Claude Code. Mesmo
+que você nunca tenha criado nada antes, a gente monta juntos."* (o quê: Operação Claude Code; o que
+será feito: a gente monta; o que ganha: sai com as cinco entregas prontas, já mostradas na
+enumeração; como acessa: o "toca em saiba mais e garante seu ingresso" do CTA seguinte)
+
+**Marcadores que o gate procura** (`MARCADORES_DE_OFERTA`, `scripts/gate_copy/limiares.py`): "você
+sai com", "a gente monta", "eu te mostro", "você aprende", "passo a passo", "na prática", "do
+zero", "com você", "imersão", "aula gratuita", "mentoria", "treinamento", entre outros. E de acesso
+(`MARCADORES_DE_ACESSO_DA_OFERTA`): "gratuita", "gratuito", "de graça", "toca em", "clica", "link",
+"inscreve", "entra".
+
+**Erro comum**: oferta em frio com preço e prazo, bullets genéricos que qualquer concorrente também
+entrega, e nomear a oferta sem dizer a entrega (ou o contrário: entrega sem nomear a oferta). As
+duas coisas juntas é que fazem o bloco valer.
 
 ### `T`: ponte (transição para o CTA)
 
@@ -398,10 +444,10 @@ Escolha a sequência **antes** de escrever a tabela de blocos, e declare no camp
 ### Frio (`frio`, `captacao`, `perpetuo_frio`)
 
 ```
-H    D  P  M  T  C          problema primeiro: nomeia a dor, prova, explica, faz a ponte, pede
-H    P  I  M  T  C          demonstração primeiro: quando existe tela, a tela abre e a prova vem antes
-H    D  P  I  P  P  M  P+T  C   enumeração: um insert por item, com respiro entre os itens
-H+I  P  P  P  M  T  C       filtro condicional: o hook já diz pra quem é, e a lista prova
+H    D  P  M  T  O  C           problema primeiro: nomeia a dor, prova, explica, ponte, oferta, pede
+H    P  I  M  P+T  O  C         demonstração primeiro: quando existe tela, a tela abre e a prova vem antes
+H    D  P  I  P  P  M  P+T  O  C   enumeração: um insert por item, com respiro entre os itens
+H+I  P  P  P  M  T  O  C        filtro condicional: o hook já diz pra quem é, e a lista prova
 ```
 
 A primeira serve quando o público está no nível 1 ou 2 (não sabe que tem o problema, ou sente a dor
@@ -424,7 +470,7 @@ Em frio, a proporção é 20 / 60 / 20: o miolo (`D`, `P`, `M`, `I`) carrega a p
 ### Quente (`carrinho`, `lote`, `remarketing`)
 
 ```
-H  P  O  T  C           prova, oferta, ponte, ação
+H  P  O+T  C           prova, oferta com a ponte na última frase, ação
 ```
 
 Curta de propósito. O contexto já existe, então a peça gasta o tempo na oferta e na decisão:
@@ -439,11 +485,13 @@ Papéis podem **repetir** e podem **compartilhar bloco**:
 - Compartilhar bloco significa dois papéis no mesmo bloco, o segundo na última frase. Escreva
   `P+T` ou `O+T` na coluna `papel`. É assim que a ponte costuma entrar sem custar um bloco inteiro.
 
-Duas coisas que a sequência sempre tem, em qualquer variação:
+Três coisas que a sequência sempre tem, em qualquer variação:
 
-1. **`T` imediatamente antes de `C`** (bloco próprio ou última frase do bloco anterior). O gate
-   **reprova** sem isso.
-2. **Ao menos um `P`.** O gate **avisa** quando não há nenhum: peça sem prova é peça pedindo fé.
+1. **`T` antes de `C`** (bloco próprio ou última frase de outro bloco, geralmente combinado com `O`
+   ou `P`: `P+T`, `O+T`). O gate **reprova** sem isso.
+2. **`O` entre a prova e o CTA** (bloco próprio ou combinado, `O+T`): nomeia a oferta e diz a
+   entrega. O gate **reprova** sem isso ("CTA sem bloco de oferta").
+3. **Ao menos um `P`.** O gate **avisa** quando não há nenhum: peça sem prova é peça pedindo fé.
 
 ---
 
@@ -467,6 +515,9 @@ consertar ainda é barato.
       resto não funciona? Se não dá, a promessa está pedindo fé.
 - [ ] **Tem ponte antes do CTA?** Aponte a frase, o bloco, e o que ela liga. Se você não consegue
       apontar, o clique está sem objeto e a peça reprova.
+- [ ] **Tem bloco de oferta antes do CTA?** Um bloco (próprio ou combinado com a ponte, `O+T`) que
+      diz o que é a oferta, o que será feito, o que a pessoa ganha e como ela acessa. Sem isso, o
+      gate reprova com "CTA sem bloco de oferta".
 - [ ] **A promessa está calibrada pela temperatura?** Em frio: resultado grande e prazo curto. Em
       quente: probabilidade alta e esforço baixo.
 - [ ] **A proporção bate com a temperatura?** Frio 20/60/20, quente 20/20/60. Conte os blocos.
@@ -490,6 +541,8 @@ Só depois disso vale escrever `roteiro.txt` e rodar `scripts/gate_copy.py`.
 - Prova de passagem apresentada como prova de resultado.
 - Oferta com preço, data ou escassez em campanha de tráfego frio.
 - CTA sem ponte antes dele, e ponte genérica que não aponta nada do que apareceu na tela.
+- CTA sem bloco de oferta antes dele: prova mais ponte direto pro "toca em saiba mais", sem dizer
+  o que é a aula, o que será feito, o que a pessoa ganha e como acessa.
 - Pergunta na ponte sem o "Então" que a costura no CTA: a pergunta fica no ar e o clique fica sem
   resposta.
 - Inventar número, cliente ou demonstração que não existe.

@@ -66,9 +66,8 @@ cd ~/.claude/skills/copy-criativos
 python3 scripts/gate_copy.py exemplos/agenda-cheia
 ```
 
-Tem que sair o resumo por bloco e **um único aviso** (densidade de 58% na janela do fecho), sem
-nenhuma reprovação. Se sair um erro de import, resolva isso agora: gate quebrado significa entrega
-sem prova.
+Tem que sair o resumo por bloco e **"Pacote aprovado, sem reprovações nem avisos."** Se sair um
+erro de import, resolva isso agora: gate quebrado significa entrega sem prova.
 
 ---
 
@@ -108,7 +107,8 @@ Tudo dentro deste diretório:
 
 | arquivo | o que tem |
 |---|---|
-| `references/metodo-de-copy.md` | **leia primeiro.** O MÉTODO: as 3 camadas, o diagnóstico do avatar (temperatura e nível de consciência), a anatomia do anúncio em papéis de bloco, as sequências válidas e o checklist de estrutura. `regras-da-tela.md` diz o que a tela aguenta; este diz o que a copy faz |
+| `references/modelo-mestre.md` | **preencha o molde ANTES de quebrar em blocos.** O template frase a frase da casa, em 9 partes, extraído de treze ads reais. Preencher as lacunas dele, na ordem, é o passo 2 do processo abaixo; só depois disso a copy vira sequência de papéis e tabela de blocos |
+| `references/metodo-de-copy.md` | **leia depois do modelo mestre.** O MÉTODO: as 3 camadas, o diagnóstico do avatar (temperatura e nível de consciência), a anatomia do anúncio em papéis de bloco, as sequências válidas e o checklist de estrutura. `regras-da-tela.md` diz o que a tela aguenta; este diz o que a copy faz |
 | `references/regras-da-tela.md` | a lista completa do que a edição faz com o seu texto, uma linha por regra, com o número de origem. É a fonte das regras resumidas abaixo |
 | `references/formato-do-pacote.md` | o contrato dos 8 arquivos, campo a campo, e a tabela de números do gate (seção 9) |
 | `references/taticas-de-hook.md` | as 29 táticas de hook por cluster, com exemplo, e a regra de cluster por objetivo |
@@ -120,15 +120,17 @@ Tudo dentro deste diretório:
 
 E os dois exemplos, que têm papéis diferentes:
 
-- **`exemplos/agenda-cheia/`: o exemplo LIMPO.** Peça fictícia de nove blocos que passa no gate com
-  **zero reprovações e zero avisos**. É o que você imita quando está aprendendo o formato. O
-  `README.md` de lá mostra a tabela de blocos, as contas que fecharam a peça, e as duas correções
-  que trouxeram o pacote até aqui: a v1 reprovada pelo dono da metodologia (hook genérico e CTA sem
-  ponte) e a v3 remontada com os moldes de `references/calibracao-jheni.md` (enumeração com um
-  insert por item, respiro entre os itens, mecanismo nomeado e ponte com molde).
+- **`exemplos/agenda-cheia/`: o exemplo LIMPO.** Peça fictícia de dez blocos que passa no gate com
+  **zero reprovações e três avisos assumidos** (custo declarado do bloco de oferta obrigatório
+  antes do CTA). É o que você imita quando está aprendendo o formato. O `README.md` de lá mostra a
+  tabela de blocos, as contas que fecharam a peça, e as três correções que trouxeram o pacote até
+  aqui: a v1 reprovada pelo dono da metodologia (hook genérico e CTA sem ponte), a v3 remontada com
+  os moldes de `references/calibracao-jheni.md` (enumeração com um insert por item, respiro entre
+  os itens, mecanismo nomeado e ponte com molde) e a v4, que acrescentou o bloco de oferta (papel
+  `O`) entre a ponte e o CTA.
 - **`exemplos/cinco-entregas/`: o exemplo REAL.** Reconstrução de uma peça de verdade, aprovada e
   no ar, com dez blocos. Passa com zero reprovações, mas carrega **13 avisos assumidos** (entre
-  eles duração de 40,67s e densidade de insert de 99% na janela do corpo), porque a peça real é assim
+  eles duração de 40,43s e densidade de insert de 99% na janela do corpo), porque a peça real é assim
   e a copy não mente sobre ela. É o que você lê quando quer entender por que uma peça aprovada
   pode carregar aviso, e como declarar isso.
 
@@ -181,11 +183,14 @@ Tudo abaixo é em tempo FINAL, que é onde a montagem mede. A conversão única 
 | bloco de CTA | 13 palavras ou mais (3,0s) e no máximo 21 (5,0s) | janela final do CTA (R6.3); acima de 21 palavras é aviso |
 | bloco sem insert e sem KEY | 25 palavras no máximo (6,0s) | bloco único acima disso REPROVA (R3.3) |
 | blocos vizinhos sem insert | somados, 25 palavras no máximo (6,0s), mesmo com KEY | AVISA, porque o lettering cobre só parte do bloco |
-| peça pago frio e orgânico | 15 a 30s finais = 64 a 126 palavras | R6.1; remarketing 6 a 15s = 26 a 63 palavras |
+| peça pago frio e orgânico (faixa da ESTEIRA) | 15 a 30s finais = 64 a 126 palavras | R6.1; remarketing 6 a 15s = 26 a 63 palavras; acima disso é AVISO, não reprovação |
 | peça de carrinho ou lote | sem faixa própria: usa a de frio como referência, e o número vira aviso | as faixas declaradas são só `frio` e `remarketing` |
-| hook | até 14 palavras (5s naturais); problema ou promessa nas 4 primeiras palavras | R1.3 e R2.6 |
+| peça no formato completo (padrão da CASA, `references/modelo-mestre.md`) | 220 a 300 palavras = 52 a 71s finais | as 9 partes do modelo mestre inteiras; o aviso de duração acima de 30s (linha acima) é ASSUMIDO aqui, nunca motivo pra cortar parte do molde |
+| peça no formato curto | 110 a 130 palavras = 26 a 31s finais | só quando o cliente pede peça curta; mantém TODAS as 9 partes do modelo mestre, cada uma em uma frase |
+| hook | até 5s de fala natural (14 palavras a 2,9 por segundo; o gate arredonda pra cima, então 15 ainda passa); problema ou promessa nas 4 primeiras palavras | R1.3 e R2.6 |
 | hook, forma | **ao menos um dos 3 hooks é pergunta ou paradoxo** que a pessoa precise resolver | afirmação previsível não faz ninguém parar; o gate AVISA quando nenhum dos três tem |
 | ponte antes do CTA | **obrigatória.** O bloco anterior ao CTA, ou a primeira frase do CTA, diz o que o clique entrega e amarra isso na prova que acabou de aparecer | benefício e depois "toca em saiba mais" do nada REPROVA: o clique fica sem objeto |
+| bloco de oferta obrigatório antes do CTA | entre a prova e o CTA, um bloco nomeia a oferta e diz o que será feito, o que a pessoa ganha e como acessa | regra do dono da metodologia: prova + ponte direto pro CTA REPROVA com "CTA sem bloco de oferta"; sem dizer o acesso, AVISA |
 | marca, produto, evento | marca dentro das 12 primeiras palavras do bloco 1 ou de qualquer hook REPROVA, salvo hook com `- logo_ancorado: sim` em `hooks.md`, que vira aviso; nas 3 primeiras palavras reprova sempre | R2.5; o teto das 3 palavras é regra de brief ("nunca abre com marca"), valor de partida |
 | frase | até 14 palavras de conforto, 20 é o teto | valor de partida: acima de 14 avisa, acima de 20 reprova |
 | KEY | até 2 palavras de conteúdo, substantivo forte, todas ditas na fala | legível em corpo pequeno; o CTA aceita 3 (verbo + objeto) |
@@ -281,8 +286,39 @@ Interface:
 |---|---|
 | `--modo` | `pago` ou `organico` |
 | `--campanha` | `frio`, `captacao`, `perpetuo_frio`, `carrinho`, `lote`, `remarketing` |
-| `--blocos` | a forma da peça, um símbolo por bloco, separados por vírgula: **`I`** insert, **`L`** lettering em placa, **`LC`** lettering em coluna ou carimbo, **`A`** apresentador sozinho, **`P`** ponte (apresentador sozinho ligando o corpo ao CTA), **`C`** CTA. O planejador exige **`P` ou `I` imediatamente antes do `C`**: são os dois tipos de bloco que comportam a fala da ponte |
+| `--blocos` | a FORMA da peça, um símbolo por bloco, separados por vírgula: **`I`** insert, **`L`** lettering em placa, **`LC`** lettering em coluna ou carimbo, **`A`** apresentador sozinho, **`P`** ponte (apresentador sozinho ligando o corpo ao CTA), **`C`** CTA. Use **`--blocos` OU `--papeis`, nunca os dois** |
+| `--papeis` | o PAPEL de cada bloco (ver tabela abaixo), separados por vírgula, aceita combinação (`P+T`, `O+T`). O planejador deriva a forma sozinho e imprime a **forma derivada** antes do relatório |
 | `--palavras` | opcional: a contagem real de palavras de cada bloco, para simular um roteiro já contado em vez do mínimo |
+| `--formato` | opcional: `completo` (alvo 62s finais, `references/modelo-mestre.md`) ou `curto` (alvo 28s); define `--alvo-s` sozinho quando `--alvo-s` não é passado, e avisa quando o plano `completo` tem menos de 9 blocos |
+| `--alvo-s` | opcional: duração final alvo, em segundos |
+
+**Tabela papel -> forma** (a mesma que `derivar_forma_de_papeis` usa para `--papeis`; detalhe e
+exemplos em `references/metodo-de-copy.md`, seção 3):
+
+| papel | forma |
+|---|---|
+| `H` | `L` |
+| `D` | `L` |
+| `P` | `I` |
+| `I` | `A` |
+| `M` | `A` |
+| `O` | `L` |
+| `T` | `P` |
+| `C` | `C` |
+
+Exemplo com `--papeis` (o planejador deriva a forma e avisa se faltar `O` antes do `C`):
+
+```bash
+python3 scripts/planejar_blocos.py --modo pago --campanha frio --papeis "H,D,P,I,P,M,P+T,O,C"
+```
+
+O planejador exige **`P` ou `I` imediatamente antes do `C`** na forma (são os dois tipos de bloco
+que comportam a fala da ponte), e **avisa quando falta `O` antes do `C`** na fila de papéis (bloco
+de oferta obrigatório, regra do dono da metodologia).
+
+A saída também traz a **CAPACIDADE DE GARRAFAIS**: quantos blocos da forma comportam garrafal
+(bloco 1, o gancho, mais cada bloco `A` ou `P` fora dele). O planejador **avisa quando for menor
+que 2**, porque a peça pede 2 a 3 garrafais no total (seção 4).
 
 A saída traz, por bloco, o **mínimo e o máximo de palavras**, a **linha do tempo** (início e fim
 de cada bloco em segundos finais) e a **densidade de insert por janela**. Se o planejador disser
@@ -297,9 +333,13 @@ que este passo vem antes de escrever, não depois.
 
 Conferir os 5 itens do onboarding. Recusar sem avatar, promessa, modo e canal.
 
-### Passo 2: montar a SEQUÊNCIA DE PAPÉIS e depois a tabela de blocos
+### Passo 2: preencher o modelo mestre, depois a SEQUÊNCIA DE PAPÉIS e a tabela de blocos
 
-**Primeiro a sequência, sempre.** Antes de escrever fala, escreva a fila de papéis que a peça vai
+**Primeiro o modelo mestre, sempre.** Preencha `references/modelo-mestre.md` parte por parte, na
+ordem das 9 partes: é o template frase a frase da casa, e ad que pula uma parte sai "esquisito"
+mesmo passando no gate. Só depois de preenchido é que ele vira a fila de papéis.
+
+**Depois a sequência.** Antes de escrever fala, escreva a fila de papéis que a peça vai
 seguir, do `references/metodo-de-copy.md` (seções 3 e 4): `H` hook, `D` dor ou diagnóstico, `P`
 prova com insert, `M` mecanismo ou virada, `I` identificação, `O` oferta, `T` ponte, `C` CTA.
 
@@ -307,13 +347,15 @@ As sequências de partida, por temperatura:
 
 | temperatura | sequência |
 |---|---|
-| frio, problema primeiro | `H D P M T C` |
-| frio, demonstração primeiro (existe tela pra mostrar) | `H P I M T C` |
-| quente, carrinho ou lote | `H P O T C` |
+| frio, problema primeiro | `H D P M T O C` |
+| frio, demonstração primeiro (existe tela pra mostrar) | `H P I M P+T O C` |
+| quente, carrinho ou lote | `H P O+T C` |
 
 Papéis podem repetir (`P` várias vezes numa peça de enumeração) e podem dividir bloco: escreva
-`P+T` ou `O+T` quando a ponte é a última frase de outro bloco. **`T` vem sempre imediatamente antes
-de `C`**, e a peça tem ao menos um `P`.
+`P+T` ou `O+T` quando a ponte é a última frase de outro bloco. **`T` vem antes de `C`, e `O` (o
+bloco de oferta) também vem antes de `C`** (bloco próprio ou combinado, `O+T`), e a peça tem ao
+menos um `P`. Rode `python3 scripts/planejar_blocos.py --papeis "<sua fila>"` pra conferir os dois
+avisos antes de escrever qualquer fala.
 
 Declare a sequência escolhida no campo `sequencia` do `conceito.md`.
 
@@ -324,7 +366,7 @@ aparece na tela. **O cliente aprova bloco a bloco**; só depois de aprovado é q
 texto vira `roteiro.txt`.
 
 Rode o **checklist de estrutura** da seção 5 do `references/metodo-de-copy.md` ainda nesta tabela,
-antes de escrever mais uma linha. Os quatro itens que mais derrubam peça:
+antes de escrever mais uma linha. Os cinco itens que mais derrubam peça:
 
 1. **Tem prova concreta?** Tela real da coisa funcionando, ou caso com nome, número e contexto.
 2. **O mecanismo está nomeado?** Aponte a frase que diz por que isso funciona quando o resto não
@@ -332,7 +374,9 @@ antes de escrever mais uma linha. Os quatro itens que mais derrubam peça:
 3. **A ponte existe?** Aponte qual frase, de qual bloco, diz o que o clique entrega e amarra isso na
    prova. Se você não consegue apontar, a peça salta do benefício para o "toca em saiba mais" e
    reprova.
-4. **O gancho combina 2 elementos e abre algo que a pessoa precise resolver?** Afirmação com que ela
+4. **O bloco de oferta existe?** Aponte qual bloco nomeia a oferta e diz o que será feito, o que a
+   pessoa ganha e como acessa, entre a prova e o CTA. Sem ele, "CTA sem bloco de oferta" reprova.
+5. **O gancho combina 2 elementos e abre algo que a pessoa precise resolver?** Afirmação com que ela
    já concorda não faz ninguém parar.
 
 ### Passo 3: gerar os 3 hooks
@@ -380,12 +424,14 @@ Quando rodar sem elas, **diga isso na entrega**.
   campanha (escassez, preço ou data fora de carrinho e lote).
 - **Ponte ausente antes do CTA**: nem o bloco anterior nem a primeira frase do CTA dizem o que o
   clique entrega.
+- **Bloco de oferta ausente antes do CTA**: nenhum bloco entre a prova e o CTA nomeia a oferta e
+  diz a entrega (o que é, o que será feito, o que a pessoa ganha, como acessa).
 - Bloco único sem insert e sem KEY acima de 6,0s (25 palavras).
 - Âncora de problema ou promessa fora das 4 primeiras palavras do hook.
 - Marca nas 3 primeiras palavras, sempre; nas 12 primeiras sem `logo_ancorado: sim`.
 - Frase de apresentação ("eu sou o", "meu nome é", "aqui é o") nas duas primeiras frases.
-- Hook acima de 14 palavras, ou cluster de hook fora do objetivo, ou ids repetidos, ou nenhum hook
-  cru.
+- Hook acima de até 5s de fala natural (14 palavras a 2,9 por segundo; o gate arredonda pra cima,
+  então 15 ainda passa), ou cluster de hook fora do objetivo, ou ids repetidos, ou nenhum hook cru.
 - Frase acima de 20 palavras.
 - Direção de insert vaga: âncora com menos de 3 palavras, ou com "algo", "genérico", "qualquer",
   "imagens de", "vídeo de".
@@ -404,6 +450,8 @@ Quando rodar sem elas, **diga isso na entrega**.
 - **Carimbo em bloco que não tem insert.**
 - **Zero ou uma garrafal** na peça (o alvo são 2 ou 3).
 - **Nenhum dos três hooks é pergunta ou paradoxo.**
+- **Bloco de oferta sem dizer o acesso** (gratuita, clica, link, inscreve, entra).
+- Coluna conteúdo/tempo de `letterings.md` não bate com o calculado.
 - Blocos vizinhos sem insert somando mais de 6,0s.
 - Densidade de insert fora de 45 a 55% em alguma janela.
 - CTA acima de 5,0s (21 palavras).

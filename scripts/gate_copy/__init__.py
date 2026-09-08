@@ -46,6 +46,7 @@ from .texto import (
     palavras_normalizadas,
     remover_acentos,
     todas_palavras_na_fala,
+    token_esta_na_fala,
 )
 
 __all__ = [
@@ -80,4 +81,5 @@ __all__ = [
     "remover_acentos",
     "numero_esta_na_fala",
     "todas_palavras_na_fala",
+    "token_esta_na_fala",
 ]

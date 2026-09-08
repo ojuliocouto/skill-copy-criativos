@@ -3,7 +3,7 @@
 **Este exemplo reproduz uma peça REAL, gravada, aprovada e no ar.** Ele reconstrói o anúncio
 "cinco entregas" da Escola de Automação, gravado na voz do apresentador da casa e aprovado pelo
 cliente. Por reproduzir uma peça de campo, ele passa com **zero reprovações mas carrega 13 avisos
-assumidos**, entre eles uma duração final de **40,67s** (a faixa publicada é 15 a 30s) e uma
+assumidos**, entre eles uma duração final de **40,43s** (a faixa publicada é 15 a 30s) e uma
 densidade de insert de **99%** na janela do corpo (a faixa é 45 a 55%).
 
 **Se você quer o exemplo LIMPO, ele é o outro:** `exemplos/agenda-cheia/`. Aquele é fictício, tem
@@ -74,10 +74,10 @@ Medida pelo gate e conferida à mão. A coluna `papel` diz o que o bloco FAZ na 
 | 6 | P | 16 | 5,52 | 3,80 | sim | QUIZ QUE FILTRA | placa_h4 | 3,50 (insert; a placa pedia 3,05) | sim |
 | 7 | P | 17 | 5,86 | 4,04 | sim | PÁGINA NO AR | placa_h1 | 3,50 (insert; a placa pedia 3,05) | sim |
 | 8 | P | 16 | 5,52 | 3,80 | sim | 8 MIL | carimbo | 3,50 (insert e carimbo empatados) | sim |
-| 9 | O+T | 22 | 7,59 | 5,23 | não | nenhum | nenhuma | máximo 6,00 | sim |
+| 9 | O+T | 21 | 7,24 | 4,99 | não | nenhum | nenhuma | máximo 6,00 | sim |
 | 10 | C | 16 | 5,52 | 3,80 | não | GARANTE SEU INGRESSO | seta_cta | 3,05 (seta_cta 2,80 + 0,25 da terceira palavra) | sim |
 
-Total: **171 palavras, 40,67s finais**. Nenhuma frase passa de 14 palavras (o teto de reprovação
+Total: **170 palavras, 40,43s finais**. Nenhuma frase passa de 14 palavras (o teto de reprovação
 é 20, valor de partida do brief, porque a R5.2 não publica número).
 
 ## O que mudou em relação ao anúncio gravado, e por quê
@@ -166,7 +166,8 @@ de oferta):
   sempre no mesmo horário."* (16 palavras, com folga sobre os 15 do insert)
 - bloco 6: *"...que filtra quem entra. E manda o lead pronto pro seu WhatsApp."*
 - bloco 8: *"E olha, não é à toa. Mais de oito mil pessoas já passaram pelos meus treinamentos."*
-- bloco 9: *"São dois dias, do zero, mesmo que você nunca tenha criado uma automação."* (a segunda frase deste bloco é a ponte, ver a mudança 12)
+- bloco 9: *"São dois dias, do zero, na Operação Claude Code."* (a segunda frase deste bloco é a
+  ponte e o bloco de oferta, ver a mudança 12)
 
 ### 8. Rodízio de formas: o mapa aprovado entra inteiro
 
@@ -229,20 +230,26 @@ O asset da prospecção entra com `serve: não` e ressalva: ele veio borrado da 
 35 a copy NÃO troca o asset por conta própria e NÃO esconde o defeito com desfoque ou véu
 (decisões 21 e 31): usa como veio e registra a ressalva pra quem produziu.
 
-### 12. O bloco 9 ganhou a ponte pro CTA
+### 12. O bloco 9 ganhou a ponte E o bloco de oferta pro CTA
 
 O gravado ia da quebra de objeção direto pro CTA: *"São dois dias, do zero. Mesmo que você nunca
 tenha criado uma automação na vida."* e, no bloco seguinte, *"toca em saiba mais"*. Entre a
 objeção e o pedido de clique não havia nada dizendo **o que o clique entrega**, e isso reprova.
 
-A fala nova fecha o bloco 9 com a ponte: *"São dois dias, do zero, mesmo que você nunca tenha
-criado uma automação. **É isso que a gente monta junto no evento.**"* A frase nomeia o que a pessoa
-leva, amarra na objeção que acabou de ser derrubada e diz onde acontece. Só então o CTA pede a
-ação.
+A fala nova fecha o bloco 9 com a ponte E a oferta no mesmo bloco (papel `O+T`): *"São dois dias,
+do zero, na Operação Claude Code. **Mesmo que você nunca tenha criado nada antes, a gente monta
+juntos.**"* A primeira frase nomeia a oferta (a Operação Claude Code, uma das `marcas` do
+`conceito.md`); a segunda é a ponte E a entrega ("a gente monta"), amarrando na objeção que acabou
+de ser derrubada. Só então o CTA pede a ação.
 
-O bloco passou de 15 para 22 palavras (5,23s finais, ainda abaixo do teto de 25 palavras de
-apresentador sozinho), e `cta.md` ganhou o campo `- ponte: bloco 9, "É isso que a gente monta junto
-no evento"`, que declara onde a ponte mora.
+Regra do dono da metodologia (a mesma que criou a ponte, seção acima): entre a prova e o CTA
+precisa existir um bloco que nomeie a oferta e diga o que a pessoa leva, senão o gate reprova com
+"CTA sem bloco de oferta". Aqui os dois papéis (`O` e `T`) cabem no mesmo bloco, sem custar um
+bloco inteiro à parte, exatamente como o método descreve para combinações como `O+T`.
+
+O bloco passou de 15 para 21 palavras (4,99s finais, ainda abaixo do teto de 25 palavras de
+apresentador sozinho), e `cta.md` ganhou o campo `- ponte: bloco 9, "a gente monta juntos"`, que
+declara onde a ponte mora.
 
 ## Os 13 avisos que este pacote assume, de propósito
 
@@ -274,16 +281,16 @@ O terminal e o quiz são `criar:ui_html`, a página é `criar:captura`. O gate a
 própria, porque ela tem que ser proposta ao cliente antes de ser produzida. Os três já têm
 aprovação registrada (decisões 16 e 19), e a linha de `assets.md` diz qual.
 
-### 11. Blocos 9 e 10 somam 9,04s sem insert
+### 11. Blocos 9 e 10 somam 8,80s sem insert
 
 O teto de dois blocos vizinhos sem insert é 6,0s. São a quebra de objeção final e o CTA, que por
 desenho não levam insert: a garrafal G3 vive no bloco 9, a **ponte** fecha esse mesmo bloco, e o
 fechamento é logo, legenda e CTA juntos. Cortar fala de um dos dois tiraria a ponte ou derrubaria o
 bloco abaixo do mínimo do lettering.
 
-### 12. Duração final de 40,67s
+### 12. Duração final de 40,43s
 
-As 171 palavras dão 40,67s finais (171 / 4,205). A faixa publicada é a de pago frio, 15 a 30s.
+As 170 palavras dão 40,43s finais (170 / 4,205). A faixa publicada é a de pago frio, 15 a 30s.
 Faixa própria existe só para `frio` e `remarketing`: `carrinho` e `lote`, que é o caso desta peça,
 não têm faixa declarada e usam a de frio como referência. A peça aprovada tem 41,48s, ou seja a
 referência de campo desta oferta também está fora da faixa de frio. Por isso o número aqui é aviso
@@ -301,11 +308,12 @@ leva**: intercalar um bloco de apresentador entre as entregas, para a janela do 
 exatamente o tipo de decisão que o `scripts/planejar_blocos.py` mostra antes de você escrever, e
 que o exemplo `exemplos/agenda-cheia/` resolve na origem.
 
-**Uma reprovação que este pacote NÃO leva, e vale dizer por quê**: ele tem **ponte** antes do CTA.
-O bloco 9 fecha com *"É isso que a gente monta junto no evento"*, que liga a quebra de objeção ao
-que o clique entrega, e o campo `- ponte: bloco 9, "..."` de `cta.md` declara onde ela está. O
-anúncio gravado não tinha essa frase: saltava da objeção direto pro "toca em saiba mais", e isso
-**reprova** (não avisa). Foi a última mudança aplicada nesta reconstrução.
+**Duas reprovações que este pacote NÃO leva, e vale dizer por quê**: ele tem **ponte** E **bloco de
+oferta** antes do CTA. O bloco 9 abre nomeando a oferta ("na Operação Claude Code") e fecha com "a
+gente monta juntos", que liga a quebra de objeção ao que o clique entrega, e o campo
+`- ponte: bloco 9, "a gente monta juntos"` de `cta.md` declara onde ela está. O anúncio gravado não
+tinha essa frase: saltava da objeção direto pro "toca em saiba mais", e isso **reprova** (não
+avisa) nas duas regras. Foi a última mudança aplicada nesta reconstrução.
 
 ## Como conferir
 

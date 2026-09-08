@@ -16,7 +16,8 @@ Todo hook, de qualquer cluster, tem que ter:
 1. Problema ou promessa nomeado nas 4 primeiras palavras (R2.6 pede até 1,2s de fala; em ritmo de 2,5 a 3 palavras por segundo, isso são 3 ou 4 palavras).
 2. Nenhuma marca, logo ou nome de produto nas 3 primeiras palavras (R2.5 proíbe marca nos 3 primeiros segundos).
 3. Nenhuma apresentação nas duas primeiras frases: "eu sou o", "meu nome é", "aqui é da" e qualquer saudação estão fora (R2.6).
-4. No máximo 14 palavras, pra caber em até 5 segundos de fala.
+4. Até 5s de fala natural (14 palavras a 2,9 por segundo; o gate arredonda pra cima, então 15
+   ainda passa).
 5. Um dos 3 hooks do conceito é CRU (R1.5): escrito como nota de voz, com "ó", "olha", "cara", pausa de fala, e sem lettering de abertura.
 6. **Ao menos um dos 3 hooks do conceito é pergunta ou paradoxo.** O gate avisa quando nenhum é.
 

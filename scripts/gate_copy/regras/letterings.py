@@ -17,11 +17,41 @@ from ..leitura import Bloco, Cta, LetteringLinha
 from ..limiares import FORMAS_LETTERING
 from ..texto import (
     contar_palavras_de_conteudo_do_key,
+    contar_palavras_nao_numericas,
     normalizar,
     normalizar_codigo,
     palavras_normalizadas,
     todas_palavras_na_fala,
 )
+
+
+def _checar_conteudo_tempo(valor: str, n_conteudo: int, n_tempo: int) -> Optional[str]:
+    """Confere a coluna "conteúdo/tempo" de `letterings.md` (seção 5)
+    contra o que o gate calcula: um número só (conteúdo e tempo são iguais)
+    ou "a/b" (conteúdo/tempo). Devolve a mensagem de aviso, ou `None`
+    quando bate (ou quando a coluna está em branco: compatibilidade com
+    pacote antigo, sem essa coluna)."""
+    valor = (valor or "").strip()
+    if not valor:
+        return None
+    if "/" in valor:
+        partes = valor.split("/", 1)
+        try:
+            declarado_conteudo = int(partes[0].strip())
+            declarado_tempo = int(partes[1].strip())
+        except ValueError:
+            return "coluna conteúdo/tempo fora do formato (use um número ou \"a/b\")"
+    else:
+        try:
+            declarado_conteudo = declarado_tempo = int(valor)
+        except ValueError:
+            return "coluna conteúdo/tempo fora do formato (use um número ou \"a/b\")"
+    if declarado_conteudo != n_conteudo or declarado_tempo != n_tempo:
+        return (
+            "coluna conteúdo/tempo não bate com o calculado (declarado %s; calculado %d/%d)"
+            % (valor, n_conteudo, n_tempo)
+        )
+    return None
 
 def checar_letterings(
     blocos: Sequence[Bloco], letterings: Sequence[LetteringLinha], cta: Optional[Cta]
@@ -78,6 +108,16 @@ def checar_letterings(
 
         max_palavras_key = 3 if (bloco.numero == ultimo_bloco_numero and cta_tipo == "cta") else 2
         n_conteudo = contar_palavras_de_conteudo_do_key(bloco.chave)
+        n_tempo = contar_palavras_nao_numericas(bloco.chave)
+        mensagem_conteudo_tempo = _checar_conteudo_tempo(linha.conteudo_tempo, n_conteudo, n_tempo)
+        if mensagem_conteudo_tempo:
+            achados.append(
+                Achado(
+                    AVISO, onde, mensagem_conteudo_tempo,
+                    acao="corrija a coluna conteúdo/tempo em letterings.md pro número calculado",
+                    medido=linha.conteudo_tempo, limiar="%d/%d" % (n_conteudo, n_tempo),
+                )
+            )
         if n_conteudo > max_palavras_key:
             achados.append(
                 Achado(

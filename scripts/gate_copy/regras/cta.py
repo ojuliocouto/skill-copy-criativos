@@ -13,9 +13,14 @@ from __future__ import annotations
 import re
 from typing import List, Optional, Sequence
 
-from ..achados import REPROVACAO, Achado
+from ..achados import AVISO, REPROVACAO, Achado
 from ..leitura import Bloco, Conceito, Cta
-from ..limiares import MARCADORES_DE_PONTE, VERBOS_DE_ACAO
+from ..limiares import (
+    MARCADORES_DE_ACESSO_DA_OFERTA,
+    MARCADORES_DE_OFERTA,
+    MARCADORES_DE_PONTE,
+    VERBOS_DE_ACAO,
+)
 from ..texto import (
     REGEX_DATA,
     REGEX_ESCASSEZ,
@@ -98,6 +103,76 @@ def checar_ponte(conceito: Conceito, blocos: Sequence[Bloco], cta: Cta) -> List[
                     )
                 )
     return achados
+
+def checar_oferta(conceito: Conceito, blocos: Sequence[Bloco], cta: Cta) -> List[Achado]:
+    """Regra do bloco de oferta antes do CTA (regra do dono da metodologia,
+    `references/metodo-de-copy.md` seção 3, papel "O"): entre o último
+    bloco com insert de prova e o CTA (ou no próprio bloco imediatamente
+    anterior ao CTA, ou na primeira frase do CTA) precisa existir um bloco
+    que nomeie a oferta (`conceito.oferta` ou uma das `marcas`) E carregue
+    um marcador de ENTREGA (`MARCADORES_DE_OFERTA`). Sem isso, reprova.
+    Além disso, avisa quando esse bloco não diz COMO acessar a oferta
+    (`MARCADORES_DE_ACESSO_DA_OFERTA`, no próprio bloco ou no CTA)."""
+    achados: List[Achado] = []
+    if not blocos:
+        return achados
+    modo = normalizar_codigo(conceito.modo)
+    tipo = normalizar_codigo(cta.get("tipo")) if cta else ""
+    if modo != "pago" or tipo != "cta":
+        return achados
+
+    ultimo = blocos[-1]
+    indice_ultimo_insert: Optional[int] = None
+    for i, b in enumerate(blocos):
+        if b.e_insert:
+            indice_ultimo_insert = i
+
+    # Janela candidata: do bloco logo após o último insert de prova até o
+    # penúltimo bloco (o bloco imediatamente anterior ao CTA sempre entra,
+    # mesmo quando não há insert nenhum antes dele).
+    inicio_janela = (indice_ultimo_insert + 1) if indice_ultimo_insert is not None else 0
+    fim_janela = len(blocos) - 1  # exclui o próprio CTA
+    candidatos: List[Bloco] = list(blocos[inicio_janela:fim_janela]) if fim_janela > inicio_janela else []
+    if not candidatos and len(blocos) >= 2:
+        candidatos = [blocos[-2]]
+
+    primeira_frase_cta = re.split(r"[.!?]", ultimo.fala or "")[0]
+
+    nomes_oferta = [conceito.oferta] + list(conceito.marcas)
+    nomes_oferta_norm = [normalizar(nome) for nome in nomes_oferta if nome]
+
+    def _bloco_tem_oferta(fala: str) -> bool:
+        n = normalizar(fala)
+        nomeia = any(nome and nome in n for nome in nomes_oferta_norm)
+        entrega = any(normalizar(marcador) in n for marcador in MARCADORES_DE_OFERTA)
+        return nomeia and entrega
+
+    tem_oferta = any(_bloco_tem_oferta(b.fala) for b in candidatos) or _bloco_tem_oferta(primeira_frase_cta)
+
+    if not tem_oferta:
+        achados.append(
+            Achado(
+                REPROVACAO, "cta.md",
+                "CTA sem bloco de oferta: antes de pedir a ação, diga o que é a aula/produto, "
+                "o que será feito, o que a pessoa ganha e como acessa",
+                acao="acrescente um bloco O entre a prova e o CTA",
+            )
+        )
+        return achados
+
+    texto_janela = " ".join(b.fala or "" for b in candidatos) + " " + (ultimo.fala or "")
+    n_acesso = normalizar(texto_janela)
+    tem_acesso = any(marcador in n_acesso for marcador in MARCADORES_DE_ACESSO_DA_OFERTA)
+    if not tem_acesso:
+        achados.append(
+            Achado(
+                AVISO, "cta.md",
+                "bloco de oferta não diz como acessar (gratuita, clique, link, inscreve, entra)",
+                acao="acrescente no bloco O ou no CTA como a pessoa chega na oferta",
+            )
+        )
+    return achados
+
 
 def checar_cta(conceito: Conceito, blocos: Sequence[Bloco], cta: Cta) -> List[Achado]:
     """Requisito 10, seção 6."""

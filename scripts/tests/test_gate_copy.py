@@ -60,7 +60,7 @@ ROTEIRO = """[thales de frente + lettering | LEAD: em dois dias | KEY: 5 ENTREGA
 [inserção de vídeo: quiz de qualificação sendo respondido | LEAD: entrega dois | KEY: QUIZ QUE FILTRA] Dois: um quiz de qualificação que filtra quem entra e manda o lead pronto direto pro seu WhatsApp.
 [inserção de vídeo: página profissional publicada pelo claude | LEAD: entrega um | KEY: PÁGINA NO AR] E um: a sua página profissional no ar, publicada e hospedada pelo Claude, sem você mexer em nada disso.
 [inserção de vídeo: pipoca de provas sociais de alunos] E não é à toa que oito mil pessoas já passaram pelos meus treinamentos ao longo desses anos todos.
-[thales de frente pra câmera] São dois dias, do zero. É isso que você constrói no evento.
+[thales de frente pra câmera] São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.
 [thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE SEU INGRESSO] Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!
 """
 
@@ -117,14 +117,14 @@ GARRAFAIS = """# Garrafais: cinco_entregas
 
 LETTERINGS = """# Letterings: cinco_entregas
 
-| bloco | LEAD | KEY | âncora na fala | forma | palavras do KEY |
+| bloco | LEAD | KEY | âncora na fala | forma | conteúdo/tempo |
 |---|---|---|---|---|---|
 | 1 | em dois dias | 5 ENTREGAS PRONTAS | prontas | placa_h1 | 2 |
-| 2 | entrega cinco | UM SQUAD | squad | placa_h2 | 2 |
-| 3 | entrega quatro | SKILLS DO ZERO | zero | placa_h4 | 2 |
+| 2 | entrega cinco | UM SQUAD | squad | placa_h2 | 1/2 |
+| 3 | entrega quatro | SKILLS DO ZERO | zero | placa_h4 | 2/3 |
 | 4 | entrega três | PROSPECÇÃO SOZINHA | sozinha | coluna | 2 |
-| 6 | entrega dois | QUIZ QUE FILTRA | filtra | placa_h1 | 2 |
-| 7 | entrega um | PÁGINA NO AR | ar | coluna | 2 |
+| 6 | entrega dois | QUIZ QUE FILTRA | filtra | placa_h1 | 2/3 |
+| 7 | entrega um | PÁGINA NO AR | ar | coluna | 2/3 |
 | 10 | toca em saiba mais | GARANTE SEU INGRESSO | garante | seta_cta | 3 |
 """
 
@@ -281,10 +281,10 @@ def test_cta_acima_do_teto_avisa(tmp_path):
 
 def test_bloco_sem_insert_sem_key_acima_do_maximo_reprova(tmp_path):
     roteiro = ROTEIRO.replace(
-        "São dois dias, do zero. É isso que você constrói no evento.",
-        "São dois dias, do zero. É isso que você constrói no evento. Mesmo que você nunca tenha criado "
-        "nada antes na vida inteira toda. Você consegue mesmo assim com certeza absoluta, sem trava "
-        "nenhuma, rapidinho de verdade, todo santo dia.",
+        "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+        "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento. Mesmo que "
+        "você nunca tenha criado nada antes na vida inteira toda. Você consegue mesmo assim com certeza "
+        "absoluta, sem trava nenhuma, rapidinho de verdade, todo santo dia.",
     )
     resultado = rodar(tmp_path, {"roteiro.txt": roteiro})
     assert len(resultado["reprovacoes"]) == 1
@@ -368,15 +368,76 @@ def test_placa_h1_vizinho_de_placa_h2_nao_reprova_rodizio(tmp_path):
 def test_carimbo_em_bloco_sem_insert_avisa(tmp_path):
     """Bloco 2 não tem insert (apresentador + lettering); carimbo é
     lettering de apoio, só serve em bloco com insert (seção 5)."""
-    overrides = {"letterings.md": LETTERINGS.replace("| placa_h2 | 2 |\n", "| carimbo | 2 |\n", 1)}
+    overrides = {"letterings.md": LETTERINGS.replace("| placa_h2 | 1/2 |\n", "| carimbo | 1/2 |\n", 1)}
     resultado = rodar(tmp_path, overrides)
     assert tem_aviso_contendo(resultado, "carimbo é lettering de apoio, só em bloco com insert")
+
+
+def test_conteudo_tempo_bate_nao_avisa(tmp_path):
+    """Baseline já declara "conteúdo/tempo" corretos (seção 5, correção C):
+    nenhum aviso de coluna errada."""
+    resultado = rodar(tmp_path)
+    assert not tem_aviso_contendo(resultado, "coluna conteúdo/tempo")
+
+
+def test_conteudo_tempo_numero_unico_errado_avisa(tmp_path):
+    overrides = {
+        # bloco 1: "5 ENTREGAS PRONTAS" e conteudo=2, tempo=2; declarar 3 erra os dois
+        "letterings.md": LETTERINGS.replace(
+            "| 5 ENTREGAS PRONTAS | prontas | placa_h1 | 2 |",
+            "| 5 ENTREGAS PRONTAS | prontas | placa_h1 | 3 |",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_aviso_contendo(resultado, "coluna conteúdo/tempo não bate com o calculado")
+    assert tem_aviso_contendo(resultado, "declarado 3; calculado 2/2")
+
+
+def test_conteudo_tempo_a_b_errado_avisa(tmp_path):
+    overrides = {
+        # bloco 3: "SKILLS DO ZERO" e conteudo=2, tempo=3; declarar 2/2 erra o tempo
+        "letterings.md": LETTERINGS.replace(
+            "| SKILLS DO ZERO | zero | placa_h4 | 2/3 |",
+            "| SKILLS DO ZERO | zero | placa_h4 | 2/2 |",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_aviso_contendo(resultado, "coluna conteúdo/tempo não bate com o calculado")
+    assert tem_aviso_contendo(resultado, "declarado 2/2; calculado 2/3")
+
+
+def test_conteudo_tempo_a_b_correto_nao_avisa(tmp_path):
+    resultado = rodar(tmp_path)
+    assert not tem_aviso_contendo(resultado, "SKILLS DO ZERO")
+
+
+def test_conteudo_tempo_formato_invalido_avisa(tmp_path):
+    overrides = {
+        "letterings.md": LETTERINGS.replace(
+            "| 5 ENTREGAS PRONTAS | prontas | placa_h1 | 2 |",
+            "| 5 ENTREGAS PRONTAS | prontas | placa_h1 | dois |",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_aviso_contendo(resultado, "coluna conteúdo/tempo fora do formato")
+
+
+def test_conteudo_tempo_em_branco_nao_avisa(tmp_path):
+    """Compatibilidade: pacote sem a coluna (célula em branco) não avisa."""
+    overrides = {
+        "letterings.md": LETTERINGS.replace(
+            "| 5 ENTREGAS PRONTAS | prontas | placa_h1 | 2 |",
+            "| 5 ENTREGAS PRONTAS | prontas | placa_h1 |  |",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_aviso_contendo(resultado, "coluna conteúdo/tempo")
 
 
 def test_carimbo_em_bloco_com_insert_nao_avisa(tmp_path):
     """Bloco 3 tem insert (claude criando uma skill do zero); carimbo não
     avisa nesse caso."""
-    overrides = {"letterings.md": LETTERINGS.replace("| placa_h4 | 2 |\n", "| carimbo | 2 |\n", 1)}
+    overrides = {"letterings.md": LETTERINGS.replace("| placa_h4 | 2/3 |\n", "| carimbo | 2/3 |\n", 1)}
     resultado = rodar(tmp_path, overrides)
     assert not tem_aviso_contendo(resultado, "carimbo é lettering de apoio")
 
@@ -630,8 +691,8 @@ def test_cta_sem_ponte_reprova(tmp_path):
     falta de ponte."""
     overrides = {
         "roteiro.txt": ROTEIRO.replace(
-            "São dois dias, do zero. É isso que você constrói no evento.",
-            "São dois dias, do zero, sem trava nenhuma.",
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero, com a Operação Claude Code, sem trava nenhuma.",
         )
     }
     resultado = rodar(tmp_path, overrides)
@@ -668,19 +729,133 @@ def test_campo_ponte_bloco_inexistente_reprova(tmp_path):
     assert tem_reprovacao_contendo(resultado, "campo ponte cita bloco inexistente")
 
 
+# ---------------------------------------------------------------------------
+# Bloco de oferta obrigatório antes do CTA (item B da correção de gaps,
+# regra do dono da metodologia): entre a prova e o CTA precisa existir um
+# bloco que nomeie a oferta e diga a entrega.
+# ---------------------------------------------------------------------------
+
+
+def test_baseline_tem_bloco_de_oferta_nao_reprova(tmp_path):
+    resultado = rodar(tmp_path)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
+
+
+def test_sem_nome_da_oferta_reprova(tmp_path):
+    """Bloco 9 tem entrega ("do zero") mas, sem o nome da marca, não
+    nomeia a oferta: reprova."""
+    overrides = {
+        "roteiro.txt": ROTEIRO.replace(
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero. É isso que você constrói no evento.",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
+
+
+def test_sem_marcador_de_entrega_reprova(tmp_path):
+    """Bloco 9 nomeia a marca mas não carrega nenhum marcador de
+    MARCADORES_DE_OFERTA: reprova."""
+    overrides = {
+        "roteiro.txt": ROTEIRO.replace(
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "Isso tudo é a Operação Claude Code, no maior estilo possível.",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
+
+
+def test_oferta_usa_campo_oferta_do_conceito_quando_declarado(tmp_path):
+    """Com `oferta:` declarado em conceito.md, o nome procurado é esse
+    campo, não a primeira marca."""
+    overrides = {
+        "conceito.md": CONCEITO.replace(
+            "marcas:\n  - Operacao Claude Code",
+            "oferta: Imersao Dois Dias\nmarcas:\n  - Operacao Claude Code",
+        ),
+        "roteiro.txt": ROTEIRO.replace(
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero, na Imersão Dois Dias. É isso que você constrói no evento.",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
+
+
+def test_oferta_sem_acesso_avisa(tmp_path):
+    """Nomeia a oferta e carrega entrega, mas nem o bloco O nem o CTA dizem
+    como acessar: avisa (não reprova)."""
+    overrides = {
+        "roteiro.txt": ROTEIRO.replace(
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero, na Operação Claude Code. Você sai com tudo pronto.",
+        ).replace(
+            "[thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE SEU INGRESSO] "
+            "Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!",
+            "[thales de frente + lettering + logo da occ | LEAD: garante ingresso | KEY: GARANTE SEU INGRESSO] "
+            "Então aproveita que ainda tem vaga e garante seu ingresso. Vamos embora!",
+        ),
+        "cta.md": CTA.replace(
+            "- fala: Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!",
+            "- fala: Então aproveita que ainda tem vaga e garante seu ingresso. Vamos embora!",
+        ).replace(
+            "- lettering: LEAD: toca em saiba mais | KEY: GARANTE SEU INGRESSO",
+            "- lettering: LEAD: garante ingresso | KEY: GARANTE SEU INGRESSO",
+        ),
+        "letterings.md": LETTERINGS.replace("| toca em saiba mais |", "| garante ingresso |"),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
+    assert tem_aviso_contendo(resultado, "bloco de oferta não diz como acessar")
+
+
+def test_oferta_com_acesso_no_cta_nao_avisa(tmp_path):
+    """Baseline: o CTA tem "toca em", que já cobre o acesso; sem aviso."""
+    resultado = rodar(tmp_path)
+    assert not tem_aviso_contendo(resultado, "bloco de oferta não diz como acessar")
+
+
+def test_conceito_oferta_usa_campo_proprio_quando_declarado():
+    conceito = gc.Conceito({"oferta": "Aula X", "marcas": ["Marca Y"]})
+    assert conceito.oferta == "Aula X"
+
+
+def test_conceito_oferta_cai_pra_primeira_marca_sem_campo():
+    conceito = gc.Conceito({"marcas": ["Marca Y", "Marca Z"]})
+    assert conceito.oferta == "Marca Y"
+
+
+def test_conceito_oferta_vazia_sem_marcas_nem_campo():
+    conceito = gc.Conceito({})
+    assert conceito.oferta == ""
+
+
+def test_checar_oferta_ignora_modo_organico():
+    conceito = gc.Conceito({"modo": "organico", "marcas": ["X"]})
+    blocos = [gc.Bloco(numero=1, linha_original="", direcao="", fala="qualquer coisa")]
+    cta = gc.Cta({"tipo": "loop"})
+    achados = gc.motor.checar_oferta(conceito, blocos, cta)
+    assert achados == []
+
+
 AGENDA_CHEIA_DIR = str(
     Path(__file__).resolve().parents[2] / "exemplos" / "agenda-cheia"
 )
 
 
 def test_pacote_real_agenda_cheia_passa_com_ponte():
-    """Pacote versionado do exemplo agenda-cheia (v3): a ponte é "É
-    exatamente isso que eu te ensino na aula", no bloco 8, imediatamente
-    antes do CTA (bloco 9). Zero reprovações, zero avisos."""
+    """Pacote versionado do exemplo agenda-cheia (v4): a ponte é "É
+    exatamente isso que eu te ensino na aula", no bloco 8, e o bloco 9 (a
+    oferta, papel O) fecha antes do CTA (bloco 10). Zero reprovações; três
+    avisos assumidos (duração total, densidade do fecho e blocos 9/10
+    vizinhos sem insert), custo declarado do bloco de oferta obrigatório."""
     resultado = gc.rodar(AGENDA_CHEIA_DIR)
     assert not tem_reprovacao_contendo(resultado, "CTA sem ponte")
+    assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
     assert resultado["reprovacoes"] == []
-    assert resultado["avisos"] == []
+    assert len(resultado["avisos"]) == 3
 
 
 def test_pacote_real_agenda_cheia_sem_ponte_reprova(tmp_path):
@@ -982,9 +1157,9 @@ def test_data_na_fala_em_campanha_frio_reprova(tmp_path):
             "[thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE PARTICIPAÇÃO] "
             "Então toca em saiba mais e garante sua participação especial nessa turma de agora. Vamos embora!",
         ).replace(
-            "São dois dias, do zero. É isso que você constrói no evento.",
-            "São dois dias, do zero. É isso que você constrói no evento. Isso vale pro dia 15 de outubro "
-            "de 2026, sem enrolação nenhuma.",
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento no "
+            "dia 15 de outubro de 2026.",
         ),
         "cta.md": CTA.replace(
             "- fala: Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!",
@@ -1128,6 +1303,26 @@ def test_numeral_ausente_da_fala_reporta_faltando():
 
 def test_hifen_casa_com_e_sem_hifen():
     assert gc.normalizar("segunda-feira") == gc.normalizar("segunda feira")
+
+
+def test_numeral_onze_da_noite_casa_com_extenso():
+    fala = gc.palavras_normalizadas("são onze da noite")
+    assert gc.todas_palavras_na_fala("11 DA NOITE", fala) == []
+
+
+def test_numeral_quarenta_e_oito_mil_casa_com_extenso():
+    fala = gc.palavras_normalizadas("mais de quarenta e oito mil pessoas confiam")
+    assert gc.todas_palavras_na_fala("48 MIL", fala) == []
+
+
+def test_numeral_duzentas_clinicas_casa_com_extenso():
+    fala = gc.palavras_normalizadas("já são duzentas clínicas usando")
+    assert gc.todas_palavras_na_fala("200 CLÍNICAS", fala) == []
+
+
+def test_numeral_11h_casa_com_onze():
+    fala = gc.palavras_normalizadas("a live começa às onze da noite")
+    assert gc.token_esta_na_fala(gc.normalizar("11h"), fala) is True
 
 
 # ---------------------------------------------------------------------------

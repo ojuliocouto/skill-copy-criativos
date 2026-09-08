@@ -203,28 +203,73 @@ VERBOS_DE_ACAO: Tuple[str, ...] = (
 )
 
 # Numerais: algarismo -> variantes por extenso (secao 4). Palavra por extenso
-# multipla ("vinte e quatro") casa como sequencia contigua na fala.
-NUMERAIS: Dict[str, Tuple[str, ...]] = {
-    "1": ("um", "uma"),
-    "2": ("dois", "duas"),
-    "3": ("tres",),
-    "4": ("quatro",),
-    "5": ("cinco",),
-    "6": ("seis",),
-    "7": ("sete",),
-    "8": ("oito",),
-    "9": ("nove",),
-    "10": ("dez",),
-    "12": ("doze",),
-    "15": ("quinze",),
-    "20": ("vinte",),
-    "24": ("vinte e quatro",),
-    "30": ("trinta",),
-    "48": ("quarenta e oito",),
-    "50": ("cinquenta",),
-    "100": ("cem",),
-    "1000": ("mil",),
+# multipla ("vinte e quatro") casa como sequencia contigua na fala. Gerado
+# por codigo (requisito 4 da tarefa) em vez de lista estatica parcial: cobre
+# 0 a 100 inteiro, com genero em unidade 1 e 2 (isolada ou dentro de uma
+# dezena composta, "vinte e um"/"vinte e uma"), mais as centenas e milhares
+# usados na copy (200, 300, 500, 1000, 10000).
+_UNIDADES: Dict[int, Tuple[str, ...]] = {
+    0: ("zero",),
+    1: ("um", "uma"),
+    2: ("dois", "duas"),
+    3: ("tres",),
+    4: ("quatro",),
+    5: ("cinco",),
+    6: ("seis",),
+    7: ("sete",),
+    8: ("oito",),
+    9: ("nove",),
 }
+
+_DEZ_A_DEZENOVE: Dict[int, Tuple[str, ...]] = {
+    10: ("dez",),
+    11: ("onze",),
+    12: ("doze",),
+    13: ("treze",),
+    14: ("catorze", "quatorze"),
+    15: ("quinze",),
+    16: ("dezesseis",),
+    17: ("dezessete",),
+    18: ("dezoito",),
+    19: ("dezenove",),
+}
+
+_DEZENAS: Dict[int, str] = {
+    20: "vinte",
+    30: "trinta",
+    40: "quarenta",
+    50: "cinquenta",
+    60: "sessenta",
+    70: "setenta",
+    80: "oitenta",
+    90: "noventa",
+}
+
+
+def _gerar_numerais_0_a_100() -> Dict[str, Tuple[str, ...]]:
+    numerais: Dict[int, Tuple[str, ...]] = {}
+    numerais.update(_UNIDADES)
+    numerais.update(_DEZ_A_DEZENOVE)
+    for valor_dezena, nome_dezena in _DEZENAS.items():
+        numerais[valor_dezena] = (nome_dezena,)
+        for unidade in range(1, 10):
+            numerais[valor_dezena + unidade] = tuple(
+                nome_dezena + " e " + variante for variante in _UNIDADES[unidade]
+            )
+    numerais[100] = ("cem",)
+    return {str(valor): variantes for valor, variantes in numerais.items()}
+
+
+NUMERAIS: Dict[str, Tuple[str, ...]] = _gerar_numerais_0_a_100()
+NUMERAIS.update(
+    {
+        "200": ("duzentos", "duzentas"),
+        "300": ("trezentos", "trezentas"),
+        "500": ("quinhentos", "quinhentas"),
+        "1000": ("mil",),
+        "10000": ("dez mil",),
+    }
+)
 
 # Secao 5: as 3 placas do rodizio (placa_h1/h2/h4) mais coluna, carimbo e
 # seta_cta. "placa" sozinha NAO e mais uma forma valida (o pacote tem que
@@ -265,6 +310,29 @@ MARCADORES_DE_PONTE: Tuple[str, ...] = (
     "fazer isso na prática", "topa aprender", "quer aprender",
     "quer transformar", "você precisa se inscrever", "eu tenho um convite",
     "num treinamento", "numa imersão", "na operação", "na nova edição",
+)
+
+# Marcadores de ENTREGA do bloco de oferta (regra do dono da metodologia,
+# `references/metodo-de-copy.md` seção 3, papel "O"): entre a prova e o CTA
+# precisa existir um bloco que nomeia a oferta E diz o que a pessoa leva.
+# Normalizados (sem acento, minúsculas) na hora da comparação.
+MARCADORES_DE_OFERTA: Tuple[str, ...] = (
+    "voce sai com", "voce sai de la", "voce monta", "a gente monta",
+    "eu monto com voce", "eu te mostro", "vou te mostrar", "voce aprende",
+    "voce vai aprender", "voce leva", "voce recebe", "passo a passo",
+    "na pratica", "do zero", "com voce", "juntas", "juntos",
+    # calibracao pedida pelo dono da metodologia (mensagem do coordenador):
+    "onde eu te mostro", "onde voce constroi", "onde voce aprende",
+    "onde eu te ensino", "imersao", "aula gratuita", "mentoria",
+    "treinamento", "sai de la", "ja sai com",
+)
+
+# Marcadores de ACESSO do bloco de oferta: diz COMO a pessoa chega na
+# oferta (gratuita, clique, link). Sem nenhum destes no bloco O nem no CTA,
+# `checar_oferta` AVISA (a oferta ficou sem caminho de acesso).
+MARCADORES_DE_ACESSO_DA_OFERTA: Tuple[str, ...] = (
+    "gratuita", "gratuito", "de graca", "toca em", "clica", "link",
+    "inscreve", "entra",
 )
 
 CORES_GARRAFAL = {"casa", "quente", "teal_do_fundo", "rosado_do_fundo"}

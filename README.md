@@ -15,9 +15,13 @@ of the copy it produces. This README is the only English document in the reposit
 
 ## What it is
 
+- A **master template** (`references/modelo-mestre.md`): the house's sentence-by-sentence template,
+  9 parts extracted from thirteen real, recorded ads. Fill in its gaps, in order, before breaking
+  the copy into blocks; skipping a part is what makes an otherwise-passing ad feel "off".
 - A **method** (`references/metodo-de-copy.md`): three layers (angle, invisible structure, format),
   an avatar diagnosis by temperature and awareness level, the anatomy of an ad broken into block
-  roles, the valid sequences per temperature, and a structure checklist that runs before the gate.
+  roles (including the mandatory offer block right before the CTA), the valid sequences per
+  temperature, and a structure checklist that runs before the gate.
 - A **process** for writing one creative concept at a time: brief, a block plan run through a
   planner *before* any writing, a block-by-block draft approved in a table, three hooks with named
   tactics, then billboard words, letterings, CTA and asset directions.
@@ -29,8 +33,9 @@ of the copy it produces. This README is the only English document in the reposit
 - A **planner** (`scripts/planejar_blocos.py`): tells you how many words fit in each block and
   whether insert density per window closes, before you spend any writing on a shape that cannot
   work.
-- **Two reference packages**: a clean one that passes with a single declared warning, and a real
-  one rebuilt from an approved ad that carries thirteen acknowledged warnings.
+- **Two reference packages**: a clean one that passes with three declared warnings (the assumed
+  cost of the mandatory offer block before the CTA), and a real one rebuilt from an approved ad
+  that carries thirteen acknowledged warnings.
 
 ## What it is NOT
 
@@ -72,9 +77,9 @@ cd ~/.claude/skills/copy-criativos
 python3 scripts/gate_copy.py exemplos/agenda-cheia
 ```
 
-You should see the per-block summary and exactly one warning (58% insert density in the closing
-window), with no rejections. If you get an import error, fix that before writing anything: a broken
-gate means delivering without proof.
+You should see the per-block summary and zero `REPROVAÇÕES` (the three `AVISOS` listed are declared
+on purpose, the cost of the mandatory offer block before the CTA). If you get an import error, fix
+that before writing anything: a broken gate means delivering without proof.
 
 ## Installation
 

@@ -104,9 +104,17 @@ def numero_esta_na_fala(token_digito: str, fala_palavras: Sequence[str]) -> bool
     return False
 
 
+_REGEX_TOKEN_HORA = re.compile(r"^(\d+)h$")
+
+
 def token_esta_na_fala(token: str, fala_palavras: Sequence[str]) -> bool:
     if token.isdigit():
         return numero_esta_na_fala(token, fala_palavras)
+    m = _REGEX_TOKEN_HORA.match(token)
+    if m:
+        # "11h" (notacao de hora) casa com o mesmo numeral por extenso que
+        # "11" ("onze"): o "h" e formato de hora, nao parte do numero.
+        return numero_esta_na_fala(m.group(1), fala_palavras)
     return token in fala_palavras
 
 

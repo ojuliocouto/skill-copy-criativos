@@ -18,7 +18,11 @@ sys.path.insert(0, SCRIPTS_DIR)
 
 from gate_copy.planejador import (  # noqa: E402
     calcular_densidade,
+    capacidade_de_garrafais,
+    checar_capacidade_de_garrafais,
     checar_ponte_do_plano,
+    checar_vizinhos_sem_insert,
+    derivar_forma_de_papeis,
     max_palavras_do_tipo,
     medio_palavras_do_tipo,
     min_palavras_do_tipo,
@@ -224,6 +228,60 @@ def test_cli_plano_agenda_cheia_v3_sem_palavras_nao_imprime_bloco_com_zero():
     assert "PONTO MÉDIO" in resultado.stdout
 
 
+# ---------------------------------------------------------------------------
+# Blocos vizinhos sem insert somando acima do teto (mesmo limiar do gate,
+# retencao.avatar_sozinho_max_s = 6,0s), item 2 da correção de gaps.
+# ---------------------------------------------------------------------------
+
+VIZINHOS_TIPOS = ["L", "L", "I", "A", "I", "A", "I", "C"]
+VIZINHOS_PALAVRAS_ACUSA = [13, 13, 15, 13, 16, 11, 18, 15]
+VIZINHOS_PALAVRAS_NAO_ACUSA = [13, 12, 15, 13, 16, 11, 18, 15]
+
+
+def test_vizinhos_sem_insert_acima_do_teto_acusa_blocos_1_e_2():
+    resultado = planejar(VIZINHOS_TIPOS, pps=2.9, aceleracao=1.45, palavras=VIZINHOS_PALAVRAS_ACUSA)
+    avisos = resultado["avisos_vizinhos"]
+    assert len(avisos) == 1
+    assert "blocos 1 e 2" in avisos[0]
+    assert "sem insert somam" in avisos[0]
+    assert "teto 6.0s" in avisos[0]
+    assert "Faça: intercale um insert ou encurte um deles" in avisos[0]
+
+
+def test_vizinhos_sem_insert_dentro_do_teto_nao_acusa():
+    resultado = planejar(VIZINHOS_TIPOS, pps=2.9, aceleracao=1.45, palavras=VIZINHOS_PALAVRAS_NAO_ACUSA)
+    assert resultado["avisos_vizinhos"] == []
+
+
+def test_checar_vizinhos_sem_insert_ignora_par_com_insert():
+    resultado = planejar(AGENDA_CHEIA_V3_TIPOS, pps=2.9, aceleracao=1.45, palavras=AGENDA_CHEIA_V3_PALAVRAS)
+    assert resultado["avisos_vizinhos"] == []
+
+
+def test_planejar_sem_palavras_tambem_calcula_avisos_vizinhos_min_e_medio():
+    resultado = planejar(VIZINHOS_TIPOS, pps=2.9, aceleracao=1.45)
+    assert "avisos_vizinhos" in resultado
+    assert "avisos_vizinhos_minimo" in resultado
+    assert isinstance(resultado["avisos_vizinhos"], list)
+    assert isinstance(resultado["avisos_vizinhos_minimo"], list)
+
+
+def test_cli_mostra_aviso_de_vizinhos_sem_insert():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--blocos", ",".join(VIZINHOS_TIPOS),
+            "--palavras", ",".join(str(p) for p in VIZINHOS_PALAVRAS_ACUSA),
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "blocos 1 e 2" in resultado.stdout
+    assert "AVISOS (blocos vizinhos sem insert)" in resultado.stdout
+
+
 def test_cli_tipo_invalido_retorna_erro():
     resultado = subprocess.run(
         [sys.executable, PLANEJAR_PATH, "--blocos", "I,Z"],
@@ -232,3 +290,216 @@ def test_cli_tipo_invalido_retorna_erro():
     )
     assert resultado.returncode == 2
     assert "Faça:" in resultado.stderr
+
+
+# ---------------------------------------------------------------------------
+# Capacidade de garrafais da forma (item E da correção de gaps): bloco 1 +
+# blocos A/P sem KEY; aviso quando menor que 2.
+# ---------------------------------------------------------------------------
+
+
+def test_capacidade_de_garrafais_conta_bloco_1_mais_a_e_p():
+    # bloco 1 (gancho) + bloco 4 (A) + bloco 6 (P) = 3
+    assert capacidade_de_garrafais(["L", "I", "I", "A", "I", "P", "C"]) == 3
+
+
+def test_capacidade_de_garrafais_sem_a_ou_p_conta_so_o_bloco_1():
+    assert capacidade_de_garrafais(["I", "I", "C"]) == 1
+
+
+def test_capacidade_de_garrafais_lista_vazia_e_zero():
+    assert capacidade_de_garrafais([]) == 0
+
+
+def test_checar_capacidade_de_garrafais_avisa_abaixo_de_2():
+    avisos = checar_capacidade_de_garrafais(["I", "I", "C"])
+    assert len(avisos) == 1
+    assert "1 bloco" in avisos[0]
+    assert "Faça:" in avisos[0]
+
+
+def test_checar_capacidade_de_garrafais_nao_avisa_com_2_ou_mais():
+    assert checar_capacidade_de_garrafais(["L", "I", "A", "I", "C"]) == []
+
+
+def test_planejar_devolve_capacidade_de_garrafais():
+    resultado = planejar(["L", "I", "I", "C"], pps=2.9, aceleracao=1.45)
+    assert resultado["capacidade_garrafais"] == 1
+    assert resultado["avisos_garrafais"]
+
+
+def test_cli_mostra_capacidade_de_garrafais():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--blocos", "L,I,I,C",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "CAPACIDADE DE GARRAFAIS" in resultado.stdout
+    assert "AVISO" in resultado.stdout
+
+
+# ---------------------------------------------------------------------------
+# --papeis (item A da correção de gaps): deriva a forma a partir da fila de
+# PAPÉIS e imprime a forma derivada antes do relatório.
+# ---------------------------------------------------------------------------
+
+
+def test_cli_papeis_deriva_forma_e_imprime_antes_do_relatorio():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,D,P,I,P,M,P+T,O,C",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    esperado = ",".join(derivar_forma_de_papeis(["H", "D", "P", "I", "P", "M", "P+T", "O", "C"]))
+    assert esperado in resultado.stdout
+    indice_forma = resultado.stdout.index(esperado)
+    indice_plano = resultado.stdout.index("PLANO POR BLOCO:")
+    assert indice_forma < indice_plano
+
+
+def test_cli_papeis_e_blocos_juntos_e_erro():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--blocos", "I,C", "--papeis", "P,C",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 2
+
+
+def test_cli_sem_blocos_nem_papeis_e_erro():
+    resultado = subprocess.run(
+        [sys.executable, PLANEJAR_PATH],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 2
+
+
+def test_cli_papeis_com_papel_invalido_retorna_erro():
+    resultado = subprocess.run(
+        [sys.executable, PLANEJAR_PATH, "--papeis", "H,Z,C"],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 2
+    assert "Faça:" in resultado.stderr
+
+
+def test_cli_papeis_sem_oferta_antes_do_cta_avisa():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,D,P,M,T,C",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "plano sem bloco O de oferta antes do CTA" in resultado.stdout
+
+
+# ---------------------------------------------------------------------------
+# --formato completo|curto (pedido do coordenador, references/modelo-mestre.md):
+# define o alvo (62s ou 28s) e avisa quando o plano completo tem menos de 9
+# blocos.
+# ---------------------------------------------------------------------------
+
+
+def test_cli_formato_completo_define_alvo_62s():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,D,P,I,P,M,P+T,O,C", "--formato", "completo",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "formato: completo (alvo 62s finais" in resultado.stdout
+    assert "ALVO: 62.00s" in resultado.stdout
+
+
+def test_cli_formato_curto_define_alvo_28s():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,P,O+T,C", "--formato", "curto",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "formato: curto (alvo 28s finais" in resultado.stdout
+    assert "ALVO: 28.00s" in resultado.stdout
+
+
+def test_cli_formato_completo_avisa_com_menos_de_9_blocos():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,P,O+T,C", "--formato", "completo",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "abaixo de 9" in resultado.stdout
+
+
+def test_cli_formato_completo_nao_avisa_com_9_blocos_ou_mais():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,D,P,I,P,M,P+T,O,C", "--formato", "completo",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "abaixo de 9" not in resultado.stdout
+
+
+def test_cli_alvo_s_explicito_tem_prioridade_sobre_formato():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,D,P,I,P,M,P+T,O,C", "--formato", "completo", "--alvo-s", "40",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "ALVO: 40.00s" in resultado.stdout
+
+
+def test_cli_papeis_com_oferta_antes_do_cta_nao_avisa_oferta():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--papeis", "H,D,P,M,T,O,C",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "plano sem bloco O de oferta antes do CTA" not in resultado.stdout

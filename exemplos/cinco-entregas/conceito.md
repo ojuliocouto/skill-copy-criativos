@@ -13,6 +13,7 @@ marcas:
   - Operação Claude Code
   - Claude Code
   - Claude
+oferta: Operação Claude Code
 sequencia: H,P,P,P,M,P,P,P,O+T,C
 palavras_por_segundo: 2.9
 aceleracao: 1.45

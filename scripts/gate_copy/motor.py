@@ -32,7 +32,7 @@ from .leitura import (
 )
 from .limiares import LIMIARES, aplicar_gates
 from .regras.assets import checar_assets
-from .regras.cta import checar_cta, checar_ponte
+from .regras.cta import checar_cta, checar_oferta, checar_ponte
 from .regras.duracoes import checar_duracoes
 from .regras.garrafais import checar_garrafais
 from .regras.hook import checar_hook, checar_hooks_md
@@ -116,6 +116,7 @@ def rodar(
         achados.extend(checar_garrafais(blocos, garrafais))
         achados.extend(checar_cta(conceito, blocos, cta))
         achados.extend(checar_ponte(conceito, blocos, cta))
+        achados.extend(checar_oferta(conceito, blocos, cta))
         achados.extend(checar_assets(blocos, assets))
         achados.extend(checar_matriz(conceito, hooks, campos_matriz, pecas))
         achados.extend(checar_frases(blocos))

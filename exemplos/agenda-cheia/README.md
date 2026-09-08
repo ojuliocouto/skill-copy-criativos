@@ -1,7 +1,9 @@
 # Exemplo limpo: `agenda_cheia`
 
-Este é o **exemplo limpo** da skill: um pacote fictício de nove blocos que passa no gate com
-**zero reprovações e zero avisos**. É o que imitar quando você está aprendendo o formato.
+Este é o **exemplo limpo** da skill: um pacote fictício de dez blocos que passa no gate com
+**zero reprovações e três avisos assumidos** (duração total, densidade do fecho e blocos vizinhos
+sem insert, todos por causa do bloco de oferta que a versão 4 acrescentou, seção 1 abaixo). É o
+que imitar quando você está aprendendo o formato.
 
 O outro exemplo, `exemplos/cinco-entregas/`, reproduz uma peça **real** aprovada e por isso carrega
 treze avisos assumidos. Os dois são úteis por motivos diferentes: aquele mostra o que acontece
@@ -58,7 +60,7 @@ de apresentadora entre os itens, mecanismo nomeado e ponte com molde**.
 | mecanismo | "Você na cadeira, ele no WhatsApp. Quanto mais cheia a clínica, mais agendamento entra." | "Isso só é possível quando o atendimento não para. Clínica cheia vira mais agendamento." |
 | ponte | "É esse atendente que eu monto com você na aula." | "É exatamente isso que eu te ensino na aula." |
 | fecho do CTA | "Sai de lá com o seu marcando." | "Bora montar o seu." |
-| gate | zero reprovações, 1 aviso | **zero reprovações, zero avisos** |
+| gate | zero reprovações, 1 aviso | zero reprovações, zero avisos |
 
 Quatro moldes da casa entraram, e cada um tem endereço em `references/metodo-de-copy.md`:
 
@@ -73,6 +75,38 @@ Quatro moldes da casa entraram, e cada um tem endereço em `references/metodo-de
 
 O que **não** foi importado: escassez, lote, preço e data. Os treze anúncios da calibração são de
 campanha de lote, esta peça é fria, e a régua de frio continua valendo por cima da calibração.
+
+### v3 para v4: o bloco de oferta, obrigatório antes do CTA
+
+O dono da metodologia reprovou um ad de teste que ia da prova mais ponte direto pro CTA, com o
+veredito de sempre: "aqui você encaixa já trazendo o que é a aula, o que será feito, o que a
+pessoa ganha e o que ela precisa fazer pra ter acesso". Isso virou o papel `O` (oferta,
+`references/metodo-de-copy.md` seção 3) e uma regra nova do gate: **entre a prova e o CTA precisa
+existir um bloco que nomeie a oferta e diga a entrega**, senão reprova.
+
+A v3 tinha a ponte fechando o bloco 8 e o CTA vindo na sequência (`P+T`, `C`). A v4 acrescenta o
+bloco 9, só de oferta:
+
+| | v3 | v4 |
+|---|---|---|
+| blocos | 9 | 10 |
+| depois da ponte (bloco 8) | CTA direto | bloco 9, só de oferta: "Na aula gratuita do Agenda Cheia a gente monta o seu, passo a passo. Você sai com ele respondendo." |
+| sequência | `H,D,P,I,P,P,M,P+T,C` | `H,D,P,I,P,P,M,P+T,O,C` |
+| `oferta` no `conceito.md` | não existia | `aula gratuita do Agenda Cheia` |
+| gate | zero reprovações, zero avisos | zero reprovações, **três avisos assumidos** |
+
+O bloco 9 cumpre os quatro itens que o dono da metodologia cobrou: **o que é** (a aula gratuita do
+Agenda Cheia), **o que será feito** (a gente monta o seu), **o que a pessoa ganha** (passo a
+passo, o próprio atendente) e **como acessa** (a palavra "gratuita", mais o "toca em saiba mais"
+que já vem no CTA seguinte).
+
+**Os três avisos que a v4 assumiu**, todos consequência direta do bloco novo: a peça passou de
+29,96s para **34,48s finais** (acima do teto de referência de 30s da esteira, R6.1); os blocos 9 e
+10, os dois sem insert, somam **8,09s** (acima do teto de 6,0s de R3.3, porque o bloco de oferta
+não tem tela própria pra mostrar); e a densidade de insert da janela do fecho caiu pra **41%**
+(abaixo da faixa de 45 a 55%, porque o bloco 9 alonga o fecho sem trazer insert). Os três ficam
+registrados aqui e na entrega: o bloco de oferta é regra que reprova, e nenhum dos três avisos
+justifica tirá-lo de novo.
 
 ---
 
@@ -93,14 +127,15 @@ campanha de lote, esta peça é fria, e a régua de frio continua valendo por ci
 **A sequência de papéis vem primeiro**, e está declarada no `conceito.md`:
 
 ```
-sequencia: H,D,P,I,P,P,M,P+T,C
+sequencia: H,D,P,I,P,P,M,P+T,O,C
 ```
 
-É a sequência de enumeração do `references/metodo-de-copy.md` (`H D P I P P M P+T C`). Lida em
+É a sequência de enumeração do `references/metodo-de-copy.md` (`H D P I P P M P+T O C`). Lida em
 português: o paradoxo abre (`H`), a dor é nomeada (`D`), o primeiro item da prova aparece na tela
 (`P`), a identificação serve de respiro e diz para quem isso é (`I`), o segundo e o terceiro itens
 fecham a lista (`P`, `P`), a virada nomeia o mecanismo (`M`), o caso da Dra. Renata fecha a prova e
-emenda a ponte (`P+T`), e o CTA pede a ação (`C`).
+emenda a ponte (`P+T`), o bloco de oferta diz o que é, o que se faz, o que a pessoa ganha e como
+acessa (`O`), e o CTA pede a ação (`C`).
 
 Só depois disso vem a tabela, que é o que o cliente aprova **antes** de o texto virar `roteiro.txt`.
 Conversão usada: duração final = palavras / 2,9 / 1,45, ou seja **4,205 palavras por segundo
@@ -119,10 +154,12 @@ São alfabetos diferentes e não se misturam.
 | 6 | P | E no dia ele ainda manda lembrete. Ninguém esquece e a cadeira não fica vazia. | 15 | 3,57s | 3,50s (insert; a placa pedia 2,80s) | sim | atendente mandando o lembrete no whatsapp | e no dia | MANDA LEMBRETE | placa_h1 |
 | 7 | M | Isso só é possível quando o atendimento não para. Clínica cheia vira mais agendamento. | 14 | 3,33s | teto de 6,00s (apresentadora sozinha) | sim | nenhum | nenhum | nenhum | nenhuma |
 | 8 | P+T | Dra. Renata dobrou a agenda num mês. É exatamente isso que eu te ensino na aula. | 16 | 3,80s | 3,75s (KEY em coluna, 3 palavras de tempo) | sim | print da agenda cheia da dra renata | Dra. Renata | DOBROU A AGENDA | coluna |
-| 9 | C | Toca em saiba mais e entra na aula do Agenda Cheia. Bora montar o seu. | 15 | 3,57s | 3,05s (KEY em seta_cta) e 3,00s (CTA) | sim | nenhum | toca em saiba mais | ENTRA NA AULA | seta_cta |
+| 9 | O | Na aula gratuita do Agenda Cheia a gente monta o seu, passo a passo. Você sai com ele respondendo. | 19 | 4,52s | teto de 6,00s (apresentadora sozinha) | sim, aviso de vizinhos com o bloco 10 | nenhum | na aula gratuita | PASSO A PASSO | placa_h4 |
+| 10 | C | Toca em saiba mais e entra na aula do Agenda Cheia. Bora montar o seu. | 15 | 3,57s | 3,05s (KEY em seta_cta) e 3,00s (CTA) | sim | nenhum | toca em saiba mais | ENTRA NA AULA | seta_cta |
 
-**Total: 126 palavras, 29,96s finais.** A faixa de pago frio é 15 a 30s, então a peça cabe, e cabe
-apertado no teto: qualquer palavra a mais no roteiro vira aviso de duração.
+**Total: 160 palavras, 34,48s finais.** A faixa de pago frio é 15 a 30s (aviso, não reprovação,
+R6.1), e o bloco de oferta empurrou a peça 4,52s pra fora do teto. É o custo assumido do bloco
+obrigatório: fica registrado como aviso, não como motivo pra tirar o bloco 9.
 
 Repare na contagem do KEY, que são duas contas diferentes. `RESPONDE EM SEGUNDOS` vale **2** para
 o limite de palavras de conteúdo ("em" é funcional e não conta) e **3** para o tempo de leitura,
@@ -146,7 +183,7 @@ Comando rodado antes da copy:
 
 ```bash
 python3 scripts/planejar_blocos.py --modo pago --campanha frio \
-  --blocos "L,L,I,A,I,I,A,I,C" --palavras "13,12,15,11,15,15,14,16,15"
+  --blocos "L,L,I,A,I,I,A,I,L,C" --palavras "13,12,15,11,15,15,14,16,19,15"
 ```
 
 ### Por que a enumeração precisa do bloco 4
@@ -212,6 +249,10 @@ python3 scripts/gate_copy.py exemplos/agenda-cheia
 Saída:
 
 ```
+AVISOS:
+  - roteiro blocos 9 e 10: blocos vizinhos sem insert somam acima do máximo (R3.3) (medido: 8.09s; limiar: <= 6.00s). Faça: intercale um insert entre esses dois blocos ou corte a fala de um deles
+  - roteiro: duração total fora da faixa esperada (R6.1) (medido: 34.48s; limiar: 15.0s a 30.0s). Faça: ajuste o roteiro (corte ou acrescente fala) pra caber na faixa esperada
+  - roteiro janela fecho: densidade de insert fora da faixa esperada (R3.4) (medido: 41%; limiar: 45% a 55%). Faça: intercale um bloco de apresentador sozinho entre dois inserts desta janela; alvo 45% a 55%
 RESUMO POR BLOCO:
   bloco 1: 13 palavras, 4.48s natural, 3.09s final, insert=False, key=PERDE CLIENTE
   bloco 2: 12 palavras, 4.14s natural, 2.85s final, insert=False, key=OUTRA CLÍNICA
@@ -221,14 +262,14 @@ RESUMO POR BLOCO:
   bloco 6: 15 palavras, 5.17s natural, 3.57s final, insert=True, key=MANDA LEMBRETE
   bloco 7: 14 palavras, 4.83s natural, 3.33s final, insert=False, key=
   bloco 8: 16 palavras, 5.52s natural, 3.80s final, insert=True, key=DOBROU A AGENDA
-  bloco 9: 15 palavras, 5.17s natural, 3.57s final, insert=False, key=ENTRA NA AULA
-Pacote aprovado, sem reprovações nem avisos.
+  bloco 9: 19 palavras, 6.55s natural, 4.52s final, insert=False, key=PASSO A PASSO
+  bloco 10: 15 palavras, 5.17s natural, 3.57s final, insert=False, key=ENTRA NA AULA
 ```
 
-**Zero reprovações e zero avisos.** Dois avisos apareceram na primeira rodada, nos blocos 5 e 6,
-porque as duas falas tinham 15 palavras numa frase só. As duas viraram duas frases curtas, sem
-mudar a contagem total nem a duração do bloco. Fica o registro: aviso de frase longa quase sempre
-se resolve com um ponto final no lugar de uma vírgula.
+**Zero reprovações, três avisos assumidos** (código de saída 0). Os três vêm do bloco 9, o bloco de
+oferta que a v4 acrescentou entre a prova e o CTA (seção 1): duração total acima do teto de
+referência, blocos 9 e 10 vizinhos sem insert somando acima do teto, e densidade do fecho abaixo da
+faixa. Nenhum dos três é motivo pra tirar o bloco: sem ele o CTA reprova por falta de oferta.
 
 ---
 
