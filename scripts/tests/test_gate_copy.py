@@ -11,6 +11,7 @@ import json
 import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import pytest
@@ -667,34 +668,34 @@ def test_campo_ponte_bloco_inexistente_reprova(tmp_path):
     assert tem_reprovacao_contendo(resultado, "campo ponte cita bloco inexistente")
 
 
-AGENDA_CHEIA_V2_DIR = (
-    "/private/tmp/claude-501/-Users-ojuliocouto/a1c3bb08-9ae2-4bc1-918d-108dadba08a3/scratchpad/agenda_cheia_v2"
+AGENDA_CHEIA_DIR = str(
+    Path(__file__).resolve().parents[2] / "exemplos" / "agenda-cheia"
 )
 
 
-@pytest.mark.skipif(not os.path.isdir(AGENDA_CHEIA_V2_DIR), reason="pacote agenda_cheia_v2 não está no scratchpad desta sessão")
-def test_pacote_real_agenda_cheia_v2_passa_com_ponte():
-    """Pacote v2 corrigido depois da reprovação do dono da metodologia: a
-    ponte é "É esse atendente que eu monto com você na aula", no bloco 5,
-    imediatamente antes do CTA (bloco 6)."""
-    resultado = gc.rodar(AGENDA_CHEIA_V2_DIR)
+def test_pacote_real_agenda_cheia_passa_com_ponte():
+    """Pacote versionado do exemplo agenda-cheia (v3): a ponte é "É
+    exatamente isso que eu te ensino na aula", no bloco 8, imediatamente
+    antes do CTA (bloco 9). Zero reprovações, zero avisos."""
+    resultado = gc.rodar(AGENDA_CHEIA_DIR)
     assert not tem_reprovacao_contendo(resultado, "CTA sem ponte")
     assert resultado["reprovacoes"] == []
+    assert resultado["avisos"] == []
 
 
-@pytest.mark.skipif(not os.path.isdir(AGENDA_CHEIA_V2_DIR), reason="pacote agenda_cheia_v2 não está no scratchpad desta sessão")
-def test_pacote_real_agenda_cheia_v2_sem_ponte_reprova(tmp_path):
-    """Mutação do pacote v2 real: tira a ponte do bloco 5 e o gate reprova."""
-    with open(os.path.join(AGENDA_CHEIA_V2_DIR, "roteiro.txt"), "r", encoding="utf-8") as f:
+def test_pacote_real_agenda_cheia_sem_ponte_reprova(tmp_path):
+    """Mutação do pacote real agenda-cheia: tira a ponte do bloco 8 e o
+    gate reprova."""
+    with open(os.path.join(AGENDA_CHEIA_DIR, "roteiro.txt"), "r", encoding="utf-8") as f:
         roteiro = f.read()
     roteiro_sem_ponte = roteiro.replace(
-        "É esse atendente que eu monto com você na aula.",
+        "É exatamente isso que eu te ensino na aula.",
         "Sem contratar mais ninguém pra clínica.",
     )
-    assert roteiro_sem_ponte != roteiro, "marcador de ponte não encontrado no roteiro.txt do v2"
+    assert roteiro_sem_ponte != roteiro, "marcador de ponte não encontrado no roteiro.txt do agenda-cheia"
 
-    for nome in os.listdir(AGENDA_CHEIA_V2_DIR):
-        origem = os.path.join(AGENDA_CHEIA_V2_DIR, nome)
+    for nome in os.listdir(AGENDA_CHEIA_DIR):
+        origem = os.path.join(AGENDA_CHEIA_DIR, nome)
         destino = os.path.join(str(tmp_path), nome)
         with open(origem, "r", encoding="utf-8") as f:
             conteudo = f.read()
@@ -704,7 +705,7 @@ def test_pacote_real_agenda_cheia_v2_sem_ponte_reprova(tmp_path):
         f.write(roteiro_sem_ponte)
 
     resultado = gc.rodar(str(tmp_path))
-    # Sem o marcador de ponte no bloco 5, a checagem estrutural (bloco
+    # Sem o marcador de ponte no bloco 8, a checagem estrutural (bloco
     # anterior sem ponte) OU a checagem do campo "ponte" declarado em
     # cta.md (frase que não bate mais com a fala do bloco) reprova.
     assert tem_reprovacao_contendo(resultado, "CTA sem ponte") or tem_reprovacao_contendo(

@@ -54,8 +54,12 @@ _NOMES_TIPO = {
 
 # Tipos que valem como "tem ponte" imediatamente antes do "C": um bloco de
 # ponte propriamente dito, ou um insert (a fala da ponte pode vir junto com
-# o insert, como em agenda_cheia_v2 bloco 5).
+# o insert, como no exemplo agenda-cheia, bloco 8).
 _TIPOS_QUE_CONTAM_COMO_PONTE = ("P", "I")
+
+# Tipos com maximo PROPRIO (limite de duracao real, nao o teto generico de
+# frase): usados pra saber quando o ponto medio e (min+max)/2 versus min+6.
+_TIPOS_COM_MAXIMO_PROPRIO = ("A", "P", "C")
 
 
 def validar_tipos(tipos: Sequence[str]) -> List[str]:
@@ -108,6 +112,11 @@ def _maximo_segundos(tipo: str, limiares: Dict[str, Any]) -> Optional[float]:
 
 
 def min_palavras_do_tipo(tipo: str, pps: float, aceleracao: float, limiares: Dict[str, Any] = LIMIARES) -> int:
+    if tipo in ("A", "P"):
+        # sem minimo de duracao proprio, mas com piso de palavras (uma
+        # frase curta): sem isso a simulacao no minimo sai com 0 palavras
+        # e "duracao 0.00s", distorcendo a densidade de insert.
+        return int(limiares["piso_apresentador_sozinho_palavras"])
     segundos = _minimo_segundos(tipo, limiares)
     if segundos <= 0:
         return 0
@@ -120,6 +129,17 @@ def max_palavras_do_tipo(tipo: str, pps: float, aceleracao: float, limiares: Dic
     if segundos is None:
         return teto_frase
     return min(teto_frase, math.floor(segundos * pps * aceleracao))
+
+
+def medio_palavras_do_tipo(tipo: str, min_palavras: int, max_palavras: int) -> int:
+    """Palavras do bloco no PONTO MEDIO entre o minimo e o maximo: a
+    simulacao que se parece com um roteiro real (nem o pior caso mais
+    compacto, nem o teto de frase). Para bloco sem maximo PROPRIO (I, L,
+    LC: o "maximo" deles e so o teto generico de frase, nao um limite de
+    duracao do proprio tipo), usa minimo + 6 em vez de (min+max)/2."""
+    if tipo in _TIPOS_COM_MAXIMO_PROPRIO:
+        return int(round((min_palavras + max_palavras) / 2.0))
+    return min_palavras + 6
 
 
 @dataclass
@@ -217,8 +237,18 @@ def planejar(
     limiares: Dict[str, Any] = LIMIARES,
 ) -> Dict[str, Any]:
     """Monta o plano de bloco a bloco (mínimo/máximo de palavras) e simula
-    a linha do tempo: com `palavras` (roteiro já contado) ou, sem ela, com
-    o MÍNIMO de cada bloco (pior caso mais compacto)."""
+    a linha do tempo.
+
+    Com `palavras` (roteiro já contado): simula esse roteiro, pros mesmos
+    números que o gate mediria depois.
+
+    Sem `palavras`: simula DUAS vezes. A simulação no MÍNIMO de cada bloco
+    (pior caso mais compacto) fica em `blocos_simulados_minimo` /
+    `densidade_minimo`, só de referência. A recomendação final (`palavras`
+    de cada `LinhaPlano`, `blocos_simulados`, `total_final_s`, `densidade`)
+    usa o PONTO MÉDIO entre mínimo e máximo de cada bloco: é a simulação
+    que se parece com um roteiro real, sem os blocos "A"/"P" saindo com
+    0 palavras."""
     tipos = validar_tipos(tipos)
     if palavras is not None and len(palavras) != len(tipos):
         raise ValueError(
@@ -231,7 +261,10 @@ def planejar(
     for i, tipo in enumerate(tipos, start=1):
         min_p = min_palavras_do_tipo(tipo, pps, aceleracao, limiares)
         max_p = max_palavras_do_tipo(tipo, pps, aceleracao, limiares)
-        usada = palavras[i - 1] if palavras is not None else min_p
+        if palavras is not None:
+            usada = palavras[i - 1]
+        else:
+            usada = medio_palavras_do_tipo(tipo, min_p, max_p)
         linhas.append(
             LinhaPlano(
                 indice=i,
@@ -254,6 +287,15 @@ def planejar(
     total_final_s = sum(b.duracao_final for b in blocos_simulados)
     densidade = calcular_densidade(blocos_simulados, limiares)
 
+    blocos_simulados_minimo: Optional[List[Bloco]] = None
+    densidade_minimo: Optional[Dict[str, Dict[str, Any]]] = None
+    total_final_s_minimo: Optional[float] = None
+    if palavras is None:
+        palavras_minimo = [l.min_palavras for l in linhas]
+        blocos_simulados_minimo = _simular(tipos, palavras_minimo, pps, aceleracao)
+        total_final_s_minimo = sum(b.duracao_final for b in blocos_simulados_minimo)
+        densidade_minimo = calcular_densidade(blocos_simulados_minimo, limiares)
+
     alvo_cabe: Optional[bool] = None
     if alvo_s is not None:
         alvo_cabe = soma_min_s <= alvo_s <= soma_max_s
@@ -271,6 +313,9 @@ def planejar(
         "blocos_simulados": blocos_simulados,
         "total_final_s": total_final_s,
         "densidade": densidade,
+        "blocos_simulados_minimo": blocos_simulados_minimo,
+        "total_final_s_minimo": total_final_s_minimo,
+        "densidade_minimo": densidade_minimo,
         "usando_palavras_informadas": palavras is not None,
         "avisos_plano": avisos_plano,
     }
@@ -284,12 +329,14 @@ def formatar_relatorio(resultado: Dict[str, Any]) -> str:
         for aviso in resultado["avisos_plano"]:
             linhas_txt.append("  - " + aviso)
         linhas_txt.append("")
+    usando_palavras = resultado["usando_palavras_informadas"]
+    rotulo_usada = "roteiro já contado (--palavras)" if usando_palavras else "ponto médio (recomendação final)"
     linhas_txt.append("PLANO POR BLOCO:")
     for l in resultado["linhas"]:
         nome_tipo = _NOMES_TIPO.get(l.tipo, l.tipo)
         linhas_txt.append(
-            "  bloco %d (%s, %s): min %d palavras, max %d palavras (usado nesta simulação: %d)"
-            % (l.indice, l.tipo, nome_tipo, l.min_palavras, l.max_palavras, l.palavras)
+            "  bloco %d (%s, %s): min %d palavras, max %d palavras (usado nesta simulação [%s]: %d)"
+            % (l.indice, l.tipo, nome_tipo, l.min_palavras, l.max_palavras, rotulo_usada, l.palavras)
         )
 
     linhas_txt.append("")
@@ -307,24 +354,51 @@ def formatar_relatorio(resultado: Dict[str, Any]) -> str:
             % (resultado["alvo_s"], veredito, resultado["soma_min_s"], resultado["soma_max_s"])
         )
 
-    linhas_txt.append("")
-    origem = "roteiro já contado (--palavras)" if resultado["usando_palavras_informadas"] else "mínimo de cada bloco"
-    linhas_txt.append("SIMULAÇÃO (" + origem + "), início de cada bloco em segundos finais:")
-    for b in resultado["blocos_simulados"]:
-        linhas_txt.append(
-            "  bloco %d: início %.2fs, duração %.2fs (%d palavras)"
-            % (b.numero, b.inicio_final, b.duracao_final, b.palavras)
-        )
-    linhas_txt.append("  duração total final: %.2fs" % resultado["total_final_s"])
+    def _bloco_simulacao_txt(blocos: Sequence[Bloco]) -> List[str]:
+        saida: List[str] = []
+        for b in blocos:
+            saida.append(
+                "  bloco %d: início %.2fs, duração %.2fs (%d palavras)"
+                % (b.numero, b.inicio_final, b.duracao_final, b.palavras)
+            )
+        return saida
 
-    linhas_txt.append("")
-    linhas_txt.append("DENSIDADE DE INSERT POR JANELA:")
-    if not resultado["densidade"]:
-        linhas_txt.append("  peça curta demais pra ter janela corpo/fecho medida")
-    for nome, dados in resultado["densidade"].items():
-        base = "  %s (%.1fs a %.1fs): %.0f%%" % (nome, dados["ini_s"], dados["fim_s"], dados["fracao"] * 100)
-        if "sugestao" in dados:
-            base += ". Faça: " + dados["sugestao"]
-        linhas_txt.append(base)
+    def _densidade_txt(densidade: Dict[str, Dict[str, Any]]) -> List[str]:
+        saida: List[str] = []
+        if not densidade:
+            saida.append("  peça curta demais pra ter janela corpo/fecho medida")
+        for nome, dados in densidade.items():
+            base = "  %s (%.1fs a %.1fs): %.0f%%" % (nome, dados["ini_s"], dados["fim_s"], dados["fracao"] * 100)
+            if "sugestao" in dados:
+                base += ". Faça: " + dados["sugestao"]
+            saida.append(base)
+        return saida
+
+    if not usando_palavras:
+        # Sem roteiro real: mostra as duas simulações (mínimo, so de
+        # referência do pior caso; ponto médio, a recomendação final).
+        linhas_txt.append("")
+        linhas_txt.append("SIMULAÇÃO NO MÍNIMO DE CADA BLOCO (pior caso mais compacto, só referência):")
+        linhas_txt.extend(_bloco_simulacao_txt(resultado["blocos_simulados_minimo"]))
+        linhas_txt.append("  duração total final: %.2fs" % resultado["total_final_s_minimo"])
+        linhas_txt.append("")
+        linhas_txt.append("DENSIDADE DE INSERT POR JANELA (no mínimo):")
+        linhas_txt.extend(_densidade_txt(resultado["densidade_minimo"]))
+
+        linhas_txt.append("")
+        linhas_txt.append("SIMULAÇÃO NO PONTO MÉDIO (recomendação final, parecida com um roteiro real):")
+        linhas_txt.extend(_bloco_simulacao_txt(resultado["blocos_simulados"]))
+        linhas_txt.append("  duração total final: %.2fs" % resultado["total_final_s"])
+        linhas_txt.append("")
+        linhas_txt.append("DENSIDADE DE INSERT POR JANELA (recomendação final, ponto médio):")
+        linhas_txt.extend(_densidade_txt(resultado["densidade"]))
+    else:
+        linhas_txt.append("")
+        linhas_txt.append("SIMULAÇÃO (" + rotulo_usada + "), início de cada bloco em segundos finais:")
+        linhas_txt.extend(_bloco_simulacao_txt(resultado["blocos_simulados"]))
+        linhas_txt.append("  duração total final: %.2fs" % resultado["total_final_s"])
+        linhas_txt.append("")
+        linhas_txt.append("DENSIDADE DE INSERT POR JANELA:")
+        linhas_txt.extend(_densidade_txt(resultado["densidade"]))
 
     return "\n".join(linhas_txt)

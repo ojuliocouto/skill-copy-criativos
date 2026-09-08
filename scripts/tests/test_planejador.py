@@ -20,6 +20,7 @@ from gate_copy.planejador import (  # noqa: E402
     calcular_densidade,
     checar_ponte_do_plano,
     max_palavras_do_tipo,
+    medio_palavras_do_tipo,
     min_palavras_do_tipo,
     planejar,
     validar_tipos,
@@ -43,8 +44,9 @@ def test_palavras_min_max_batem_com_limiares_padrao():
     assert min_palavras_do_tipo("LC", 2.9, 1.45) == 15
     # cta_min_s=3.0 -> ceil(3.0*2.9*1.45) = 13
     assert min_palavras_do_tipo("C", 2.9, 1.45) == 13
-    # "A" nao tem minimo proprio
-    assert min_palavras_do_tipo("A", 2.9, 1.45) == 0
+    # "A" nao tem minimo de DURACAO proprio, mas tem piso de PALAVRAS
+    # (uma frase curta), pra simulacao no minimo nao sair com "0.00s"
+    assert min_palavras_do_tipo("A", 2.9, 1.45) == 6
     # teto de frase (20) e o teto padrao pra quem nao tem duracao maxima
     assert max_palavras_do_tipo("I", 2.9, 1.45) == 20
     assert max_palavras_do_tipo("L", 2.9, 1.45) == 20
@@ -159,6 +161,67 @@ def test_plano_e_incluido_no_resultado_de_planejar():
 def test_p_tem_mesmos_limites_de_a():
     assert min_palavras_do_tipo("P", 2.9, 1.45) == min_palavras_do_tipo("A", 2.9, 1.45)
     assert max_palavras_do_tipo("P", 2.9, 1.45) == max_palavras_do_tipo("A", 2.9, 1.45)
+
+
+# ---------------------------------------------------------------------------
+# Piso de palavras do "A"/"P" (bloco de apresentador sozinho, sem insert e
+# sem KEY) e o ponto médio como recomendação final (sem isso a simulação no
+# mínimo saía com 0 palavras e "duração 0.00s", distorcendo a densidade).
+# ---------------------------------------------------------------------------
+
+AGENDA_CHEIA_V3_TIPOS = ["L", "L", "I", "A", "I", "I", "A", "I", "C"]
+AGENDA_CHEIA_V3_PALAVRAS = [13, 12, 15, 11, 15, 15, 14, 16, 15]
+
+
+def test_agenda_cheia_v3_com_palavras_reproduz_densidade_medida_pelo_gate():
+    # Mesmo plano e mesma contagem de palavras do exemplo versionado
+    # exemplos/agenda-cheia: rodando o gate nesse pacote real dá zero
+    # reprovações e zero avisos, ou seja, corpo e fecho já caem dentro da
+    # faixa 45% a 55% de densidade de insert.
+    resultado = planejar(AGENDA_CHEIA_V3_TIPOS, pps=2.9, aceleracao=1.45, palavras=AGENDA_CHEIA_V3_PALAVRAS)
+    densidade = resultado["densidade"]
+    assert "corpo" in densidade
+    assert 0.45 <= densidade["corpo"]["fracao"] <= 0.55
+    assert "sugestao" not in densidade["corpo"]
+    assert "fecho" in densidade
+    assert 0.45 <= densidade["fecho"]["fracao"] <= 0.55
+    assert "sugestao" not in densidade["fecho"]
+
+
+def test_medio_palavras_de_a_e_p_usa_meio_do_minimo_ao_maximo():
+    min_p = min_palavras_do_tipo("A", 2.9, 1.45)
+    max_p = max_palavras_do_tipo("A", 2.9, 1.45)
+    assert medio_palavras_do_tipo("A", min_p, max_p) == round((min_p + max_p) / 2)
+
+
+def test_medio_palavras_de_bloco_sem_maximo_proprio_usa_minimo_mais_seis():
+    min_p = min_palavras_do_tipo("I", 2.9, 1.45)
+    assert medio_palavras_do_tipo("I", min_p, max_palavras_do_tipo("I", 2.9, 1.45)) == min_p + 6
+
+
+def test_plano_sem_palavras_nao_tem_nenhum_bloco_com_zero_palavras():
+    resultado = planejar(AGENDA_CHEIA_V3_TIPOS, pps=2.9, aceleracao=1.45)
+    assert all(l.palavras > 0 for l in resultado["linhas"])
+    assert all(b.palavras > 0 for b in resultado["blocos_simulados"])
+    assert all(b.duracao_final > 0 for b in resultado["blocos_simulados"])
+    # a recomendação final é o ponto médio, não o mínimo
+    assert resultado["blocos_simulados"] != resultado["blocos_simulados_minimo"]
+
+
+def test_cli_plano_agenda_cheia_v3_sem_palavras_nao_imprime_bloco_com_zero():
+    resultado = subprocess.run(
+        [
+            sys.executable, PLANEJAR_PATH,
+            "--modo", "pago", "--campanha", "frio",
+            "--blocos", "L,L,I,A,I,I,A,I,C",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0
+    assert "duração 0.00s (0 palavras)" not in resultado.stdout
+    assert "(0 palavras)" not in resultado.stdout
+    assert "PONTO MÉDIO" in resultado.stdout
 
 
 def test_cli_tipo_invalido_retorna_erro():

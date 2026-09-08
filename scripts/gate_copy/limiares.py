@@ -57,6 +57,11 @@ LIMIARES: Dict[str, Any] = {
     # tabela secao 9, "frase"
     "frase_max_palavras": 20,
     "frase_aviso_palavras": 14,
+    # piso de palavras pra bloco "A"/"P" (apresentador sozinho, sem insert
+    # e sem KEY): sem isso a simulacao do planejador saia com 0 palavras e
+    # "duracao 0.00s", distorcendo a densidade de insert. Valor de partida
+    # da skill (uma frase curta), sem fonte na esteira.
+    "piso_apresentador_sozinho_palavras": 6,
     # tabela secao 9, "duracao total" (R6.1, so aviso)
     "duracao_total_pago_min_s": 15.0,
     "duracao_total_pago_max_s": 30.0,
