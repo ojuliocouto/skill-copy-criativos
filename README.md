@@ -196,6 +196,7 @@ scripts/gate_copy/                the gate: readers, text normalisation, one mod
 scripts/planejar_blocos.py        block planner: words per block, timeline, density per window
 scripts/tests/                    tests (a valid package plus one mutation per rule)
 exemplos/sem-contratar/           the full-format reference package (service): zero rejections
+exemplos/casa-medida/             the full-format package on a PHYSICAL product (custom furniture)
 exemplos/agenda-cheia/            the short-format reference package: zero rejections, three declared warnings
 exemplos/cinco-entregas/          a real approved ad rebuilt: zero rejections, 13 acknowledged warnings
 ```

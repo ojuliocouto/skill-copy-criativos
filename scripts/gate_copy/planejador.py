@@ -115,15 +115,36 @@ def derivar_forma_de_papeis(papeis: Sequence[str]) -> List[str]:
     return formas
 
 
+# Componentes (papel OU forma) que valem como "tem ponte" imediatamente
+# antes do "C": os símbolos de FORMA "P" (ponte) e "I" (insert, a fala da
+# ponte pode vir junto com o insert), mais os símbolos de PAPEL "T" (ponte)
+# e "O" (a ponte pode ser a última frase da própria oferta, decisão do
+# dono da metodologia). Um "T"/"O" nunca aparece no alfabeto de forma, e um
+# "P"/"I" de forma não colide com o significado de papel, então o mesmo
+# conjunto serve pras duas chamadas (`checar_ponte_do_plano(tipos)` com a
+# FORMA derivada, ou com a lista de PAPÉIS direto).
+_COMPONENTES_QUE_CONTAM_COMO_PONTE = frozenset(_TIPOS_QUE_CONTAM_COMO_PONTE) | {"T", "O"}
+
+# Janela de blocos ANTES do "C" onde o bloco de oferta pode morar (mesma
+# janela que o gate mede em `regras.cta.checar_oferta`: até os 3 blocos
+# imediatamente anteriores ao CTA, porque o bloco de oferta pode ocupar
+# mais de uma posição, e a ponte pode ficar colada nele, entre a oferta e
+# o CTA).
+_JANELA_OFERTA_ANTES_DO_CTA = 3
+
+
 def checar_ponte_do_plano(tipos: Sequence[str]) -> List[str]:
-    """Avisa quando o bloco logo antes de um "C" não é "P" nem "I" (regra
-    do dono da metodologia: CTA sem ponte)."""
+    """Avisa quando o bloco logo antes de um "C" não carrega ponte. Aceita
+    "P" ou "I" na FORMA da peça, e "T", "P+T", "I", "O+T" ou "O" no PAPEL
+    (a ponte pode ser a última frase da própria oferta)."""
     avisos: List[str] = []
     for i, tipo in enumerate(tipos):
-        if tipo != "C":
+        if tipo.strip().upper() != "C":
             continue
         anterior = tipos[i - 1] if i > 0 else None
-        if anterior not in _TIPOS_QUE_CONTAM_COMO_PONTE:
+        componentes = [c.strip().upper() for c in anterior.split("+")] if anterior else []
+        tem_ponte = any(c in _COMPONENTES_QUE_CONTAM_COMO_PONTE for c in componentes)
+        if not tem_ponte:
             avisos.append(
                 "plano sem ponte antes do CTA (bloco " + str(i + 1) + "). Faça: use P "
                 "(bloco de ponte) ou I (insert com a fala da ponte) imediatamente antes do C"
@@ -132,21 +153,28 @@ def checar_ponte_do_plano(tipos: Sequence[str]) -> List[str]:
 
 
 def checar_oferta_do_plano(papeis: Sequence[str]) -> List[str]:
-    """Avisa quando o papel logo antes de um "C" não carrega "O" (sozinho
-    ou combinado, como "O+T"): regra do dono da metodologia, seção 3 e 4
-    de `references/metodo-de-copy.md` (bloco de oferta obrigatório antes
-    do CTA). Opera no alfabeto de PAPÉIS (`--papeis`), não no de forma."""
+    """Avisa quando nenhum dos até 3 papéis imediatamente antes de um "C"
+    carrega "O" (sozinho ou combinado, como "O+T"): regra do dono da
+    metodologia, seção 3 e 4 de `references/metodo-de-copy.md` (bloco de
+    oferta obrigatório antes do CTA). Mesma janela que o gate mede em
+    `regras.cta.checar_oferta` (o bloco de oferta pode não ser o
+    imediatamente anterior ao CTA, com a ponte entre os dois). Opera no
+    alfabeto de PAPÉIS (`--papeis`), não no de forma."""
     avisos: List[str] = []
     for i, papel in enumerate(papeis):
         if papel.strip().upper() != "C":
             continue
-        anterior = papeis[i - 1] if i > 0 else None
-        componentes = [c.strip().upper() for c in anterior.split("+")] if anterior else []
-        if "O" not in componentes:
+        inicio_janela = max(0, i - _JANELA_OFERTA_ANTES_DO_CTA)
+        candidatos = papeis[inicio_janela:i]
+        tem_oferta = any(
+            "O" in [c.strip().upper() for c in candidato.split("+")]
+            for candidato in candidatos
+        )
+        if not tem_oferta:
             avisos.append(
                 "plano sem bloco O de oferta antes do CTA (bloco " + str(i + 1) + "). Faça: "
-                "acrescente um papel O (oferta) imediatamente antes do C, sozinho ou "
-                "combinado (O+T)"
+                "acrescente um papel O (oferta) em algum dos " + str(_JANELA_OFERTA_ANTES_DO_CTA)
+                + " blocos antes do C, sozinho ou combinado (O+T)"
             )
     return avisos
 

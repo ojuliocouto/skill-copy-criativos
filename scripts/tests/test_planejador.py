@@ -20,6 +20,7 @@ from gate_copy.planejador import (  # noqa: E402
     calcular_densidade,
     capacidade_de_garrafais,
     checar_capacidade_de_garrafais,
+    checar_oferta_do_plano,
     checar_ponte_do_plano,
     checar_vizinhos_sem_insert,
     derivar_forma_de_papeis,
@@ -503,3 +504,68 @@ def test_cli_papeis_com_oferta_antes_do_cta_nao_avisa_oferta():
     )
     assert resultado.returncode == 0
     assert "plano sem bloco O de oferta antes do CTA" not in resultado.stdout
+
+
+# ---------------------------------------------------------------------------
+# Planejador x gate na oferta/ponte (item 5 da correção): `checar_oferta_do_plano`
+# aceita "O" em qualquer um dos 3 papéis antes do "C" (igual à janela do gate
+# em `regras.cta.checar_oferta`), e `checar_ponte_do_plano` aceita a ponte em
+# "T", "P+T", "I", "O+T" ou "O" imediatamente antes do "C" (a ponte pode ser a
+# última frase da própria oferta).
+# ---------------------------------------------------------------------------
+
+
+def test_sequencia_real_casa_medida_sem_aviso_de_oferta_nem_ponte():
+    """H,D,P,I,P,M,P,O,P+T,C (a sequência real do pacote Casa Medida): o
+    "O" está no bloco 8, com "P+T" (a ponte) entre ele e o "C" no bloco 10.
+    Antes da correção, `checar_oferta_do_plano` só olhava o papel
+    IMEDIATAMENTE anterior ao "C" (aqui, "P+T", sem "O") e avisava à toa."""
+    papeis = ["H", "D", "P", "I", "P", "M", "P", "O", "P+T", "C"]
+    assert checar_oferta_do_plano(papeis) == []
+
+    tipos = derivar_forma_de_papeis(papeis)
+    assert checar_ponte_do_plano(tipos) == []
+
+
+def test_checar_oferta_do_plano_aceita_o_ate_3_blocos_antes_do_c():
+    """"O" dois blocos antes do "C" (dentro da janela de 3) não avisa."""
+    assert checar_oferta_do_plano(["H", "O", "T", "C"]) == []
+
+
+def test_checar_oferta_do_plano_o_fora_da_janela_de_3_avisa():
+    """"O" quatro blocos antes do "C" (fora da janela de 3) ainda avisa."""
+    avisos = checar_oferta_do_plano(["H", "O", "D", "M", "T", "C"])
+    assert len(avisos) == 1
+    assert "plano sem bloco O de oferta antes do CTA" in avisos[0]
+
+
+def test_checar_oferta_do_plano_sem_o_na_janela_avisa():
+    avisos = checar_oferta_do_plano(["H", "D", "P", "M", "T", "C"])
+    assert len(avisos) == 1
+    assert "plano sem bloco O de oferta antes do CTA" in avisos[0]
+    assert "Faça:" in avisos[0]
+
+
+def test_checar_ponte_do_plano_aceita_papel_t_imediatamente_antes_do_c():
+    assert checar_ponte_do_plano(["H", "D", "P", "T", "C"]) == []
+
+
+def test_checar_ponte_do_plano_aceita_papel_o_imediatamente_antes_do_c():
+    """A ponte pode ser a última frase da própria oferta: um "O" sozinho
+    imediatamente antes do "C" também conta como ponte."""
+    assert checar_ponte_do_plano(["H", "D", "P", "O", "C"]) == []
+
+
+def test_checar_ponte_do_plano_aceita_o_mais_t_combinado_antes_do_c():
+    assert checar_ponte_do_plano(["H", "D", "P", "O+T", "C"]) == []
+
+
+def test_checar_ponte_do_plano_forma_continua_igual_antes_da_correcao():
+    """As chamadas antigas (alfabeto de FORMA: I/L/LC/A/P/C) continuam
+    exatamente com o mesmo resultado: "T" e "O" nunca aparecem nesse
+    alfabeto, então a expansão não muda nada aqui."""
+    assert checar_ponte_do_plano(["L", "L", "I", "P", "C"]) == []
+    assert checar_ponte_do_plano(["L", "L", "I", "C"]) == []
+    avisos = checar_ponte_do_plano(["L", "L", "A", "C"])
+    assert len(avisos) == 1
+    assert "plano sem ponte antes do CTA" in avisos[0]

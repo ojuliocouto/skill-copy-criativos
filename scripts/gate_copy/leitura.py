@@ -94,6 +94,13 @@ class Conceito:
     def campanha(self) -> str:
         return str(self.dados.get("campanha", ""))
 
+    @property
+    def formato(self) -> str:
+        """Campo opcional `formato: completo|curto` (references/modelo-mestre.md,
+        tabela de tamanho). Padrão `curto` quando ausente, pra não mudar o
+        comportamento de pacotes que nunca declararam o campo."""
+        return str(self.dados.get("formato") or "curto")
+
 
 @dataclass
 class Hook:

@@ -129,6 +129,7 @@ E os três exemplos, que têm papéis diferentes:
   palavras, cerca de 64 segundos finais, de uma mentoria para donas de clínica de estética. É o
   molde de `references/modelo-mestre.md` inteiro, parte por parte, sem pular nenhuma. Leia este
   quando a peça for de conversão e precisar construir crença antes da oferta.
+- **`exemplos/casa-medida/`: o formato completo num PRODUTO FÍSICO.** Loja fictícia de móveis planejados, 10 blocos, 225 palavras, demonstração por antes e depois, oferta de visita técnica gratuita. Mostra que o molde serve fora de infoproduto. Gate: zero reprovação, um aviso (imagem parada).
 - **`exemplos/agenda-cheia/`: o formato CURTO, no mesmo produto.** Dez blocos, cerca de 30
   segundos, passa no gate com **zero reprovações e três avisos assumidos** (custo declarado do
   bloco de oferta obrigatório antes do CTA). É o que você imita quando está aprendendo o formato.

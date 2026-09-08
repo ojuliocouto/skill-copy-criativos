@@ -11,13 +11,15 @@ annotations` mais `Optional[X]`).
 from __future__ import annotations
 
 import math
+import os
 import re
-from typing import List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Set, Tuple
 
 from ..achados import AVISO, REPROVACAO, Achado
 from ..leitura import Bloco, Conceito, Hook
 from ..limiares import LIMIARES
 from ..texto import (
+    PALAVRAS_FUNCIONAIS_KEY,
     REGEX_ANTITESE,
     REGEX_DATA,
     REGEX_DIGITO_SOLTO,
@@ -293,7 +295,14 @@ def checar_janelas_de_insert(conceito: Conceito, blocos: Sequence[Bloco]) -> Lis
 
     modo = normalizar_codigo(conceito.modo)
     campanha = normalizar_codigo(conceito.campanha)
-    if campanha == "remarketing":
+    formato = normalizar_codigo(conceito.formato)
+    if formato == "completo":
+        # references/modelo-mestre.md, tabela de tamanho: o formato completo
+        # roda numa faixa própria (52 a 71s), maior que a faixa padrão da
+        # esteira (15 a 30s), e substitui a faixa de modo/campanha por
+        # inteiro enquanto o campo estiver declarado.
+        faixa = (LIMIARES["duracao_completo_min_s"], LIMIARES["duracao_completo_max_s"])
+    elif campanha == "remarketing":
         faixa = (LIMIARES["duracao_total_remarketing_min_s"], LIMIARES["duracao_total_remarketing_max_s"])
     elif modo == "organico":
         faixa = (LIMIARES["duracao_total_organico_min_s"], LIMIARES["duracao_total_organico_max_s"])
@@ -368,4 +377,149 @@ def checar_densidade_insert(conceito: Conceito, blocos: Sequence[Bloco]) -> List
                     limiar="%.0f%% a %.0f%%" % (minimo * 100, maximo * 100),
                 )
             )
+    return achados
+
+
+# ---------------------------------------------------------------------------
+# Eco de exemplo ou estudo de caso (regra nova): a fala do roteiro (e dos
+# hooks) não pode repetir 5 palavras seguidas de um exemplo ou estudo de
+# caso da própria skill (references/ e exemplos/). O molde de estrutura
+# viaja de um cliente pro outro; a frase escrita pro exemplo não pode.
+# ---------------------------------------------------------------------------
+
+_TAMANHO_NGRAMA_ECO = 5
+_EXTENSOES_ECO = (".md", ".txt")
+
+# Cache do índice em variável de módulo: construído uma vez por processo
+# (varrer references/ e exemplos/ a cada bloco seria lento e desnecessário,
+# o conteúdo da skill não muda no meio de uma rodada do gate).
+_INDICE_ECO_CACHE: Optional[Dict[Tuple[str, ...], Set[str]]] = None
+_RAIZ_SKILL_CACHE: Optional[str] = None
+_RAIZ_SKILL_JA_PROCURADA = False
+
+
+def _apenas_palavras_funcionais(sequencia: Sequence[str]) -> bool:
+    return all(p in PALAVRAS_FUNCIONAIS_KEY for p in sequencia)
+
+
+def _localizar_raiz_da_skill() -> Optional[str]:
+    """Sobe a partir de `regras/roteiro.py` (dentro do pacote `gate_copy`)
+    até achar a pasta que tem `references/` e `exemplos/` como irmãs
+    (a raiz da skill `copy-criativos`). Ignora qualquer candidato que já
+    esteja dentro de um `exemplos/` (defesa contra um `gate_copy` copiado
+    pra dentro de um pacote de exemplo, o que faria a skill inteira virar
+    "eco de si mesma")."""
+    caminho = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # .../scripts/gate_copy
+    for _ in range(6):
+        partes = os.path.normpath(caminho).split(os.sep)
+        dentro_de_exemplos = "exemplos" in partes
+        if (
+            not dentro_de_exemplos
+            and os.path.isdir(os.path.join(caminho, "references"))
+            and os.path.isdir(os.path.join(caminho, "exemplos"))
+        ):
+            return caminho
+        pai = os.path.dirname(caminho)
+        if pai == caminho:
+            break
+        caminho = pai
+    return None
+
+
+def _construir_indice_eco(raiz_skill: str) -> Dict[Tuple[str, ...], Set[str]]:
+    indice: Dict[Tuple[str, ...], Set[str]] = {}
+    for pasta in ("references", "exemplos"):
+        raiz_pasta = os.path.join(raiz_skill, pasta)
+        if not os.path.isdir(raiz_pasta):
+            continue
+        for diretorio_atual, _subpastas, arquivos in os.walk(raiz_pasta):
+            for nome_arquivo in arquivos:
+                if not nome_arquivo.endswith(_EXTENSOES_ECO):
+                    continue
+                caminho_arquivo = os.path.join(diretorio_atual, nome_arquivo)
+                try:
+                    with open(caminho_arquivo, "r", encoding="utf-8") as f:
+                        conteudo = f.read()
+                except OSError:
+                    continue
+                caminho_relativo = os.path.relpath(caminho_arquivo, raiz_skill)
+                palavras = palavras_normalizadas(conteudo)
+                for i in range(len(palavras) - _TAMANHO_NGRAMA_ECO + 1):
+                    sequencia = tuple(palavras[i:i + _TAMANHO_NGRAMA_ECO])
+                    if _apenas_palavras_funcionais(sequencia):
+                        continue
+                    indice.setdefault(sequencia, set()).add(caminho_relativo)
+    return indice
+
+
+def _obter_indice_eco() -> Dict[Tuple[str, ...], Set[str]]:
+    global _INDICE_ECO_CACHE, _RAIZ_SKILL_CACHE, _RAIZ_SKILL_JA_PROCURADA
+    if _INDICE_ECO_CACHE is None:
+        if not _RAIZ_SKILL_JA_PROCURADA:
+            _RAIZ_SKILL_CACHE = _localizar_raiz_da_skill()
+            _RAIZ_SKILL_JA_PROCURADA = True
+        _INDICE_ECO_CACHE = _construir_indice_eco(_RAIZ_SKILL_CACHE) if _RAIZ_SKILL_CACHE else {}
+    return _INDICE_ECO_CACHE
+
+
+def _arquivo_dentro_do_pacote(raiz_skill: str, caminho_relativo: str, raiz_pacote: Optional[str]) -> bool:
+    """Verdadeiro quando o `.md`/`.txt` indexado é um arquivo do PRÓPRIO
+    pacote sendo avaliado (o pacote sendo checado mora dentro de
+    `exemplos/`: rodar o gate no exemplo agenda_cheia não pode acusar eco
+    do agenda_cheia contra ele mesmo)."""
+    if not raiz_pacote:
+        return False
+    caminho_absoluto = os.path.realpath(os.path.join(raiz_skill, caminho_relativo))
+    raiz_pacote_absoluta = os.path.realpath(raiz_pacote)
+    return os.path.commonpath([caminho_absoluto, raiz_pacote_absoluta]) == raiz_pacote_absoluta
+
+
+def checar_eco(
+    blocos: Sequence[Bloco], hooks: Sequence[Hook], raiz_pacote: Optional[str] = None
+) -> List[Achado]:
+    """Regra nova: cada fala do roteiro e cada hook de `hooks.md` não pode
+    repetir 5 palavras seguidas de nenhum `.md`/`.txt` de `references/` ou
+    `exemplos/` da própria skill. Ignora sequências só de palavras
+    funcionais (artigo, preposição etc.), que ecoam por acaso em qualquer
+    texto, e ignora o próprio pacote sendo avaliado quando ele estiver
+    dentro de `exemplos/` (`raiz_pacote`), pra não acusar eco de um
+    exemplo contra ele mesmo. AVISO, não reprovação: o molde de estrutura
+    pode se parecer, só a frase pronta não pode ser copiada."""
+    achados: List[Achado] = []
+    indice = _obter_indice_eco()
+    if not indice:
+        return achados
+    raiz_skill = _RAIZ_SKILL_CACHE
+
+    def _checa_fala(onde: str, fala: Optional[str]) -> None:
+        if not fala:
+            return
+        palavras = palavras_normalizadas(fala)
+        arquivos_ja_reportados: Set[str] = set()
+        for i in range(len(palavras) - _TAMANHO_NGRAMA_ECO + 1):
+            sequencia = tuple(palavras[i:i + _TAMANHO_NGRAMA_ECO])
+            if _apenas_palavras_funcionais(sequencia):
+                continue
+            arquivos = indice.get(sequencia)
+            if not arquivos:
+                continue
+            for arquivo in sorted(arquivos):
+                if arquivo in arquivos_ja_reportados:
+                    continue
+                if raiz_skill and _arquivo_dentro_do_pacote(raiz_skill, arquivo, raiz_pacote):
+                    continue
+                arquivos_ja_reportados.add(arquivo)
+                achados.append(
+                    Achado(
+                        AVISO, onde,
+                        "frase com eco de exemplo ou estudo de caso (5 palavras iguais a "
+                        + arquivo + ")",
+                        acao="reescreva com o produto do cliente; o molde viaja, a frase não",
+                        medido=" ".join(sequencia),
+                    )
+                )
+    for bloco in blocos:
+        _checa_fala("roteiro bloco " + str(bloco.numero), bloco.fala)
+    for hook in hooks:
+        _checa_fala(hook.nome, hook.fala)
     return achados

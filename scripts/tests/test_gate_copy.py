@@ -729,6 +729,22 @@ def test_campo_ponte_bloco_inexistente_reprova(tmp_path):
     assert tem_reprovacao_contendo(resultado, "campo ponte cita bloco inexistente")
 
 
+def test_ponte_com_deslocamento_ate_a_casa_do_cliente_nao_reprova(tmp_path):
+    """Marcadores novos de ponte (produto/serviço com visita até a casa do
+    cliente, achado do teste3 Casa Medida): "eu levo até", "eu vou até",
+    "na sua casa" etc. valem como ponte antes do CTA."""
+    overrides = {
+        "roteiro.txt": ROTEIRO.replace(
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero, na Operação Claude Code. É esse desenho que eu levo até a "
+            "sua casa depois da aula.",
+        )
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem ponte")
+    assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
+
+
 # ---------------------------------------------------------------------------
 # Bloco de oferta obrigatório antes do CTA (item B da correção de gaps,
 # regra do dono da metodologia): entre a prova e o CTA precisa existir um
@@ -817,6 +833,55 @@ def test_oferta_com_acesso_no_cta_nao_avisa(tmp_path):
     assert not tem_aviso_contendo(resultado, "bloco de oferta não diz como acessar")
 
 
+# ---------------------------------------------------------------------------
+# Marcadores de oferta: só locução de ENTREGA (verbo/preposição), nunca
+# substantivo solto do nicho (achado do teste3, produto físico "Casa
+# Medida": "projeto", "orçamento" e afins aparecem em qualquer frase do
+# ramo de móveis planejados, sem dizer que a pessoa está recebendo algo).
+# ---------------------------------------------------------------------------
+
+
+def test_bloco_com_substantivo_solto_do_nicho_sem_entrega_reprova():
+    """"A Casa Medida trabalha assim faz tempo aqui em Curitiba. Cada
+    projeto sai do mesmo jeito, sem enrolação nenhuma pra ninguém." nomeia
+    a marca ("Casa Medida") mas não carrega nenhuma locução de ENTREGA
+    (só o substantivo solto "projeto"): reprova."""
+    conceito = gc.Conceito({"modo": "pago", "marcas": ["Casa Medida"]})
+    blocos = [
+        gc.Bloco(
+            numero=1, linha_original="", direcao="", fala=(
+                "A Casa Medida trabalha assim faz tempo aqui em Curitiba. Cada projeto sai do "
+                "mesmo jeito, sem enrolação nenhuma pra ninguém."
+            ),
+        ),
+        gc.Bloco(numero=2, linha_original="", direcao="", fala="Toca aqui embaixo e marca a sua visita."),
+    ]
+    cta = gc.Cta({"tipo": "cta", "fala": "Toca aqui embaixo e marca a sua visita."})
+    achados = gc.motor.checar_oferta(conceito, blocos, cta)
+    assert any(a.nivel == gc.REPROVACAO and "CTA sem bloco de oferta" in a.recado for a in achados)
+
+
+def test_oferta_real_produto_fisico_com_locucao_de_entrega_nao_reprova():
+    """"A visita técnica da Casa Medida é gratuita. Eu meço a sua cozinha
+    e monto o projeto em três dimensões com você. O orçamento sai junto,
+    e você decide depois." nomeia a oferta E carrega locuções de entrega
+    ("eu meço", "monto o projeto", "o orçamento sai", "com você", "você
+    decide depois"): passa."""
+    conceito = gc.Conceito({"modo": "pago", "oferta": "visita técnica da Casa Medida", "marcas": ["Casa Medida"]})
+    blocos = [
+        gc.Bloco(
+            numero=1, linha_original="", direcao="", fala=(
+                "A visita técnica da Casa Medida é gratuita. Eu meço a sua cozinha e monto o "
+                "projeto em três dimensões com você. O orçamento sai junto, e você decide depois."
+            ),
+        ),
+        gc.Bloco(numero=2, linha_original="", direcao="", fala="Toca aqui embaixo e marca a sua visita."),
+    ]
+    cta = gc.Cta({"tipo": "cta", "fala": "Toca aqui embaixo e marca a sua visita."})
+    achados = gc.motor.checar_oferta(conceito, blocos, cta)
+    assert not any(a.nivel == gc.REPROVACAO for a in achados)
+
+
 def test_conceito_oferta_usa_campo_proprio_quando_declarado():
     conceito = gc.Conceito({"oferta": "Aula X", "marcas": ["Marca Y"]})
     assert conceito.oferta == "Aula X"
@@ -850,12 +915,17 @@ def test_pacote_real_agenda_cheia_passa_com_ponte():
     exatamente isso que eu te ensino na aula", no bloco 8, e o bloco 9 (a
     oferta, papel O) fecha antes do CTA (bloco 10). Zero reprovações; três
     avisos assumidos (duração total, densidade do fecho e blocos 9/10
-    vizinhos sem insert), custo declarado do bloco de oferta obrigatório."""
+    vizinhos sem insert), custo declarado do bloco de oferta obrigatório.
+    Os avisos de "eco de exemplo" (regra nova) não entram nessa conta: o
+    próprio agenda-cheia é citado como ilustração em references/*.md e no
+    outro exemplo (sem-contratar), então ecoa contra a documentação da
+    skill sem ter copiado nada de ninguém."""
     resultado = gc.rodar(AGENDA_CHEIA_DIR)
     assert not tem_reprovacao_contendo(resultado, "CTA sem ponte")
     assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")
     assert resultado["reprovacoes"] == []
-    assert len(resultado["avisos"]) == 3
+    avisos_sem_eco = [a for a in resultado["avisos"] if "eco de exemplo" not in a]
+    assert len(avisos_sem_eco) == 3
 
 
 def test_pacote_real_agenda_cheia_sem_ponte_reprova(tmp_path):
@@ -1174,6 +1244,54 @@ def test_data_na_fala_em_campanha_frio_reprova(tmp_path):
     assert tem_reprovacao_contendo(resultado, "sinal de envelhecimento")
 
 
+def test_dia_da_medicao_nao_e_data(tmp_path):
+    """"no dia da medição"/"no dia da entrega" NÃO são data: "dia" sem um
+    número ou mês logo depois. Regressão do teste3 (Casa Medida): a
+    versão antiga do bloco 3 caiu no detector de envelhecimento por causa
+    disso e teve que ser reescrita."""
+    overrides = {
+        "conceito.md": CONCEITO.replace("campanha: carrinho", "campanha: frio").replace(
+            "objetivo: carrinho", "objetivo: frio"
+        ),
+        "roteiro.txt": ROTEIRO.replace(
+            "Quatro: as suas próprias skills, criadas do zero. E skill é texto, se você sabe escrever "
+            "como faz, você sabe montar direitinho.",
+            "No dia da medição eu levo o material, e no dia da entrega você já usa a skill pronta.",
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_reprovacao_contendo(resultado, "sinal de envelhecimento")
+    assert not tem_aviso_contendo(resultado, "sinal de envelhecimento")
+
+
+def test_dia_seguido_de_numero_continua_data(tmp_path):
+    """"dia 15" (dia seguido de número) continua contando como
+    envelhecimento: só "dia da"/"dia do" solto que deixou de contar."""
+    overrides = {
+        "conceito.md": CONCEITO.replace("campanha: carrinho", "campanha: frio").replace(
+            "objetivo: carrinho", "objetivo: frio"
+        ),
+        "roteiro.txt": ROTEIRO.replace(
+            "[thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE SEU INGRESSO] "
+            "Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!",
+            "[thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE PARTICIPAÇÃO] "
+            "Então toca em saiba mais e garante sua participação especial nessa turma de agora. Vamos embora!",
+        ).replace(
+            "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+            "São dois dias, do zero, na Operação Claude Code. Chega no dia 15 pronto pra começar.",
+        ),
+        "cta.md": CTA.replace(
+            "- fala: Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!",
+            "- fala: Então toca em saiba mais e garante sua participação especial nessa turma de agora. Vamos embora!",
+        ),
+        "letterings.md": LETTERINGS.replace(
+            "| toca em saiba mais | GARANTE SEU INGRESSO |", "| toca em saiba mais | GARANTE PARTICIPAÇÃO |"
+        ),
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_reprovacao_contendo(resultado, "sinal de envelhecimento")
+
+
 def test_densidade_insert_corpo_acima_do_maximo_avisa(tmp_path):
     """Contrato seção 9 (R3.4): densidade de insert por janela. No pacote
     baseline a janela 'corpo' (3,0 a 15,0s) passa de 55% de tempo com
@@ -1195,6 +1313,57 @@ def test_densidade_insert_janela_hook_isenta(tmp_path):
     assert not tem_aviso_contendo(resultado, "roteiro janela hook")
 
 
+def test_formato_completo_usa_faixa_de_52_a_71s(tmp_path):
+    """Com `formato: completo` em conceito.md, a faixa de duração usada
+    pelo aviso passa a ser 52 a 71s (references/modelo-mestre.md, tabela
+    de tamanho), não a faixa curta de 15 a 30s da esteira. O roteiro
+    baseline (~42,6s finais) fica FORA da faixa de 15 a 30s (avisaria sem
+    o campo) mas também fora de 52 a 71s: o teste confere que o LIMIAR
+    citado no aviso mudou pra 52.0s a 71.0s."""
+    overrides = {"conceito.md": CONCEITO + "formato: completo\n"}
+    # nao da pra so appendar depois do "---" de fechamento; refaz o front matter
+    overrides["conceito.md"] = CONCEITO.replace(
+        "aceleracao: 1.45\n---", "aceleracao: 1.45\nformato: completo\n---"
+    )
+    resultado = rodar(tmp_path, overrides)
+    avisos_duracao = [a for a in resultado["avisos"] if "duração total fora da faixa esperada" in a]
+    assert len(avisos_duracao) == 1
+    assert "52.0s a 71.0s" in avisos_duracao[0]
+
+
+def test_formato_completo_dentro_da_faixa_nao_avisa():
+    """teste3 (Casa Medida): 225 palavras, 53,51s finais, `formato:
+    completo`. Dentro de 52 a 71s: sem aviso de duração (checagem direta
+    de `checar_janelas_de_insert`, sem montar o pacote inteiro)."""
+    conceito = gc.Conceito({"modo": "pago", "campanha": "frio", "formato": "completo"})
+    bloco = gc.Bloco(
+        numero=1, linha_original="", direcao="", fala="x" * 10,
+        duracao_final=53.51, duracao_natural=53.51 * 1.45, inicio_final=0.0,
+    )
+    from gate_copy.regras.roteiro import checar_janelas_de_insert
+
+    achados = checar_janelas_de_insert(conceito, [bloco])
+    avisos_duracao = [a for a in achados if "duração total fora da faixa esperada" in a.recado]
+    assert avisos_duracao == []
+
+
+def test_conceito_formato_padrao_curto_quando_ausente():
+    assert gc.Conceito({}).formato == "curto"
+
+
+def test_conceito_formato_completo_declarado():
+    assert gc.Conceito({"formato": "completo"}).formato == "completo"
+
+
+def test_formato_ausente_mantem_faixa_padrao_de_15_a_30s(tmp_path):
+    """Sem o campo `formato`, o comportamento não muda: continua a faixa
+    de 15 a 30s (o baseline, ~42,6s, avisa nela, como sempre avisou)."""
+    resultado = rodar(tmp_path)
+    avisos_duracao = [a for a in resultado["avisos"] if "duração total fora da faixa esperada" in a]
+    assert len(avisos_duracao) == 1
+    assert "15.0s a 30.0s" in avisos_duracao[0]
+
+
 def test_antitese_paralela_e_aviso_nao_reprovacao(tmp_path):
     overrides = {
         "roteiro.txt": ROTEIRO.replace(
@@ -1205,6 +1374,58 @@ def test_antitese_paralela_e_aviso_nao_reprovacao(tmp_path):
     resultado = rodar(tmp_path, overrides)
     assert resultado["reprovacoes"] == []
     assert tem_aviso_contendo(resultado, "antítese paralela, cara de IA")
+
+
+# ---------------------------------------------------------------------------
+# Eco de exemplo ou estudo de caso (regra nova): a fala do roteiro ou de um
+# hook não pode repetir 5 palavras seguidas de um `.md`/`.txt` de
+# `references/` ou `exemplos/` da própria skill.
+# ---------------------------------------------------------------------------
+
+
+def test_frase_copiada_do_exemplo_agenda_cheia_avisa_eco():
+    """Copiar uma frase de `exemplos/agenda-cheia/roteiro.txt` pro roteiro
+    de um cliente novo acusa eco (aviso, não reprovação): o molde de
+    estrutura pode inspirar, a frase pronta do exemplo não pode ir junto
+    pro cliente. Checagem direta de `checar_eco`, contra o índice real da
+    skill (raiz_pacote fora de `exemplos/`: nada é excluído)."""
+    from gate_copy.regras.roteiro import checar_eco
+
+    bloco = gc.Bloco(
+        numero=1, linha_original="", direcao="", fala=(
+            "Cliente na cadeira, WhatsApp tocando. Quem espera vai marcar em outra barbearia."
+        ),
+    )
+    achados = checar_eco([bloco], [])
+    assert achados, "esperava pelo menos um AVISO de eco"
+    assert all(a.nivel == gc.AVISO for a in achados)
+    assert any("agenda-cheia" in a.recado for a in achados)
+
+
+def test_frase_original_do_cliente_nao_avisa_eco():
+    """Frase inédita, nunca escrita em nenhum exemplo/referência da
+    skill: sem eco."""
+    from gate_copy.regras.roteiro import checar_eco
+
+    bloco = gc.Bloco(
+        numero=1, linha_original="", direcao="", fala=(
+            "A tinturaria do bairro Água Verde entrega sua roupa passada em quarenta minutos."
+        ),
+    )
+    achados = checar_eco([bloco], [])
+    assert achados == []
+
+
+def test_pacote_dentro_de_exemplos_nao_ecoa_contra_si_mesmo():
+    """Rodar o gate diretamente no exemplo `agenda-cheia` não pode acusar
+    eco do agenda-cheia contra ele mesmo: `raiz_pacote` exclui os próprios
+    arquivos do pacote sendo avaliado do índice de eco."""
+    resultado = gc.rodar(AGENDA_CHEIA_DIR)
+    avisos_eco_do_proprio_pacote = [
+        a for a in resultado["avisos"]
+        if "frase com eco de exemplo ou estudo de caso" in a and "exemplos/agenda-cheia/" in a
+    ]
+    assert avisos_eco_do_proprio_pacote == []
 
 
 # ---------------------------------------------------------------------------

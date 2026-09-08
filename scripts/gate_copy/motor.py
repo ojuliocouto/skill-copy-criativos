@@ -42,6 +42,7 @@ from .regras.roteiro import (
     checar_antitese,
     checar_densidade_insert,
     checar_direcoes,
+    checar_eco,
     checar_envelhecimento,
     checar_frases,
     checar_janelas_de_insert,
@@ -125,6 +126,7 @@ def rodar(
         achados.extend(checar_duracoes(conceito, blocos, letterings, cta))
         achados.extend(checar_janelas_de_insert(conceito, blocos))
         achados.extend(checar_densidade_insert(conceito, blocos))
+        achados.extend(checar_eco(blocos, hooks, raiz_pacote=pacote_dir))
 
         reprovacoes = [a.linha() for a in achados if a.nivel == REPROVACAO]
         avisos = [a.linha() for a in achados if a.nivel == AVISO]

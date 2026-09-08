@@ -69,6 +69,11 @@ LIMIARES: Dict[str, Any] = {
     "duracao_total_remarketing_max_s": 15.0,
     "duracao_total_organico_min_s": 15.0,
     "duracao_total_organico_max_s": 30.0,
+    # formato completo do modelo mestre (references/modelo-mestre.md, tabela
+    # de tamanho: 220 a 300 palavras, 52 a 71s finais); usado no lugar da
+    # faixa de modo/campanha quando `conceito.md` declara `formato: completo`.
+    "duracao_completo_min_s": 52.0,
+    "duracao_completo_max_s": 71.0,
 }
 
 # Mapa de chaves com ponto (como vem em --gates) para o caminho em LIMIARES.
@@ -297,6 +302,9 @@ MARCADORES_DE_PONTE: Tuple[str, ...] = (
     "eu te mostro", "vou te mostrar", "te mostro", "eu monto com você",
     "a gente monta", "na aula", "no treinamento", "na mentoria", "no evento",
     "na imersão", "dentro d",
+    # serviço e produto físico, deslocamento até a casa do cliente:
+    "eu levo ate", "eu vou ate", "levo pra sua casa", "na sua casa",
+    "ate voce", "a gente vai ate",
     # calibração pelos ads reais (references/calibracao-jheni.md, seção 2):
     # a ponte dela ou aponta o que acabou de aparecer na tela ("é
     # exatamente isso que"), ou nomeia o mecanismo ("isso só é
@@ -321,21 +329,21 @@ MARCADORES_DE_PONTE: Tuple[str, ...] = (
 # `references/metodo-de-copy.md` seção 3, papel "O"): entre a prova e o CTA
 # precisa existir um bloco que nomeia a oferta E diz o que a pessoa leva.
 # Normalizados (sem acento, minúsculas) na hora da comparação.
+#
+# Só locuções de ENTREGA, com verbo ou preposição (nunca substantivo solto:
+# "projeto", "orçamento", "amostra", "montado", "instalado", "imersão",
+# "mentoria", "treinamento", "entrega em" saíram da lista porque aparecem em
+# qualquer frase do nicho, sem dizer que a pessoa está recebendo algo. Ex.:
+# "cada projeto sai do mesmo jeito" tem "projeto" sem entregar nada).
 MARCADORES_DE_OFERTA: Tuple[str, ...] = (
-    "voce sai com", "voce sai de la", "voce monta", "a gente monta",
-    "eu monto com voce", "eu te mostro", "vou te mostrar", "voce aprende",
-    "voce vai aprender", "voce leva", "voce recebe", "passo a passo",
-    "na pratica", "do zero", "com voce", "juntas", "juntos",
-    # calibracao pedida pelo dono da metodologia (mensagem do coordenador):
-    "onde eu te mostro", "onde voce constroi", "onde voce aprende",
-    "onde eu te ensino", "imersao", "aula gratuita", "mentoria",
-    "treinamento", "sai de la", "ja sai com",
-    # serviço e produto físico:
-    "a gente desenha", "a gente mede", "a gente olha", "a gente revisa",
-    "eu analiso", "voce recebe por escrito", "sem compromisso", "visita tecnica",
-    "avaliacao gratuita", "consulta gratuita", "diagnostico gratuito", "orcamento",
-    "teste gratis", "primeira sessao", "amostra", "projeto", "entrega em",
-    "voce leva pra casa", "instalado", "montado",
+    "eu meco", "a gente mede", "monto o projeto", "o orcamento sai",
+    "voce recebe", "voce leva", "eu te mostro", "onde voce aprende",
+    "na imersao", "na mentoria", "no treinamento", "aula gratuita",
+    "visita tecnica gratuita", "consulta gratuita", "avaliacao gratuita",
+    "diagnostico gratuito", "teste gratis", "sem compromisso",
+    "voce decide depois", "sai junto", "com voce", "passo a passo",
+    "na pratica", "do zero", "voce sai com", "voce sai de la", "ja sai com",
+    "eu levo ate", "eu vou ate", "na sua casa", "ate a sua casa",
 )
 
 # Marcadores de ACESSO do bloco de oferta: diz COMO a pessoa chega na

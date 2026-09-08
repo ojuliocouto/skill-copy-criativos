@@ -84,6 +84,7 @@ Campos e domínios:
 | `sequencia` | não | a fila de PAPÉIS dos blocos, separada por vírgula: `H` hook, `D` dor ou diagnóstico, `P` prova com insert, `M` mecanismo ou virada, `I` identificação, `O` oferta, `T` ponte, `C` CTA (ver `references/metodo-de-copy.md`). Dois papéis no mesmo bloco se escrevem juntos: `P+T`, `O+T`. Sequências de partida: `H,D,P,M,T,O,C` e `H,P,I,M,P+T,O,C` em frio, `H,P,O+T,C` em quente |
 | `palavras_por_segundo` | não | padrão 2.9 (medido no ad21v2: 174 palavras em 60,155s de voz natural) |
 | `aceleracao` | não | padrão 1.45 (decisão 23) |
+| `formato` | não | `completo` ou `curto`; padrão `curto` quando ausente. Formato de referência da casa (`references/modelo-mestre.md`, "O tamanho de verdade"): `completo` roda o molde inteiro das 9 partes do modelo mestre e o gate troca a faixa de duração total esperada pra 52 a 71s finais (em vez da faixa de 15 a 30s da esteira); `curto` mantém o comportamento de sempre |
 
 ---
 
@@ -396,6 +397,7 @@ aceleração).
 | algarismo na fala | "8 mil" na fala | voz falada BR: por extenso na fala, algarismo no lettering | aviso |
 | antítese paralela | "não é X. É Y." | `feedback-antitese-paralela-cara-de-ia` | aviso |
 | direção vaga | âncora com menos de 3 palavras, ou com "algo", "genérico", "qualquer", "imagens de", "vídeo de" | o casamento com o arquivo é por âncora exata | reprova |
+| eco de exemplo ou estudo de caso | 5 palavras seguidas da fala (roteiro ou hook) iguais a um trecho de `references/` ou `exemplos/` da própria skill | o molde de estrutura viaja de um cliente pro outro, a frase pronta não | aviso |
 | primeiro insert | começa entre 5 e 10s finais | R3.2 | aviso |
 | segundo insert | começa entre 12 e 20s finais quando a peça passa de 15s | R3.2 | aviso |
-| duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência. Essa faixa é a da ESTEIRA: no formato completo os anúncios rodam **220 a 300 palavras (52 a 71s finais) no formato completo**, e **110 a 130 palavras (26 a 31s) só no formato curto**, quando o cliente pede peça curta (`references/modelo-mestre.md`). O aviso de duração acima de 30s é ASSUMIDO no formato completo, não motivo pra cortar parte do molde | R6.1 (avisa, não reprova) | aviso |
+| duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência. Essa faixa é a da ESTEIRA. Com `formato: completo` em `conceito.md`, o gate troca essa faixa pela do modelo mestre (**52 a 71s finais, 220 a 300 palavras**, `references/modelo-mestre.md`, tabela de tamanho) e não avisa dentro dela; sem o campo (ou com `formato: curto`), a faixa curta continua sendo **110 a 130 palavras (26 a 31s)** contra a mesma faixa de 15 a 30s da esteira, e o gate mede a faixa de sempre | R6.1 (avisa, não reprova); `duracao_completo_min_s`/`duracao_completo_max_s` | aviso |

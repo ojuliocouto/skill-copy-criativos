@@ -25,10 +25,18 @@ _MESES = (
     "janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|"
     "novembro|dezembro"
 )
+_DIAS_DA_SEMANA = (
+    "segunda|terca|quarta|quinta|sexta|sabado|domingo"
+)
+# So pega "dia" seguido de numero ou de mes (nao "dia da medicao", "dia da
+# entrega", "dia da instalacao", "no dia" solto): "dia da"/"dia do" NAO tem
+# digito logo depois, entao nao casa. Dias da semana so contam com um
+# numero por perto (ex.: "segunda, dia 15"), nunca a palavra sozinha.
 REGEX_DATA = re.compile(
     r"\b\d{1,2} de (" + _MESES + r")\b|\b20\d\d\b|\bdia \d"
+    r"|\b(" + _DIAS_DA_SEMANA + r")[a-z]*\b[^.!?]{0,20}?\b\d{1,2}\b"
 )
-REGEX_EDICAO = re.compile(r"edicao|turma \d|lote \d|\d+a\b")
+REGEX_EDICAO = re.compile(r"\bedicao\b|turma \d|lote \d|\d+a\b")
 REGEX_DIGITO_SOLTO = re.compile(r"\b\d+\b")
 REGEX_ORGANICO_PROIBIDO = re.compile(
     r"toca em|toque em|clica|clique|link|saiba mais|bio|arrasta|arraste"
