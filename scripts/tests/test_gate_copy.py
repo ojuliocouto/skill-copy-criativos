@@ -1380,3 +1380,25 @@ def test_cli_json_no_pacote_mutado(tmp_path):
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-v"]))
+
+
+def test_oferta_dois_blocos_antes_do_cta_com_insert_passa(tmp_path):
+    """O bloco de oferta pode ter insert e ficar dois blocos antes do CTA
+    (o que é e o que será feito num bloco, o que ganha no seguinte): a
+    janela é por posição, os 3 blocos antes do CTA, nunca 'depois do último
+    insert'. Reproduz o exemplo sem-contratar."""
+    roteiro = ROTEIRO.replace(
+        "São dois dias, do zero, na Operação Claude Code. É isso que você constrói no evento.",
+        "São dois dias, do zero. É isso que você constrói no evento.",
+    )
+    linhas = roteiro.strip().splitlines()
+    oferta = (
+        "[inserção de vídeo: tela da aula com o squad sendo montado | LEAD: na prática | KEY: OPERAÇÃO CLAUDE CODE] "
+        "Na Operação Claude Code eu te mostro, na prática, como montar o seu squad do zero. "
+        "Você sai de lá com ele rodando, mesmo sem saber código."
+    )
+    ganho = "[thales de frente pra câmera] E sai de lá com o seu já rodando, mesmo sem entender nada de código."
+    linhas = linhas[:-1] + [oferta, ganho, linhas[-1]]
+    overrides = {"roteiro.txt": "\n".join(linhas) + "\n"}
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem bloco de oferta")

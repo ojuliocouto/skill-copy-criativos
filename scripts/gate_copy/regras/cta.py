@@ -122,19 +122,13 @@ def checar_oferta(conceito: Conceito, blocos: Sequence[Bloco], cta: Cta) -> List
         return achados
 
     ultimo = blocos[-1]
-    indice_ultimo_insert: Optional[int] = None
-    for i, b in enumerate(blocos):
-        if b.e_insert:
-            indice_ultimo_insert = i
-
-    # Janela candidata: do bloco logo após o último insert de prova até o
-    # penúltimo bloco (o bloco imediatamente anterior ao CTA sempre entra,
-    # mesmo quando não há insert nenhum antes dele).
-    inicio_janela = (indice_ultimo_insert + 1) if indice_ultimo_insert is not None else 0
+    # Janela candidata: os até 3 blocos imediatamente anteriores ao CTA. O
+    # bloco de oferta pode ter insert (tela da aula, produto em uso) e pode
+    # ocupar dois blocos (o que é e o que será feito num, o que ganha no
+    # outro), então a janela é por posição, nunca "depois do último insert".
     fim_janela = len(blocos) - 1  # exclui o próprio CTA
-    candidatos: List[Bloco] = list(blocos[inicio_janela:fim_janela]) if fim_janela > inicio_janela else []
-    if not candidatos and len(blocos) >= 2:
-        candidatos = [blocos[-2]]
+    inicio_janela = max(0, fim_janela - 3)
+    candidatos: List[Bloco] = list(blocos[inicio_janela:fim_janela])
 
     primeira_frase_cta = re.split(r"[.!?]", ultimo.fala or "")[0]
 
@@ -147,6 +141,8 @@ def checar_oferta(conceito: Conceito, blocos: Sequence[Bloco], cta: Cta) -> List
         entrega = any(normalizar(marcador) in n for marcador in MARCADORES_DE_OFERTA)
         return nomeia and entrega
 
+    # Nome e entrega no MESMO bloco: espalhar os dois por blocos diferentes
+    # deixaria passar prova social num bloco e marca solta no outro.
     tem_oferta = any(_bloco_tem_oferta(b.fala) for b in candidatos) or _bloco_tem_oferta(primeira_frase_cta)
 
     if not tem_oferta:
