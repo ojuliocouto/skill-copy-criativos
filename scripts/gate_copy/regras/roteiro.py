@@ -41,6 +41,7 @@ def checar_direcoes(blocos: Sequence[Bloco]) -> List[Achado]:
                     REPROVACAO,
                     "roteiro bloco " + str(bloco.numero),
                     "linha sem colchete ou sem direção (seção 2 e requisito 13)",
+                    acao="coloque a direção entre colchetes no início da linha",
                     medido=repr(bloco.linha_original),
                     limiar="direção entre colchetes, não vazia",
                 )
@@ -54,6 +55,7 @@ def checar_direcoes(blocos: Sequence[Bloco]) -> List[Achado]:
                         REPROVACAO,
                         "roteiro bloco " + str(bloco.numero),
                         "âncora de insert vaga demais pra casar por igualdade (seção 2)",
+                        acao="descreva a âncora do insert com pelo menos 3 palavras específicas",
                         medido=repr(bloco.ancora),
                         limiar=">=3 palavras, sem termo generico",
                     )
@@ -87,8 +89,8 @@ def checar_marca(conceito: Conceito, blocos: Sequence[Bloco], hooks: Sequence[Ho
         Quando varias marcas casam em trechos que se sobrepoem (ex.:
         "Operacao Claude Code", "Claude Code" e "Claude" todas dentro do
         mesmo pedaco da fala, uma sendo substring da outra), so a mais longa
-        e reportada: as mais curtas sao redundantes, o Julio ja ve o
-        problema inteiro na mais longa. Marcas em trechos que NAO se tocam
+        e reportada: as mais curtas sao redundantes, ja se ve o problema
+        inteiro na mais longa. Marcas em trechos que NAO se tocam
         continuam cada uma com o seu proprio Achado."""
         fala_p = palavras_normalizadas(fala)
         combinacoes: List[Tuple[int, int, List[str]]] = []
@@ -112,13 +114,14 @@ def checar_marca(conceito: Conceito, blocos: Sequence[Bloco], hooks: Sequence[Ho
 
         for _fim, idx, marca_p in trechos:
             if idx < 3:
-                # Nunca abre com marca, mesmo com logo ancorado (brief, valor
-                # de partida sem medicao propria).
+                # Nunca abre com marca, mesmo com logo ancorado (regra do
+                # brief, valor de partida sem medicao propria).
                 achados.append(
                     Achado(
                         REPROVACAO,
                         onde,
                         "marca começa dentro das 3 primeiras palavras (R2.5), reprova mesmo com logo ancorado",
+                        acao="tire a marca das 3 primeiras palavras ou declare logo_ancorado: sim no hook",
                         medido="indice " + str(idx) + ": " + " ".join(marca_p),
                         limiar="indice >= 3",
                     )
@@ -130,6 +133,7 @@ def checar_marca(conceito: Conceito, blocos: Sequence[Bloco], hooks: Sequence[Ho
                             AVISO,
                             onde,
                             "marca dentro dos 3s com logo ancorado (decisão 11): a esteira confere a âncora",
+                            acao="confirme com a esteira se a âncora do logo cobre este trecho da fala",
                             medido="indice " + str(idx) + ": " + " ".join(marca_p),
                             limiar="indice >= " + str(limite_reprovacao),
                         )
@@ -141,6 +145,8 @@ def checar_marca(conceito: Conceito, blocos: Sequence[Bloco], hooks: Sequence[Ho
                             onde,
                             "marca dentro das primeiras " + str(limite_reprovacao)
                             + " palavras sem logo_ancorado: sim (R2.5)",
+                            acao="tire a marca das " + str(limite_reprovacao)
+                            + " primeiras palavras ou declare logo_ancorado: sim no hook",
                             medido="indice " + str(idx) + ": " + " ".join(marca_p),
                             limiar="indice >= " + str(limite_reprovacao),
                         )
@@ -165,9 +171,23 @@ def checar_frases(blocos: Sequence[Bloco]) -> List[Achado]:
             if n == 0:
                 continue
             if n > max_p:
-                achados.append(Achado(REPROVACAO, "roteiro bloco " + str(bloco.numero), "frase com mais de " + str(max_p) + " palavras", medido=str(n), limiar="<= " + str(max_p)))
+                achados.append(
+                    Achado(
+                        REPROVACAO, "roteiro bloco " + str(bloco.numero),
+                        "frase com mais de " + str(max_p) + " palavras",
+                        acao="quebre esta frase em duas, mais curtas",
+                        medido=str(n), limiar="<= " + str(max_p),
+                    )
+                )
             elif n > aviso_p:
-                achados.append(Achado(AVISO, "roteiro bloco " + str(bloco.numero), "frase acima de " + str(aviso_p) + " palavras", medido=str(n), limiar="<= " + str(aviso_p)))
+                achados.append(
+                    Achado(
+                        AVISO, "roteiro bloco " + str(bloco.numero),
+                        "frase acima de " + str(aviso_p) + " palavras",
+                        acao="considere quebrar esta frase em duas, mais curtas",
+                        medido=str(n), limiar="<= " + str(aviso_p),
+                    )
+                )
     return achados
 
 
@@ -185,10 +205,22 @@ def checar_envelhecimento(conceito: Conceito, blocos: Sequence[Bloco]) -> List[A
             if achou:
                 nivel = AVISO if permite_dentro else REPROVACAO
                 achados.append(
-                    Achado(nivel, "roteiro bloco " + str(bloco.numero) + " (" + rotulo + ")", "sinal de envelhecimento: data, preço ou edição numerada (decisões 6 e 19)", medido=texto)
+                    Achado(
+                        nivel, "roteiro bloco " + str(bloco.numero) + " (" + rotulo + ")",
+                        "sinal de envelhecimento: data, preço ou edição numerada (decisões 6 e 19)",
+                        acao="tire a data, preço ou edição numerada deste trecho",
+                        medido=texto,
+                    )
                 )
         if REGEX_DIGITO_SOLTO.search(bloco.fala):
-            achados.append(Achado(AVISO, "roteiro bloco " + str(bloco.numero), "algarismo solto na fala; numero por extenso na fala", medido=bloco.fala))
+            achados.append(
+                Achado(
+                    AVISO, "roteiro bloco " + str(bloco.numero),
+                    "algarismo solto na fala; numero por extenso na fala",
+                    acao="escreva o número por extenso na fala deste bloco",
+                    medido=bloco.fala,
+                )
+            )
     return achados
 
 
@@ -209,10 +241,22 @@ def checar_antitese(blocos: Sequence[Bloco], hooks: Sequence[Hook]) -> List[Acha
     achados: List[Achado] = []
     for bloco in blocos:
         if REGEX_ANTITESE.search(_normalizar_com_pontuacao(bloco.fala)):
-            achados.append(Achado(AVISO, "roteiro bloco " + str(bloco.numero), "antítese paralela, cara de IA", medido=bloco.fala))
+            achados.append(
+                Achado(
+                    AVISO, "roteiro bloco " + str(bloco.numero), "antítese paralela, cara de IA",
+                    acao="reescreva a frase sem o padrão 'não é X, é Y'",
+                    medido=bloco.fala,
+                )
+            )
     for hook in hooks:
         if REGEX_ANTITESE.search(_normalizar_com_pontuacao(hook.fala)):
-            achados.append(Achado(AVISO, hook.nome, "antítese paralela, cara de IA", medido=hook.fala))
+            achados.append(
+                Achado(
+                    AVISO, hook.nome, "antítese paralela, cara de IA",
+                    acao="reescreva a frase sem o padrão 'não é X, é Y'",
+                    medido=hook.fala,
+                )
+            )
     return achados
 
 
@@ -226,14 +270,26 @@ def checar_janelas_de_insert(conceito: Conceito, blocos: Sequence[Bloco]) -> Lis
     ini1, fim1 = LIMIARES["retencao_insert_1_ini_s"], LIMIARES["retencao_insert_1_fim_s"]
     tem_insert_1 = any(b.e_insert and ini1 <= b.inicio_final <= fim1 for b in blocos)
     if not tem_insert_1:
-        achados.append(Achado(AVISO, "roteiro", "nenhum insert começa na janela do primeiro insert (R3.2)", medido="janela vazia", limiar=str(ini1) + "s a " + str(fim1) + "s"))
+        achados.append(
+            Achado(
+                AVISO, "roteiro", "nenhum insert começa na janela do primeiro insert (R3.2)",
+                acao="posicione ou adicione um insert começando nesta janela",
+                medido="janela vazia", limiar=str(ini1) + "s a " + str(fim1) + "s",
+            )
+        )
 
     exigido_acima = LIMIARES["retencao_insert_2_exigido_acima_de_s"]
     if total_final > exigido_acima:
         ini2, fim2 = LIMIARES["retencao_insert_2_ini_s"], LIMIARES["retencao_insert_2_fim_s"]
         tem_insert_2 = any(b.e_insert and ini2 <= b.inicio_final <= fim2 for b in blocos)
         if not tem_insert_2:
-            achados.append(Achado(AVISO, "roteiro", "nenhum insert começa na janela do segundo insert (R3.2)", medido="janela vazia", limiar=str(ini2) + "s a " + str(fim2) + "s"))
+            achados.append(
+                Achado(
+                    AVISO, "roteiro", "nenhum insert começa na janela do segundo insert (R3.2)",
+                    acao="posicione ou adicione um insert começando nesta janela",
+                    medido="janela vazia", limiar=str(ini2) + "s a " + str(fim2) + "s",
+                )
+            )
 
     modo = normalizar_codigo(conceito.modo)
     campanha = normalizar_codigo(conceito.campanha)
@@ -245,7 +301,11 @@ def checar_janelas_de_insert(conceito: Conceito, blocos: Sequence[Bloco]) -> Lis
         faixa = (LIMIARES["duracao_total_pago_min_s"], LIMIARES["duracao_total_pago_max_s"])
     if not (faixa[0] <= total_final <= faixa[1]):
         achados.append(
-            Achado(AVISO, "roteiro", "duração total fora da faixa esperada (R6.1)", medido="%.2fs" % total_final, limiar=str(faixa[0]) + "s a " + str(faixa[1]) + "s")
+            Achado(
+                AVISO, "roteiro", "duração total fora da faixa esperada (R6.1)",
+                acao="ajuste o roteiro (corte ou acrescente fala) pra caber na faixa esperada",
+                medido="%.2fs" % total_final, limiar=str(faixa[0]) + "s a " + str(faixa[1]) + "s",
+            )
         )
     return achados
 
@@ -294,14 +354,18 @@ def checar_densidade_insert(conceito: Conceito, blocos: Sequence[Bloco]) -> List
         tempo_insert = _tempo_de_insert_na_janela(blocos, ini, fim)
         fracao = tempo_insert / duracao_janela
         if fracao < minimo or fracao > maximo:
+            sugestao = (
+                "mova ou tire um insert desta janela" if fracao > maximo
+                else "intercale um bloco de apresentador sozinho entre dois inserts desta janela"
+            )
             achados.append(
                 Achado(
                     AVISO,
                     "roteiro janela " + nome,
                     "densidade de insert fora da faixa esperada (R3.4)",
+                    acao=sugestao + "; alvo %.0f%% a %.0f%%" % (minimo * 100, maximo * 100),
                     medido="%.0f%%" % (fracao * 100),
                     limiar="%.0f%% a %.0f%%" % (minimo * 100, maximo * 100),
                 )
             )
     return achados
-

@@ -1,0 +1,9 @@
+[carla de frente + lettering | LEAD: sua clínica | KEY: PERDE CLIENTE] Sua clínica perde cliente justamente na hora que está mais cheia? Pensa comigo.
+[carla de frente + lettering | LEAD: quem espera | KEY: OUTRA CLÍNICA] Cliente na cadeira, WhatsApp tocando. Quem espera vai marcar em outra clínica.
+[inserção de vídeo: atendente respondendo no whatsapp da clínica | LEAD: tá vendo | KEY: RESPONDE EM SEGUNDOS] Tá vendo esse atendente aqui? Ele responde em segundos e você nem larga a cadeira.
+[carla de frente pra câmera] Isso é pra quem atende sem recepção. Não para por aí.
+[inserção de vídeo: atendente confirmando o horário na agenda | LEAD: e aqui ele | KEY: CONFIRMA O HORÁRIO] E aqui ele confirma o horário direto na agenda. E o cliente já sai marcado.
+[inserção de vídeo: atendente mandando o lembrete no whatsapp | LEAD: e no dia | KEY: MANDA LEMBRETE] E no dia ele ainda manda lembrete. Ninguém esquece e a cadeira não fica vazia.
+[carla de frente pra câmera] Isso só é possível quando o atendimento não para. Clínica cheia vira mais agendamento.
+[inserção de vídeo: print da agenda cheia da dra renata | LEAD: Dra. Renata | KEY: DOBROU A AGENDA] Dra. Renata dobrou a agenda num mês. É exatamente isso que eu te ensino na aula.
+[carla de frente + lettering + logo do agenda cheia | LEAD: toca em saiba mais | KEY: ENTRA NA AULA] Toca em saiba mais e entra na aula do Agenda Cheia. Bora montar o seu.

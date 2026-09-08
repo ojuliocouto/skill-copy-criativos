@@ -42,13 +42,17 @@ def checar_letterings(
         linha = letterings_por_bloco.get(bloco.numero)
         if linha is None:
             achados.append(
-                Achado(REPROVACAO, onde, "bloco com KEY no roteiro sem linha em letterings.md")
+                Achado(
+                    REPROVACAO, onde, "bloco com KEY no roteiro sem linha em letterings.md",
+                    acao="adicione uma linha em letterings.md para este bloco",
+                )
             )
             continue
         if normalizar(linha.lead) != normalizar(bloco.lead or ""):
             achados.append(
                 Achado(
                     REPROVACAO, onde, "LEAD da tabela diferente do LEAD do roteiro",
+                    acao="deixe o LEAD da tabela igual ao LEAD do roteiro para este bloco",
                     medido=linha.lead, limiar=bloco.lead or "",
                 )
             )
@@ -56,6 +60,7 @@ def checar_letterings(
             achados.append(
                 Achado(
                     REPROVACAO, onde, "KEY da tabela diferente do KEY do roteiro",
+                    acao="deixe o KEY da tabela igual ao KEY do roteiro para este bloco",
                     medido=linha.key, limiar=bloco.chave or "",
                 )
             )
@@ -66,6 +71,7 @@ def checar_letterings(
             achados.append(
                 Achado(
                     REPROVACAO, onde, "palavra do KEY não está na fala do bloco",
+                    acao="troque o KEY por palavras que estejam ditas na fala do bloco",
                     medido=str(faltando), limiar="todas as palavras do KEY na fala",
                 )
             )
@@ -78,6 +84,7 @@ def checar_letterings(
                     REPROVACAO, onde,
                     "KEY com mais palavras de conteúdo que o permitido (algarismo e "
                     "palavra funcional não contam, seção 5)",
+                    acao="corte o KEY até " + str(max_palavras_key) + " palavras de conteúdo",
                     medido=str(n_conteudo), limiar="<= " + str(max_palavras_key),
                 )
             )
@@ -86,12 +93,20 @@ def checar_letterings(
             n_lead = len(bloco.lead.split())
             if n_lead > 4:
                 achados.append(
-                    Achado(REPROVACAO, onde, "LEAD com mais de 4 palavras", medido=str(n_lead), limiar="<= 4")
+                    Achado(
+                        REPROVACAO, onde, "LEAD com mais de 4 palavras",
+                        acao="corte o LEAD até 4 palavras",
+                        medido=str(n_lead), limiar="<= 4",
+                    )
                 )
             lead_faltando = todas_palavras_na_fala(bloco.lead, fala_p)
             if lead_faltando:
                 achados.append(
-                    Achado(AVISO, onde, "palavra do LEAD fora da fala", medido=str(lead_faltando))
+                    Achado(
+                        AVISO, onde, "palavra do LEAD fora da fala",
+                        acao="use no LEAD só palavras ditas na fala do bloco, ou aceite o aviso",
+                        medido=str(lead_faltando),
+                    )
                 )
 
         forma = linha.forma
@@ -101,13 +116,18 @@ def checar_letterings(
                     REPROVACAO,
                     onde,
                     "forma 'placa' sozinha não é válida: declare h1, h2 ou h4",
+                    acao="troque forma para placa_h1, placa_h2 ou placa_h4",
                     medido=forma,
                     limiar="placa_h1, placa_h2 ou placa_h4",
                 )
             )
         elif forma not in FORMAS_LETTERING:
             achados.append(
-                Achado(REPROVACAO, onde, "forma de lettering fora do domínio", medido=forma, limiar=str(sorted(FORMAS_LETTERING)))
+                Achado(
+                    REPROVACAO, onde, "forma de lettering fora do domínio",
+                    acao="troque a forma por uma do domínio aceito",
+                    medido=forma, limiar=str(sorted(FORMAS_LETTERING)),
+                )
             )
         else:
             formas_por_bloco[bloco.numero] = forma
@@ -117,6 +137,7 @@ def checar_letterings(
                         AVISO,
                         onde,
                         "carimbo é lettering de apoio, só em bloco com insert",
+                        acao="troque carimbo por outra forma neste bloco, ou mova o carimbo para um bloco com insert",
                         medido=forma,
                     )
                 )
@@ -129,8 +150,8 @@ def checar_letterings(
                     AVISO,
                     "letterings blocos " + str(num_a) + " e " + str(num_b),
                     "mesma forma de lettering em blocos vizinhos (rodízio, decisão 13)",
+                    acao="alterne a forma de lettering entre esses dois blocos vizinhos",
                     medido=forma_a,
                 )
             )
     return achados
-

@@ -32,7 +32,7 @@ from .leitura import (
 )
 from .limiares import LIMIARES, aplicar_gates
 from .regras.assets import checar_assets
-from .regras.cta import checar_cta
+from .regras.cta import checar_cta, checar_ponte
 from .regras.duracoes import checar_duracoes
 from .regras.garrafais import checar_garrafais
 from .regras.hook import checar_hook, checar_hooks_md
@@ -87,7 +87,14 @@ def rodar(
         for nome in ARQUIVOS_OBRIGATORIOS[1:]:
             if not os.path.isfile(_caminho(pacote_dir, nome)):
                 return {
-                    "reprovacoes": [Achado(REPROVACAO, "pacote", "arquivo obrigatório faltando: " + nome).linha()],
+                    "reprovacoes": [
+                        Achado(
+                            REPROVACAO,
+                            "pacote",
+                            "arquivo obrigatório faltando: " + nome,
+                            acao="crie o arquivo " + nome + " no pacote antes de rodar o gate de novo",
+                        ).linha()
+                    ],
                     "avisos": [],
                     "blocos": [],
                 }
@@ -103,11 +110,12 @@ def rodar(
         achados: List[Achado] = []
         achados.extend(checar_direcoes(blocos))
         achados.extend(checar_marca(conceito, blocos, hooks))
-        achados.extend(checar_hook(conceito, blocos))
+        achados.extend(checar_hook(conceito, blocos, hooks))
         achados.extend(checar_hooks_md(conceito, blocos, hooks, taticas=taticas))
         achados.extend(checar_letterings(blocos, letterings, cta))
         achados.extend(checar_garrafais(blocos, garrafais))
         achados.extend(checar_cta(conceito, blocos, cta))
+        achados.extend(checar_ponte(conceito, blocos, cta))
         achados.extend(checar_assets(blocos, assets))
         achados.extend(checar_matriz(conceito, hooks, campos_matriz, pecas))
         achados.extend(checar_frases(blocos))

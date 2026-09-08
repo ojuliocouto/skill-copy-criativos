@@ -236,6 +236,32 @@ CATEGORIA_PERMANENCIA_LETTERING = {
     "carimbo": "carimbo",
     "seta_cta": "seta_cta",
 }
+# Marcadores de ponte (regra do dono da metodologia): frase que liga o que
+# foi mostrado no corpo da peça ao que o clique do CTA entrega. Checados no
+# bloco imediatamente anterior ao CTA (ou na primeira frase do próprio
+# CTA), normalizados (sem acento, minúsculas) na hora da comparação.
+MARCADORES_DE_PONTE: Tuple[str, ...] = (
+    # marcadores originais
+    "é isso que", "é exatamente isso", "é esse", "é essa", "é exatamente esse",
+    "é exatamente essa", "foi assim que", "por isso que eu", "é o que eu",
+    "eu te mostro", "vou te mostrar", "te mostro", "eu monto com você",
+    "a gente monta", "na aula", "no treinamento", "na mentoria", "no evento",
+    "na imersão", "dentro d",
+    # calibração pelos ads reais (references/calibracao-jheni.md, seção 2):
+    # a ponte dela ou aponta o que acabou de aparecer na tela ("é
+    # exatamente isso que"), ou nomeia o mecanismo ("isso só é
+    # possível"), ou vira pergunta de adesão ("topa aprender", "quer
+    # aprender"), ou nomeia o lugar da entrega ("num treinamento", "na
+    # operação").
+    "é exatamente isso que", "e é isso que", "são soluções como essa",
+    "esse é o tipo de conteúdo", "isso só é possível", "só é possível quando",
+    "é o que eu vou te ensinar", "eu vou te ensinar", "vou te ensinar",
+    "eu te ensino", "te ensino", "vou te mostrar na prática",
+    "fazer isso na prática", "topa aprender", "quer aprender",
+    "quer transformar", "você precisa se inscrever", "eu tenho um convite",
+    "num treinamento", "numa imersão", "na operação", "na nova edição",
+)
+
 CORES_GARRAFAL = {"casa", "quente", "teal_do_fundo", "rosado_do_fundo"}
 ENQUADRAMENTOS_ASSET = {"inteiro", "foco"}
 ORIGENS_ASSET_FIXAS = {"doc", "galeria", "drive", "gravacao"}

@@ -1,8 +1,13 @@
 # Regras da tela: o que a copy de um criativo em vídeo precisa saber da edição
 
 Este arquivo é a lista completa do que a edição vai fazer com o seu texto, escrita para quem
-escreve o roteiro anotado antes de a esteira `creative-studio` montar a peça. Você não precisa
-abrir o repositório: tudo que a tela exige está aqui, com o número e o lugar onde ele mora.
+escreve o roteiro anotado antes de alguém montar a peça. Você não precisa abrir nenhum outro
+repositório: tudo que a tela exige está aqui.
+
+**Sobre a coluna "onde mora"**: ela aponta pra esteira `creative-studio`, que é **opcional**. Sem
+ela, a regra vale exatamente como está escrita aqui, e o gate desta skill mede pelos limiares
+embutidos. A coluna serve de rastreio pra quem tem a esteira, nunca de pré-requisito.
+
 A regra de ouro é uma só: **a copy escolhe as palavras que viram tela e as põe na fala, nunca o
 contrário.** Palavra grande escolhida porque cabe na faixa é decoração; palavra dita na fala e
 marcada como KEY ou garrafal é a peça funcionando. Se a palavra certa não couber, o corpo desce
@@ -24,6 +29,7 @@ até ela caber, ou ela não entra: o que nunca acontece é a medida escolher a p
 | R2.8 | Hook trocado por medição de impressões, nunca por leitura pontual | Escreva os 3 hooks já na entrega: o segundo entra sem pedir copy nova | `docs/creative-studio-spec.md -> R2.8`, `config/gates.yaml -> regua.amostra_minima` |
 | decisão 10 | O KEY do gancho pousa no TOPO, acima da cabeça, e o corpo cai para 68px | KEY do hook curto e legível em corpo pequeno: 2 palavras, sem palavra comprida | `config/gates.yaml -> dinamica.lettering.gancho_no_topo`, decisão 10 |
 | decisão 11 | Logo do evento é liberado nos 3s quando o nome do evento é DITO naquele instante | Se quiser o logo cedo, escreva o nome do evento na fala do bloco e declare a âncora | `config/gates.yaml -> hook.logo_ancorado_na_fala_permitido`, decisão 11 |
+| forma do hook | Ao menos um dos 3 hooks é PERGUNTA ou PARADOXO que a pessoa precise resolver | Afirmação com que o público já concorda não faz ninguém parar: ele concorda com a cabeça e continua rolando. O paradoxo abre uma conta que só o corpo da peça fecha. O gate AVISA quando nenhum dos três tem | `hooks.md`, `references/taticas-de-hook.md` |
 | R1.3 e R1.5 | Hook alternativo é fala curta do mesmo lote de voz; um dos três é cru | Cada hook tem até 5,0s de fala natural (14 palavras); o cru vai sem lettering | `config/gates.yaml -> diversidade.hook_fala_max_s`, `.matriz.hooks_crus_min` |
 
 ## 2. Blocos e duração
@@ -52,6 +58,7 @@ até ela caber, ou ela não entra: o que nunca acontece é a medida escolher a p
 | decisão 30 | O conteúdo do insert nunca corre acima de 1,0x da origem | Direção do tipo "pipoca" ou "sequência" precisa de bloco longo, nunca de 2 segundos | decisão 30 |
 | decisão 34 | O insert é feito com o que foi PASSADO; criar por conta só quando não há nada pronto | `origem` em `doc`, `galeria`, `drive` ou `gravacao`; `criar:*` só com proposta antes | seção 7 do `formato-do-pacote.md`, decisão 34 |
 | decisão 35 | Asset do briefing é intocável, mesmo quando parece fraco | Não troque asset por conta: marque `serve: não` e escreva a ressalva | decisão 35 |
+| decisão 30 | Imagem parada serve como insert, desde que declarada | Declare a origem com o sufixo `:imagem` (por exemplo `drive:imagem`). O gate aceita e AVISA, porque quem monta precisa dar movimento ao asset (deslize lento no próprio arquivo, sem desfoque nem véu) | seção 7 do `formato-do-pacote.md` |
 | memória | Asset horizontal ou borrado é o que mais derruba a peça | Asset assim entra com `serve: não` e ressalva, e a fala não pode depender de detalhe dele | seção 7 do `formato-do-pacote.md` (decisões 12, 15, 21, 30, 31) |
 | decisão 18 | As duas variantes do squad aprovadas para a biblioteca | Só edição; a copy não faz nada | decisão 18 |
 | memória | A direção do bloco vem da COPY e não se troca | Se o asset não tem o movimento que a fala descreve, a esteira PRODUZ o movimento; o bloco nunca vira avatar por causa do asset. Bloco escrito pra abrir em insert abre em insert | `feedback-copy-manda-a-direcao-do-bloco.md` (leva 2 da OCC: 5 de 9 anúncios tiveram a abertura invertida assim) |
@@ -62,8 +69,8 @@ até ela caber, ou ela não entra: o que nunca acontece é a medida escolher a p
 |---|---|---|---|
 | decisão 1 | A zona útil é medida por faixa de altura (x até 930 acima dos botões) | KEY com no máximo 2 palavras, 3 só no CTA: é o que cabe sem o corpo desabar | `config/gates.yaml -> safezone.faixas_da_zona_util`, decisão 1 |
 | decisão 13 | O lettering do corpo é diagramado por CONTEXTO, com três pousos | Marque `KEY` no bloco certo: avatar sozinho pousa no topo, bloco com insert pousa no painel | `config/gates.yaml -> dinamica.lettering.posicao_por_contexto`, decisão 13 |
-| decisão 13 | O rodízio é `h1`, `h2` e `h4` (os três estilos de placa), mais as duas formas alternativas, `coluna` e `carimbo`, e a `seta_cta` do fechamento | Escreva a forma por bloco em `letterings.md` pelo nome do estilo (`placa_h1`, `placa_h2`, `placa_h4`, `coluna`, `carimbo`, `seta_cta`), nunca "placa" como forma única: h1 seguida de h2 é rodízio, não repetição. A mesma forma nunca em dois blocos vizinhos com lettering. Sequência aprovada: h2 no gancho, depois h1, h2, coluna, h4, h1, carimbo, seta_cta | `config/gates.yaml -> dinamica.lettering.rodizio` (`[h1, h2, h4]`), `.formas` (coluna e carimbo), `.repetir_vizinho: false`, `piloto/etapas/etapa5/MAPA-LETTERINGS.md` |
-| decisão 13 | O carimbo é lettering de APOIO, não pede o quadro | Marque `carimbo` só em bloco que tem insert: ele existe pra marcar onde a peça está quando o insert já é o assunto | `config/gates.yaml -> dinamica.lettering.formas.carimbo`, `MAPA-LETTERINGS.md` (L6) |
+| decisão 13 | O rodízio é `h1`, `h2` e `h4` (os três estilos de placa), mais as duas formas alternativas, `coluna` e `carimbo`, e a `seta_cta` do fechamento | Escreva a forma por bloco em `letterings.md` pelo nome do estilo (`placa_h1`, `placa_h2`, `placa_h4`, `coluna`, `carimbo`, `seta_cta`), nunca "placa" como forma única: h1 seguida de h2 é rodízio, não repetição. A mesma forma nunca em dois blocos vizinhos com lettering; forma repetida em bloco vizinho AVISA, não reprova. Sequência aprovada: h2 no gancho, depois h1, h2, coluna, h4, h1, carimbo, seta_cta | `config/gates.yaml -> dinamica.lettering.rodizio` (`[h1, h2, h4]`), `.formas` (coluna e carimbo), `.repetir_vizinho: false`, `piloto/etapas/etapa5/MAPA-LETTERINGS.md` |
+| decisão 13 | O carimbo é lettering de APOIO, não pede o quadro | Marque `carimbo` só em bloco que tem insert: ele existe pra marcar onde a peça está quando o insert já é o assunto. Carimbo em bloco sem insert AVISA, não reprova | `config/gates.yaml -> dinamica.lettering.formas.carimbo`, `MAPA-LETTERINGS.md` (L6) |
 | decisão 14 | Lettering pode dividir a tela com o insert quando pousa no painel | Pode e deve parear insert e KEY no MESMO bloco: é o pareamento que o doc faz de propósito | `config/gates.yaml -> colisao.regras[R8.1-folga-lettering].excecao`, decisão 14 |
 | decisão 20 | Os templates de insert nascem com rodapé reservado para o lettering | Reforça o pareamento acima: bloco com insert aceita KEY sem brigar com o asset | decisão 20 |
 | decisão 29 | Lettering precisa de tempo de leitura, e quem cede é o insert, nunca o lettering | KEY de 3 palavras em coluna pede 16 palavras de fala (3,5s + 0,25s da terceira = 3,75s) | `config/gates.yaml -> dinamica.lettering.permanencia_min_ms`, `.quem_cede` |
@@ -71,6 +78,7 @@ até ela caber, ou ela não entra: o que nunca acontece é a medida escolher a p
 | R5.6 | Lettering e legenda alternam, com ao menos um lettering de impacto além do hook | Garanta pelo menos um KEY forte no corpo, fora do hook e fora do CTA | `config/gates.yaml -> legenda.alternar_com_lettering`, `.letterings_de_impacto_min` |
 | decisão 13 | O LEAD é o contexto em itálico acima do KEY | LEAD com até 4 palavras; LEAD fora da fala é aviso, não reprovação | seção 5 do `formato-do-pacote.md`, `templates/lettering/*.html` |
 | decisão 13 | Toda palavra do KEY tem que estar na fala do bloco | Escreva a fala primeiro e recorte o KEY dela; algarismo casa com número por extenso | seção 5 do `formato-do-pacote.md` |
+| decisão 29 | O KEY tem duas contagens diferentes | O **limite de 2 palavras** conta só palavras de CONTEÚDO (algarismo e palavra funcional não entram). O **tempo de leitura** conta TODAS as palavras não numéricas. Exemplo: `SKILLS DO ZERO` vale 2 pro limite e 3 pro tempo, mínimo de 3,05s | seção 5 do `formato-do-pacote.md`, seção 9 |
 | decisão 9 | Colisão medida no quadro final, em vários instantes, valendo o pior caso | Só edição; a copy não faz nada | decisão 9 |
 
 ## 5. Garrafal (a palavra grande atrás do apresentador)
@@ -81,7 +89,7 @@ até ela caber, ou ela não entra: o que nunca acontece é a medida escolher a p
 | decisão 8 | A garrafal é sincronizada com o instante em que a palavra é dita | Declare a âncora: a palavra tem que estar na fala daquele bloco | `garrafais.md` (campo `ancora`), decisão 8 |
 | decisão 8 | Nunca repete a palavra que o KEY do mesmo bloco já diz | Se o bloco já tem KEY, a garrafal carrega OUTRA palavra da mesma fala | `config/gates.yaml -> dinamica.garrafal.nao_repetir_o_lettering` |
 | MAPA-GARRAFAIS | Ela vive entre o fundo e a pessoa: só onde o apresentador está SOZINHO em tela | Fora do bloco 1, marque garrafal só em bloco SEM `inserção de vídeo` e SEM `KEY`: insert por cima apaga o efeito e lettering junto empilha dois textos grandes (a garrafal ainda pede 80ms de folga do lettering) | `piloto/etapas/MAPA-GARRAFAIS.md`, regra 1, `config/gates.yaml -> dinamica.garrafal.folga_para_o_lettering_ms` |
-| decisão 8 | Máximo 2 por gancho | No bloco 1 cabem 2 garrafais; a terceira vira três camadas de texto | `config/gates.yaml -> dinamica.garrafal.maximo_por_gancho` |
+| decisão 8 | Máximo 2 por gancho, 2 ou 3 na peça | No bloco 1 cabem 2 garrafais; a terceira vira três camadas de texto. Na peça inteira: zero ou uma garrafal AVISA (a peça está deixando carga de copy fora da tela); acima de três REPROVA | `config/gates.yaml -> dinamica.garrafal.maximo_por_gancho` |
 | decisão 10 | Estilo G2: laranja da casa a 0,8, atravessando o quadro devagar | Palavra curta e forte: a travessia entrega a palavra ao longo do tempo | `config/gates.yaml -> dinamica.garrafal.cor`, `.travessia_px`, decisão 10 |
 | decisão 10 | Paleta por PAPEL, não por gosto: `casa` é a marca e a oferta, `quente` é o resultado, `teal_do_fundo` e `rosado_do_fundo` recuam | Declare a cor pelo papel da palavra na argumentação | `config/gates.yaml -> dinamica.garrafal.paleta`, `MAPA-GARRAFAIS.md` |
 | MAPA-GARRAFAIS | O número vai em algarismo na tela e por extenso na fala | Escreva "dois dias" na fala e "2 DIAS" na garrafal: o gate casa os dois | `piloto/etapas/MAPA-GARRAFAIS.md`, seção 4 do `formato-do-pacote.md` |
@@ -105,6 +113,7 @@ até ela caber, ou ela não entra: o que nunca acontece é a medida escolher a p
 | R6.1 | Duração final: pago frio e orgânico 15 a 30s; remarketing 6 a 15s | Peça de 15 a 30s finais = 64 a 126 palavras no roteiro inteiro. `pago.yaml -> duracao` só tem faixa pra `frio` e `remarketing`: `carrinho` e `lote` NÃO têm faixa declarada e usam a de frio como referência, com o número registrado como aviso (a peça v5.7 aprovada tem 41,48s) | `config/modos/pago.yaml -> duracao`, `config/modos/organico.yaml -> duracao`, decisão 36 |
 | R6.2 | Aceleração 1,45x aplicada antes de transcrever | Toda conta de duração parte de palavras, nunca de segundos escritos à mão | `config/modos/pago.yaml -> aceleracao.fator` |
 | R6.3 | No modo pago, os últimos 3 a 5s têm CTA falado E lettering com verbo de ação, mais seta quando o canal tem botão | Bloco de CTA com no mínimo 13 palavras e verbo da lista da esteira na fala | `config/modos/pago.yaml -> fechamento`, seção 6 do `formato-do-pacote.md` |
+| ponte | Antes de pedir a ação, a peça diz o que o clique ENTREGA, amarrado na prova ou no benefício que acabou de aparecer | A ponte vai no fim do bloco anterior ao CTA, ou na primeira frase do CTA. Marcadores: "é isso que", "é esse ... que eu monto com você", "eu te mostro", "na aula", "no treinamento", "na mentoria". Benefício e depois "toca em saiba mais" do nada REPROVA: o clique fica sem objeto | `cta.md` (campo `ponte`), seção 6 e seção 9 do `formato-do-pacote.md` |
 | R6.3 | CTA vago reprova | "Saiba mais" sozinho não é CTA: escreva a ação e o objeto ("garante seu ingresso") | `config/modos/pago.yaml -> fechamento.cta_vago_reprova` |
 | R6.4 | Oferta, prazo e preço no CTA só em carrinho ou lote | Em captação e perpétuo frio, corte escassez, preço e data da fala do CTA | `config/modos/pago.yaml -> fechamento.oferta_no_cta` |
 | R6.5 | No orgânico a peça não pede clique nem mostra link | Fechamento em loop, pedido de envio ou pergunta; proibido "toca em", "clica", "link", "bio" | `config/modos/organico.yaml -> fechamento.saidas` |
@@ -157,7 +166,7 @@ natural) e o 1,45 é a decisão 23.
 | bloco com insert | mínimo 15 palavras | 3,5s finais (decisões 29 e 30) |
 | bloco com KEY em placa (`h1`, `h2` ou `h4`) | mínimo 12 palavras | 2,8s finais (`permanencia_min_ms.placa`) |
 | bloco com KEY em coluna ou carimbo | mínimo 15 palavras | 3,5s finais (`permanencia_min_ms.coluna`, `.carimbo`) |
-| palavra do KEY além da segunda | mais 0,25s cada, ou seja, mais 2 palavras | `leitura_por_palavra_extra_ms`, `palavras_de_graca` |
+| palavra do KEY além da segunda | mais 0,25s cada, ou seja, mais 1 palavra | `leitura_por_palavra_extra_ms`, `palavras_de_graca`. O limite de 2 palavras do KEY conta só palavras de CONTEÚDO; o tempo de leitura conta todas as palavras não numéricas |
 | bloco com KEY em `seta_cta` | mínimo 12 palavras | 2,8s finais (`permanencia_min_ms.seta_cta`) |
 | bloco de CTA | mínimo 13 palavras | 3,0s finais (`fechamento.janela_final_min_s`) |
 | bloco de CTA | máximo 21 palavras (aviso) | 5,0s finais (`pago.yaml -> fechamento.janela_final_max_s`) |
@@ -184,8 +193,4 @@ deles.
 
 ---
 
-**Nota de rodapé sobre a numeração das decisões.** O `piloto/DECISOES.md` começa na decisão 1 e
-pula direto para a 7: **as decisões de número 2 a 6 não existem no arquivo**. Elas são citadas de
-passagem em outros documentos (a decisão 5, revogada pela 21, e a decisão 6, citada na seção 9 do
-`formato-do-pacote.md` junto com a 19), mas o texto delas não está registrado, então nada aqui foi
-deduzido a partir delas.
+**Nota sobre a numeração das decisões.** O registro original pula da decisão 1 para a 7: as de número 2 a 6 não existem, e nada aqui foi deduzido a partir delas.

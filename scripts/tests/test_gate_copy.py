@@ -59,7 +59,7 @@ ROTEIRO = """[thales de frente + lettering | LEAD: em dois dias | KEY: 5 ENTREGA
 [inserção de vídeo: quiz de qualificação sendo respondido | LEAD: entrega dois | KEY: QUIZ QUE FILTRA] Dois: um quiz de qualificação que filtra quem entra e manda o lead pronto direto pro seu WhatsApp.
 [inserção de vídeo: página profissional publicada pelo claude | LEAD: entrega um | KEY: PÁGINA NO AR] E um: a sua página profissional no ar, publicada e hospedada pelo Claude, sem você mexer em nada disso.
 [inserção de vídeo: pipoca de provas sociais de alunos] E não é à toa que oito mil pessoas já passaram pelos meus treinamentos ao longo desses anos todos.
-[thales de frente pra câmera] São dois dias, do zero, mesmo que você nunca tenha criado uma automação sequer na vida inteira.
+[thales de frente pra câmera] São dois dias, do zero. É isso que você constrói no evento.
 [thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE SEU INGRESSO] Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!
 """
 
@@ -280,9 +280,10 @@ def test_cta_acima_do_teto_avisa(tmp_path):
 
 def test_bloco_sem_insert_sem_key_acima_do_maximo_reprova(tmp_path):
     roteiro = ROTEIRO.replace(
-        "São dois dias, do zero, mesmo que você nunca tenha criado uma automação sequer na vida inteira.",
-        "São dois dias, do zero. Mesmo que você nunca tenha criado nada antes na vida inteira toda. "
-        "Você consegue mesmo assim com certeza absoluta, sem trava nenhuma, rapidinho de verdade, todo santo dia.",
+        "São dois dias, do zero. É isso que você constrói no evento.",
+        "São dois dias, do zero. É isso que você constrói no evento. Mesmo que você nunca tenha criado "
+        "nada antes na vida inteira toda. Você consegue mesmo assim com certeza absoluta, sem trava "
+        "nenhuma, rapidinho de verdade, todo santo dia.",
     )
     resultado = rodar(tmp_path, {"roteiro.txt": roteiro})
     assert len(resultado["reprovacoes"]) == 1
@@ -618,6 +619,168 @@ def test_cta_organico_pergunta_sem_interrogacao_reprova(tmp_path):
 
 
 # ---------------------------------------------------------------------------
+# Ponte antes do CTA (regra nova do dono da metodologia)
+# ---------------------------------------------------------------------------
+
+
+def test_cta_sem_ponte_reprova(tmp_path):
+    """Baseline tem ponte no bloco 9 ("É isso que você constrói no
+    evento."); tirando o marcador, o CTA (modo pago, tipo cta) reprova por
+    falta de ponte."""
+    overrides = {
+        "roteiro.txt": ROTEIRO.replace(
+            "São dois dias, do zero. É isso que você constrói no evento.",
+            "São dois dias, do zero, sem trava nenhuma.",
+        )
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert len(resultado["reprovacoes"]) == 1
+    assert tem_reprovacao_contendo(resultado, "CTA sem ponte")
+
+
+def test_cta_com_ponte_no_bloco_anterior_nao_reprova(tmp_path):
+    resultado = rodar(tmp_path)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem ponte")
+
+
+def test_campo_ponte_declarado_e_valido_nao_reprova(tmp_path):
+    overrides = {
+        "cta.md": CTA + '- ponte: bloco 9, "É isso que você constrói no evento"\n',
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_reprovacao_contendo(resultado, "campo ponte")
+
+
+def test_campo_ponte_declarado_com_frase_que_nao_bate_reprova(tmp_path):
+    overrides = {
+        "cta.md": CTA + '- ponte: bloco 9, "isso não está na fala desse bloco"\n',
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_reprovacao_contendo(resultado, "frase do campo ponte não está na fala do bloco citado")
+
+
+def test_campo_ponte_bloco_inexistente_reprova(tmp_path):
+    overrides = {
+        "cta.md": CTA + '- ponte: bloco 99, "qualquer coisa"\n',
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert tem_reprovacao_contendo(resultado, "campo ponte cita bloco inexistente")
+
+
+AGENDA_CHEIA_V2_DIR = (
+    "/private/tmp/claude-501/-Users-ojuliocouto/a1c3bb08-9ae2-4bc1-918d-108dadba08a3/scratchpad/agenda_cheia_v2"
+)
+
+
+@pytest.mark.skipif(not os.path.isdir(AGENDA_CHEIA_V2_DIR), reason="pacote agenda_cheia_v2 não está no scratchpad desta sessão")
+def test_pacote_real_agenda_cheia_v2_passa_com_ponte():
+    """Pacote v2 corrigido depois da reprovação do dono da metodologia: a
+    ponte é "É esse atendente que eu monto com você na aula", no bloco 5,
+    imediatamente antes do CTA (bloco 6)."""
+    resultado = gc.rodar(AGENDA_CHEIA_V2_DIR)
+    assert not tem_reprovacao_contendo(resultado, "CTA sem ponte")
+    assert resultado["reprovacoes"] == []
+
+
+@pytest.mark.skipif(not os.path.isdir(AGENDA_CHEIA_V2_DIR), reason="pacote agenda_cheia_v2 não está no scratchpad desta sessão")
+def test_pacote_real_agenda_cheia_v2_sem_ponte_reprova(tmp_path):
+    """Mutação do pacote v2 real: tira a ponte do bloco 5 e o gate reprova."""
+    with open(os.path.join(AGENDA_CHEIA_V2_DIR, "roteiro.txt"), "r", encoding="utf-8") as f:
+        roteiro = f.read()
+    roteiro_sem_ponte = roteiro.replace(
+        "É esse atendente que eu monto com você na aula.",
+        "Sem contratar mais ninguém pra clínica.",
+    )
+    assert roteiro_sem_ponte != roteiro, "marcador de ponte não encontrado no roteiro.txt do v2"
+
+    for nome in os.listdir(AGENDA_CHEIA_V2_DIR):
+        origem = os.path.join(AGENDA_CHEIA_V2_DIR, nome)
+        destino = os.path.join(str(tmp_path), nome)
+        with open(origem, "r", encoding="utf-8") as f:
+            conteudo = f.read()
+        with open(destino, "w", encoding="utf-8") as f:
+            f.write(conteudo)
+    with open(os.path.join(str(tmp_path), "roteiro.txt"), "w", encoding="utf-8") as f:
+        f.write(roteiro_sem_ponte)
+
+    resultado = gc.rodar(str(tmp_path))
+    # Sem o marcador de ponte no bloco 5, a checagem estrutural (bloco
+    # anterior sem ponte) OU a checagem do campo "ponte" declarado em
+    # cta.md (frase que não bate mais com a fala do bloco) reprova.
+    assert tem_reprovacao_contendo(resultado, "CTA sem ponte") or tem_reprovacao_contendo(
+        resultado, "frase do campo ponte não está na fala do bloco citado"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Hook com pergunta ou paradoxo (regra nova do dono da metodologia)
+# ---------------------------------------------------------------------------
+
+
+def test_nenhum_hook_com_pergunta_ou_paradoxo_avisa(tmp_path):
+    """Baseline tem 3 hooks com id de paradoxo (curiosity/contrarian/
+    myth_busting); trocando os 3 pra táticas fora da lista e sem "?" na
+    fala, avisa."""
+    hooks_sem_paradoxo = (
+        HOOKS.replace("- id: curiosity", "- id: bold_claim")
+        .replace("- tatica: Curiosity", "- tatica: Bold Claim")
+        .replace("- cluster: curiosidade", "- cluster: interrupcao_padrao")
+        .replace("- id: contrarian", "- id: warning")
+        .replace("- tatica: Contrarian", "- tatica: Warning")
+        .replace("- id: myth_busting", "- id: shocking_statement")
+        .replace("- tatica: Myth Busting", "- tatica: Shocking Statement")
+    )
+    matriz_sem_paradoxo = (
+        MATRIZ.replace("curiosity", "bold_claim")
+        .replace("contrarian", "warning")
+        .replace("myth_busting", "shocking_statement")
+    )
+    overrides = {"hooks.md": hooks_sem_paradoxo, "matriz.md": matriz_sem_paradoxo}
+    resultado = rodar(tmp_path, overrides)
+    assert tem_aviso_contendo(resultado, "nenhum hook com pergunta ou paradoxo")
+
+
+def test_hook_com_interrogacao_na_fala_nao_avisa_mesmo_sem_tatica_de_paradoxo(tmp_path):
+    """"?" na fala de um hook basta, mesmo com as 3 táticas fora da lista
+    de paradoxo (ids trocados como no teste anterior, fala do Hook A com
+    "?")."""
+    hooks_com_interrogacao = (
+        HOOKS.replace("- id: curiosity", "- id: bold_claim")
+        .replace("- tatica: Curiosity", "- tatica: Bold Claim")
+        .replace("- cluster: curiosidade", "- cluster: interrupcao_padrao")
+        .replace(
+            "- fala: Em dois dias você sai da Operação Claude Code com cinco entregas prontas.\n- ancora: dois dias",
+            "- fala: Em dois dias, você sai com cinco entregas prontas?\n- ancora: dois dias",
+        )
+        .replace("- id: contrarian", "- id: warning")
+        .replace("- tatica: Contrarian", "- tatica: Warning")
+        .replace("- id: myth_busting", "- id: shocking_statement")
+        .replace("- tatica: Myth Busting", "- tatica: Shocking Statement")
+    )
+    matriz_sem_paradoxo = (
+        MATRIZ.replace("curiosity", "bold_claim")
+        .replace("contrarian", "warning")
+        .replace("myth_busting", "shocking_statement")
+    )
+    roteiro_com_interrogacao = ROTEIRO.replace(
+        "Em dois dias você sai da Operação Claude Code com cinco entregas prontas.",
+        "Em dois dias, você sai com cinco entregas prontas?",
+    )
+    overrides = {
+        "hooks.md": hooks_com_interrogacao,
+        "matriz.md": matriz_sem_paradoxo,
+        "roteiro.txt": roteiro_com_interrogacao,
+    }
+    resultado = rodar(tmp_path, overrides)
+    assert not tem_aviso_contendo(resultado, "nenhum hook com pergunta ou paradoxo")
+
+
+def test_baseline_tem_paradoxo_nao_avisa(tmp_path):
+    resultado = rodar(tmp_path)
+    assert not tem_aviso_contendo(resultado, "nenhum hook com pergunta ou paradoxo")
+
+
+# ---------------------------------------------------------------------------
 # Garrafais (secao 4, requisito 9)
 # ---------------------------------------------------------------------------
 
@@ -818,8 +981,9 @@ def test_data_na_fala_em_campanha_frio_reprova(tmp_path):
             "[thales de frente + lettering + logo da occ | LEAD: toca em saiba mais | KEY: GARANTE PARTICIPAÇÃO] "
             "Então toca em saiba mais e garante sua participação especial nessa turma de agora. Vamos embora!",
         ).replace(
-            "São dois dias, do zero, mesmo que você nunca tenha criado uma automação sequer na vida inteira.",
-            "São dois dias, do zero. Isso vale pro dia 15 de outubro de 2026, sem enrolação nenhuma.",
+            "São dois dias, do zero. É isso que você constrói no evento.",
+            "São dois dias, do zero. É isso que você constrói no evento. Isso vale pro dia 15 de outubro "
+            "de 2026, sem enrolação nenhuma.",
         ),
         "cta.md": CTA.replace(
             "- fala: Então aproveita que ainda tem vaga, toca em saiba mais e garante seu ingresso. Vamos embora!",

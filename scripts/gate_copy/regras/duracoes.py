@@ -67,6 +67,7 @@ def checar_duracoes(
                         REPROVACAO,
                         "roteiro bloco " + str(bloco.numero),
                         "duração final abaixo do mínimo de " + rotulo_min,
+                        acao="acrescente cerca de " + str(faltam) + " palavras na fala deste bloco",
                         medido="%.2fs (%d palavras)" % (bloco.duracao_final, bloco.palavras),
                         limiar="%.2fs; faltam %d palavras para fechar" % (minimo_s, faltam),
                     )
@@ -79,6 +80,7 @@ def checar_duracoes(
                         AVISO,
                         "roteiro bloco " + str(bloco.numero),
                         "duração final do CTA acima do teto (seção 6, fechamento.janela_final_max_s)",
+                        acao="corte a fala do CTA até caber no teto",
                         medido="%.2fs" % bloco.duracao_final,
                         limiar="<= %.2fs" % teto,
                     )
@@ -92,6 +94,7 @@ def checar_duracoes(
                         REPROVACAO,
                         "roteiro bloco " + str(bloco.numero),
                         "bloco sem insert e sem KEY acima do máximo (R3.3)",
+                        acao="corte a fala deste bloco ou acrescente um insert/KEY",
                         medido="%.2fs" % bloco.duracao_final,
                         limiar="<= %.2fs" % maximo,
                     )
@@ -107,9 +110,9 @@ def checar_duracoes(
                         AVISO,
                         "roteiro blocos " + str(a.numero) + " e " + str(b.numero),
                         "blocos vizinhos sem insert somam acima do máximo (R3.3)",
+                        acao="intercale um insert entre esses dois blocos ou corte a fala de um deles",
                         medido="%.2fs" % soma,
                         limiar="<= %.2fs" % maximo,
                     )
                 )
     return achados
-

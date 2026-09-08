@@ -123,9 +123,9 @@ def contar_palavras_nao_numericas(texto: str) -> int:
     return sum(1 for t in palavras_normalizadas(texto) if not t.isdigit())
 
 
-# Palavras funcionais que NAO contam pro limite de tamanho do KEY (correcao do
-# Julio, secao 5): so palavra de CONTEUDO conta pro maximo de 2 (ou 3 no CTA).
-# Nao vale pro LEAD, que conta toda palavra.
+# Palavras funcionais que NAO contam pro limite de tamanho do KEY (correcao
+# de leitura, secao 5): so palavra de CONTEUDO conta pro maximo de 2 (ou 3
+# no CTA). Nao vale pro LEAD, que conta toda palavra.
 PALAVRAS_FUNCIONAIS_KEY: frozenset = frozenset(
     {
         "de", "do", "da", "dos", "das", "no", "na", "nos", "nas", "em", "que",

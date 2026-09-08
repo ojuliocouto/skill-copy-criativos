@@ -1,16 +1,18 @@
-# Formato do pacote de copy (contrato entre `copy-criativos` e `creative-studio`)
+# Formato do pacote de copy (o contrato)
 
-Este arquivo é o CONTRATO. O `scripts/gate_copy.py` lê exatamente o que está descrito aqui, e a
-`creative-studio` consome o `roteiro.txt` sem nenhuma conversão. Quem escrever fora deste
-formato reprova no gate antes de chegar na esteira.
+Este arquivo é o CONTRATO. O `scripts/gate_copy.py` lê exatamente o que está descrito aqui. Quem
+escrever fora deste formato reprova no gate.
+
+Uma esteira de montagem (a `creative-studio`, **opcional**) consome o `roteiro.txt` sem nenhuma
+conversão. Sem esteira, o mesmo arquivo é o roteiro anotado que quem edita o vídeo lê direto.
 
 Um pacote = um diretório por CONCEITO, com estes 8 arquivos:
 
 ```
 <saida>/<conceito>/
   conceito.md      cabeçalho do conceito (front matter YAML + brief resumido)
-  roteiro.txt      o roteiro anotado, no formato da esteira (a fronteira entre copy e edição)
-  hooks.md         os 3 hooks da matriz (regra 3-2-2 do Léo, R1.2 a R1.5)
+  roteiro.txt      o roteiro anotado (a fronteira entre copy e edição)
+  hooks.md         os 3 hooks da matriz (regra 3-2-2, R1.2 a R1.5)
   garrafais.md     as 2 ou 3 palavras garrafais e a frase âncora de cada uma (decisão 8)
   letterings.md    LEAD e KEY por bloco, com a âncora da fala e a forma sugerida
   cta.md           fechamento por modo (R6.3 a R6.5)
@@ -47,12 +49,19 @@ marcas:
   - Operação Claude Code
   - Claude Code
   - Claude
+sequencia: H,P,P,P,M,P,P,P,O+T,C
 palavras_por_segundo: 2.9
 aceleracao: 1.45
 ---
 
-Brief: <o que o Júlio passou, em 3 a 6 linhas: oferta, prova autorizada, assets entregues>
+Brief: <o que o cliente passou, em 3 a 6 linhas: oferta, prova autorizada, assets entregues>
 ```
+
+**Sobre o campo `sequencia`**: ele é opcional na escrita, mas o que ele descreve não é opcional na
+peça. O gate **cobra `T` imediatamente antes de `C`** (ponte antes do CTA, reprovação) e **avisa
+quando não existe nenhum `P`** (peça sem prova concreta). Declarar a sequência é o que torna a
+auditoria possível bloco a bloco: dá pra apontar qual bloco carrega qual papel, e qual papel está
+faltando quando a peça não fecha.
 
 Campos e domínios:
 
@@ -62,13 +71,14 @@ Campos e domínios:
 | `angulo` | sim | nome do ângulo da biblioteca dos 78 e a categoria |
 | `estrutura_invisivel` | sim | a combinação dos 8 elementos, em texto |
 | `avatar` | sim | pra quem a peça fala |
-| `apresentador` | sim | quem fala (Thales, Júlio, ou `nenhum` em peça só de narração) |
+| `apresentador` | sim | quem fala, pelo nome, ou `nenhum` em peça só de narração |
 | `promessa` | sim | uma frase |
 | `modo` | sim | `pago` ou `organico` |
 | `canal` | sim | `reels`, `stories`, `feed_4x5`, `feed_1x1`, `tiktok`, `shorts` |
 | `campanha` | sim | `frio`, `captacao`, `perpetuo_frio`, `carrinho`, `lote`, `remarketing` |
 | `objetivo` | não | `frio` ou `carrinho`; sem ele o gate deriva: `carrinho` e `lote` viram `carrinho`, o resto vira `frio` |
 | `marcas` | sim | lista dos nomes que R2.5 proíbe nos 3 primeiros segundos (marca, produto, evento) |
+| `sequencia` | não | a fila de PAPÉIS dos blocos, separada por vírgula: `H` hook, `D` dor ou diagnóstico, `P` prova com insert, `M` mecanismo ou virada, `I` identificação, `O` oferta, `T` ponte, `C` CTA (ver `references/metodo-de-copy.md`). Dois papéis no mesmo bloco se escrevem juntos: `P+T`, `O+T`. Sequências de partida: `H,D,P,M,T,C` e `H,P,I,M,T,C` em frio, `H,P,O,T,C` em quente |
 | `palavras_por_segundo` | não | padrão 2.9 (medido no ad21v2: 174 palavras em 60,155s de voz natural) |
 | `aceleracao` | não | padrão 1.45 (decisão 23) |
 
@@ -76,7 +86,7 @@ Campos e domínios:
 
 ## 2. `roteiro.txt`
 
-É o formato que `creative_studio/inserts/fontes.ler_marcacoes` lê. Uma linha por bloco. TODA
+Uma linha por bloco. TODA
 linha começa com a direção entre colchetes e segue com a fala. Linha em branco é ignorada. Não
 existe comentário: uma linha sem colchete vira fala solta e reprova no gate.
 
@@ -88,7 +98,7 @@ existe comentário: uma linha sem colchete vira fala solta e reprova no gate.
 [thales de frente + lettering + logo da operação | LEAD: <lead> | KEY: <KEY>] fala do CTA
 ```
 
-Como a esteira lê cada parte:
+Como cada parte é lida:
 
 - O primeiro campo é a DIREÇÃO. Se começa com `inserção de vídeo:`, o que vem depois dos dois
   pontos é a ÂNCORA do asset, e o casamento com o arquivo é por igualdade da âncora, nunca pelo
@@ -98,8 +108,8 @@ Como a esteira lê cada parte:
   contexto em itálico acima dele. Bloco sem `KEY` não gera lettering.
 - A palavra `logo` na direção gera o evento de logo (R2.5 proíbe antes de 3,0s; a decisão 11
   libera o logo do EVENTO quando o nome está sendo dito na fala).
-- A esteira ancora cada bloco buscando a FALA no alinhamento da voz, da frase inteira pra
-  trás. Logo, a fala escrita tem que ser a fala gravada, palavra por palavra.
+- Cada bloco é ancorado buscando a FALA no alinhamento da voz, da frase inteira pra trás. Logo,
+  a fala escrita tem que ser a fala gravada, palavra por palavra.
 - A direção "pipoca" ou "sequência" significa vários assets encadeados, nunca imagem parada.
 
 O bloco 1 é o hook A. Os hooks B e C (`hooks.md`) entram ANTES do bloco 1 na montagem; o corpo
@@ -136,7 +146,7 @@ continua o mesmo.
 
 | campo | regra |
 |---|---|
-| `id` | id da tática em `references/taticas-de-hook.md` (29 da Motion); os 3 ids são distintos |
+| `id` | id da tática em `references/taticas-de-hook.md` (são 29); os 3 ids são distintos |
 | `tatica`, `cluster` | nome e cluster da mesma tabela; o cluster tem que estar liberado pro `objetivo` (frio: `interrupcao_padrao` e `curiosidade`; carrinho: os dois mais `promocional`) |
 | `cru` | `sim` ou `não`; ao menos um `sim` (R1.5); hook cru tem `lettering: nenhum` |
 | `fala` | até 5,0s de fala natural (`diversidade.hook_fala_max_s`), ou seja, até 14 palavras a 2,9 p/s; o Hook A tem a MESMA fala do bloco 1 do roteiro |
@@ -146,12 +156,15 @@ continua o mesmo.
 | `garrafal` | opcional; quando existe, a palavra tem que estar na fala |
 | `insert` | âncora de `assets.md` ou `nenhum` |
 
+**Quais seções contam**: só `## Hook A`, `## Hook B` e `## Hook C` são lidas como hook. Qualquer
+outra seção `##` do arquivo (nota, histórico, variação descartada) é **ignorada** pelo gate.
+
 O que reprova em qualquer hook: marca dentro das primeiras 12 palavras (3s finais a 1,45x, R2.5)
 sem `logo_ancorado: sim`; marca entre as 3 primeiras palavras mesmo com logo ancorado ("nunca
 abre com marca", regra do brief, valor de partida sem medição própria); frase de apresentação
 ("eu sou o", "meu nome é", "aqui é o") nas duas primeiras frases; cluster fora do objetivo; mais
-de 14 palavras. O que avisa: marca dentro dos 3s COM `logo_ancorado: sim` (fica registrado, a
-esteira confere a âncora); antítese paralela ("não é X. É Y.") tem cara de IA.
+de 14 palavras. O que avisa: marca dentro dos 3s COM `logo_ancorado: sim` (fica registrado, e
+quem monta confere a âncora); antítese paralela ("não é X. É Y."), que tem cara de IA.
 
 ---
 
@@ -175,12 +188,16 @@ esteira confere a âncora); antítese paralela ("não é X. É Y.") tem cara de 
 - papel: a virada de argumento, quando o que foi listado vira resultado
 ```
 
-Regras (decisão 8, `MAPA-GARRAFAIS.md`): a `palavra` é dita na `ancora`, e a âncora está na
+**Quais seções contam**: só `## G1`, `## G2`, `## G3` e assim por diante são lidas como garrafal.
+Qualquer outra seção `##` do arquivo é **ignorada** pelo gate.
+
+Regras (decisão 8): a `palavra` é dita na `ancora`, e a âncora está na
 fala do `bloco`; a palavra não repete o KEY do mesmo bloco; fora do bloco 1, o bloco é de
 apresentador SOZINHO (sem `inserção de vídeo` e sem KEY, porque a garrafal exige 80ms de folga
 do lettering e o mapa do piloto só a usa em janela sem lettering), porque a garrafal vive entre o fundo e a pessoa;
-no máximo 2 no gancho (bloco 1) e 2 ou 3 na peça; `cor` em `casa`, `quente`, `teal_do_fundo`,
-`rosado_do_fundo`. Número na garrafal vai em algarismo ("2 DIAS") e na fala por extenso ("dois
+no máximo 2 no gancho (bloco 1) e 2 ou 3 na peça: **zero ou uma garrafal AVISA** (a peça está
+deixando carga de copy fora da tela) e **acima de três REPROVA**; `cor` em `casa`, `quente`,
+`teal_do_fundo`, `rosado_do_fundo`. Número na garrafal vai em algarismo ("2 DIAS") e na fala por extenso ("dois
 dias"): o gate casa os dois.
 
 ---
@@ -199,12 +216,28 @@ dias"): o gate casa os dois.
 
 Regras: cada linha corresponde a um bloco do roteiro com `KEY`, com LEAD e KEY IDÊNTICOS aos do
 roteiro (o roteiro manda; a tabela é a leitura); toda palavra do KEY está na fala do bloco
-(algarismo casa com o número por extenso); KEY com no máximo 2 palavras de CONTEÚDO (o tempo de leitura da seção 9 conta toda palavra, como o motor) (algarismo e palavra funcional como de, do, da, no, na, em, que, e, um, uma, pra, com, sem não contam: "SKILLS DO ZERO" e "PÁGINA NO AR" valem 2),
-exceto o KEY do CTA, que aceita 3 (verbo + objeto, decisão 7); `forma` em `placa_h1`, `placa_h2`,
-`placa_h4` (os três estilos de placa do rodízio `dinamica.lettering.rodizio`), `coluna`,
-`carimbo`, `seta_cta`; a mesma forma nunca em dois blocos vizinhos com lettering (`repetir_vizinho:
-false`, decisão 13, e a sequência aprovada em `MAPA-LETTERINGS.md`: h2, h1, h2, coluna, h4, h1,
-carimbo, seta_cta); `carimbo` é lettering de apoio, só em bloco com insert; LEAD com até 4 palavras. LEAD fora da fala é aviso, não reprovação.
+(algarismo casa com o número por extenso); `forma` em `placa_h1`, `placa_h2`, `placa_h4` (os três estilos de placa do rodízio), `coluna`,
+`carimbo`, `seta_cta`; LEAD com até 4 palavras, e LEAD fora da fala é **aviso**, não reprovação.
+
+**O KEY tem duas contagens diferentes, e elas não dão o mesmo número.**
+
+1. **Para o limite de 2 palavras**, contam só as palavras de CONTEÚDO. Algarismo e palavra
+   funcional (de, do, da, no, na, em, que, e, um, uma, pra, com, sem) não contam. O KEY do CTA é a
+   única exceção ao limite: ele aceita 3 palavras de conteúdo (verbo + objeto, decisão 7).
+2. **Para o tempo de leitura da seção 9**, contam TODAS as palavras não numéricas do KEY,
+   inclusive as funcionais.
+
+Exemplo: `SKILLS DO ZERO` vale **2** para o limite (skills, zero) e **3** para o tempo (skills, do,
+zero), o que leva o mínimo da placa de 2,8s para **3,05s**, ou seja 13 palavras de fala em vez de
+12. `PÁGINA NO AR` e `8 MIL` seguem a mesma lógica.
+
+**Rodízio de forma**: a mesma forma não deve aparecer em dois blocos vizinhos com lettering, e o
+gate **AVISA** quando aparece (não reprova). "Placa" não é forma única: `placa_h1` depois de
+`placa_h2` é rodízio funcionando. Sequência de referência: h2, h1, h2, coluna, h4, h1, carimbo,
+seta_cta.
+
+**Carimbo**: é lettering de apoio e deve ficar só em bloco com insert. Carimbo em bloco sem insert
+**AVISA**, não reprova.
 
 ---
 
@@ -221,17 +254,26 @@ carimbo, seta_cta); `carimbo` é lettering de apoio, só em bloco com insert; LE
 - escassez: ainda tem vaga
 - lettering: LEAD: toca em saiba mais | KEY: GARANTE SEU INGRESSO
 - logo: Operação Claude Code, nome dito na fala do bloco anterior
+- ponte: bloco 9, "é isso que a gente monta junto nos dois dias"
 ```
+
+**Campo `ponte`** (opcional na escrita, obrigatório na peça): declara ONDE está a frase que diz o
+que o clique entrega, no formato `bloco N, "frase"`. A ponte mora no fim do bloco anterior ao CTA
+ou na primeira frase do próprio CTA, e ela amarra o clique na prova ou no benefício que acabou de
+aparecer na tela.
+
+O gate procura marcadores como "é isso que", "é esse ... que eu monto com você", "eu te mostro",
+"na aula", "no treinamento", "na mentoria". **Benefício e depois "toca em saiba mais" do nada
+REPROVA**: sem ponte, quem assiste não sabe o que ganha clicando.
 
 | modo e campanha | `tipo` | exige | proíbe |
 |---|---|---|---|
-| pago, carrinho ou lote | `cta` | verbo de ação da lista da esteira + escassez legítima (vaga, ingresso, lote, prazo, última) | CTA vago |
+| pago, carrinho ou lote | `cta` | verbo de ação da lista abaixo + escassez legítima (vaga, ingresso, lote, prazo, última) | CTA vago |
 | pago, frio, captação, perpétuo frio | `cta` | verbo de ação | escassez, preço, data, prazo (R6.4) |
 | pago, remarketing | `cta` | verbo de ação | nada a mais; oferta permitida |
 | orgânico | `loop`, `envio` ou `pergunta` | pergunta termina com `?`; envio tem "manda pra", "marca", "compartilha"; loop declara a frase que casa com o início | "toca em", "clica", "link", "saiba mais", "bio", "arrasta" (R6.5) |
 
-A `fala` do CTA é a fala do ÚLTIMO bloco do roteiro. Verbos de ação aceitos (mesma lista de
-`edl/construtor.VERBOS_DE_ACAO` da esteira): toca, toque, clica, clique, aperta, aperte, acessa,
+A `fala` do CTA é a fala do ÚLTIMO bloco do roteiro. Verbos de ação aceitos: toca, toque, clica, clique, aperta, aperte, acessa,
 acesse, entra, entre, inscreve, inscreva, inscrever, garante, garanta, garantir, baixa, baixe,
 assiste, assista, chama, chame, manda, mande, comenta, comente, salva, salve, arrasta, arraste,
 pega, pegue, aproveita, aproveite, cadastra, cadastre, responde, responda, vem, venha, corre,
@@ -255,7 +297,10 @@ Regras: uma linha por `inserção de vídeo` do roteiro, com a âncora IDÊNTICA
 `inteiro` (padrão, decisão 15) ou `foco` (leve, até 1,25x; a ressalva diz o que a fala cita);
 `origem` em `doc`, `galeria`, `drive`, `gravacao` (o que foi PASSADO, decisão 34) ou
 `criar:captura`, `criar:ui_html`, `criar:gerado` (só quando não há nada pronto pro bloco;
-`referência` descreve a proposta, que o Júlio aprova antes); `serve` em `sim` ou `não`; quando
+`referência` descreve a proposta, que o cliente aprova antes). Qualquer origem aceita o sufixo
+**`:imagem`** (por exemplo `drive:imagem`, `doc:imagem`) para declarar que o asset é **imagem
+parada**: o gate aceita e **AVISA**, porque quem monta precisa dar movimento ao arquivo (deslize
+lento no próprio asset, sem desfoque nem véu). `serve` em `sim` ou `não`; quando
 `não`, a `ressalva` é obrigatória e a copy NÃO troca o asset por conta (decisão 35: asset do
 briefing é intocável, a ressalva vai pro relatório). Asset horizontal ou borrado é o que mais
 derruba a peça (decisões 12, 15, 21, 30, 31): é o caso típico de `serve: não`.
@@ -286,16 +331,28 @@ Regras (R1.2, R7.1, R7.5): 12 linhas = 3 hooks x 2 legendas x 2 formatos; nome n
 sendo ao menos um SEM avatar em tela (`sem_avatar`, `noticia`, `alerta`); `legendas` são texto
 livre (padrão `laranja` e `amarela`).
 
+**Domínio de caractere**: `conceito` e cada nome de `legenda` aceitam `[a-z0-9_-]+`, ou seja
+minúscula sem acento, dígito, sublinhado e hífen. Maiúscula, acento e espaço reprovam, porque o
+nome da peça é nome de arquivo.
+
 ---
 
 ## 9. O que o gate mede no roteiro (resumo dos números)
 
 Duração natural do bloco = palavras / `palavras_por_segundo`. Duração FINAL = natural /
-`aceleracao`. Tudo medido em duração final, que é onde a esteira mede (a EDL nasce depois da
+`aceleracao`. Tudo medido em duração final, que é onde a montagem mede (o corte nasce depois da
 aceleração).
 
 | o que | limiar | origem | veredito |
 |---|---|---|---|
+| ponte antes do CTA | a frase que diz o que o clique entrega, no bloco anterior ao CTA ou na primeira frase do CTA | reprova |
+| nenhum dos 3 hooks é pergunta ou paradoxo | forma do hook | aviso |
+| forma de lettering repetida em bloco vizinho | rodízio de formas | aviso |
+| carimbo em bloco sem insert | carimbo é lettering de apoio | aviso |
+| garrafais na peça | zero ou uma | aviso |
+| garrafais na peça | mais de três | reprova |
+| origem de asset com sufixo `:imagem` | imagem parada; quem monta dá o movimento | aviso |
+| origem de asset `criar:*` | precisa de proposta ao cliente antes | aviso |
 | bloco com insert | duração final >= 3,5s | decisões 29 e 30 (b-roll em 1,0x precisa de tempo) | reprova |
 | bloco com KEY em placa | duração final >= 2,8s + 0,25s por palavra além da segunda | `dinamica.lettering.permanencia_min_ms`, decisão 29 | reprova |
 | bloco com KEY em coluna ou carimbo | duração final >= 3,5s + 0,25s por palavra extra | idem | reprova |
@@ -313,7 +370,7 @@ aceleração).
 | envelhecimento | data, preço, edição, lote numerado na fala ou lettering | decisão 19 e R6.4 | reprova fora de `carrinho` e `lote`; aviso dentro |
 | algarismo na fala | "8 mil" na fala | voz da casa: por extenso na fala, algarismo no lettering | aviso |
 | antítese paralela | "não é X. É Y." | `feedback-antitese-paralela-cara-de-ia` | aviso |
-| direção vaga | âncora com menos de 3 palavras, ou com "algo", "genérico", "qualquer", "imagens de", "vídeo de" | esteira casa por âncora exata | reprova |
+| direção vaga | âncora com menos de 3 palavras, ou com "algo", "genérico", "qualquer", "imagens de", "vídeo de" | o casamento com o arquivo é por âncora exata | reprova |
 | primeiro insert | começa entre 5 e 10s finais | R3.2 | aviso |
 | segundo insert | começa entre 12 e 20s finais quando a peça passa de 15s | R3.2 | aviso |
 | duração total | pago frio e orgânico 15 a 30s finais; remarketing 6 a 15s; carrinho e lote não têm faixa em `pago.yaml` e usam a de frio como referência | R6.1 (avisa, não reprova) | aviso |

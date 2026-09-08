@@ -279,21 +279,38 @@ def _ler_secoes_chave_valor(texto: str) -> List[Tuple[str, Dict[str, str]]]:
     return secoes
 
 
+# Título normalizado (ver `normalizar`) de uma seção '## ...' de hooks.md:
+# "hook" seguido de espaço e uma letra ou número ("Hook A", "Hook 1"). Uma
+# seção "## Hooks" ou "## Observações" NAO casa e é ignorada.
+_REGEX_TITULO_HOOK = re.compile(r"^hook [a-z0-9]")
+
+# Título normalizado de uma seção '## ...' de garrafais.md: "g" seguido de
+# dígito ("G1", "G2") ou começando com "garrafal". Uma seção "## Gancho" ou
+# "## Observações" NAO casa e é ignorada.
+_REGEX_TITULO_GARRAFAL = re.compile(r"^g[0-9]|^garrafal")
+
+
 def ler_hooks(caminho: str) -> List[Hook]:
-    """hooks.md (seção 3): uma seção '## Hook X' por hook."""
+    """hooks.md (seção 3): uma seção '## Hook X' por hook (título
+    normalizado começando com "hook" + espaço + letra/número); outras
+    seções (ex.: "## Observações") são ignoradas."""
     texto = _ler_arquivo(caminho)
     hooks = []
     for titulo, dados in _ler_secoes_chave_valor(texto):
-        if normalizar(titulo).startswith("hook"):
+        if _REGEX_TITULO_HOOK.match(normalizar(titulo)):
             hooks.append(Hook(nome=titulo, dados=dados))
     return hooks
 
 
 def ler_garrafais(caminho: str) -> List[Garrafal]:
-    """garrafais.md (seção 4): uma seção '## Gn' por garrafal."""
+    """garrafais.md (seção 4): uma seção '## Gn' por garrafal (título
+    normalizado começando com "g" + dígito, ou com "garrafal"); outras
+    seções (ex.: "## Observações") são ignoradas."""
     texto = _ler_arquivo(caminho)
     garrafais = []
     for titulo, dados in _ler_secoes_chave_valor(texto):
+        if not _REGEX_TITULO_GARRAFAL.match(normalizar(titulo)):
+            continue
         try:
             bloco = int(str(dados.get("bloco", "0")).strip())
         except ValueError:
@@ -311,12 +328,11 @@ def ler_garrafais(caminho: str) -> List[Garrafal]:
 
 
 def ler_cta(caminho: str) -> Cta:
-    """cta.md (seção 6): uma única seção de campos."""
+    """cta.md (seção 6): campos "- chave: valor" lidos do arquivo INTEIRO,
+    independente de haver "#"/"##" (uma eventual seção extra, tipo
+    "## Observações", não muda o resultado: os campos dela entram no
+    mesmo mapa)."""
     texto = _ler_arquivo(caminho)
-    secoes = _ler_secoes_chave_valor(texto)
-    if secoes:
-        return Cta(dados=secoes[0][1])
-    # cta.md pode nao ter titulo de secao "## ...": trata o arquivo inteiro.
     dados: Dict[str, str] = {}
     for linha in texto.splitlines():
         bruta = linha.strip()
