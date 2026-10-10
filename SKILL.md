@@ -2,14 +2,37 @@
 name: copy-criativos
 description: "Escreve a COPY de anúncio em vídeo pra QUALQUER produto ou serviço (clínica, loja física, e-commerce, imobiliária, SaaS, serviço local, infoproduto), em tráfego pago ou orgânico (Reels, Shorts, TikTok, Stories, feed), já no formato anotado que uma esteira de montagem consome: roteiro bloco a bloco com direção de insert, LEAD e KEY, mais hooks com tática nomeada, garrafais, letterings, CTA por modo, origem dos assets e a matriz 3x2x2. A copy sai da mão do copywriter pronta pra virar peça sem retrabalho de edição. Triggers: copy de criativo, roteiro de anúncio em vídeo, roteiro anotado, hooks, matriz de criativos, pacote de copy, /copy-criativos."
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+disable-model-invocation: true
 pairs-with:
   - skill: creative-method-creator
     reason: "optional: true. Escolhe conceito e ângulo antes desta skill. Se você não tem essa skill instalada, use references/angulos-e-estrutura.md, que traz a mesma biblioteca de ângulos e a estrutura invisível."
-  - skill: creative-studio
-    reason: "optional: true. Esteira de montagem que consome o roteiro.txt deste pacote sem reescrever uma palavra. Sem ela, o pacote continua sendo copy pronta pra produção manual, e o gate roda com os limiares embutidos."
+  - skill: video-ads-machine
+    reason: "optional: true. Motor de montagem do vídeo: o roteiro.txt deste pacote vira o roteiro.md dele (vam roteiro) sem reescrever uma palavra. Sem ele, o pacote continua sendo copy pronta pra produção manual, e o gate roda com os limiares embutidos."
 ---
 
 # Copy de anúncio em vídeo
+
+> **APOSENTADA em 14/09/2026. Só roda por invocação explícita (`/copy-criativos`).**
+>
+> As decisões que ela tomava na frente agora moram em três skills dedicadas, que são a leitura
+> completa das fontes originais em vez do resumo que vivia aqui:
+>
+> | decisão | onde está agora |
+> |---|---|
+> | qual ÂNGULO a peça usa | `/angulos-de-copy` (os 78 com explicação, exemplo e prompt) |
+> | em que ORDEM ela fala | `/estrutura-invisivel` (8 elementos, 14 estruturas, raio-x) |
+> | como a primeira frase ABRE | `/hooks-low-ticket` (30 moldes, 9 famílias, gate) |
+>
+> **O que continua só aqui, e por isso ela não foi apagada:** o contrato do pacote de produção
+> (`conceito.md`, `roteiro.txt` anotado, hooks, garrafais, letterings, CTA, assets, matriz 3x2x2),
+> o `scripts/gate_copy` e a calibração de voz. A `video-ads-machine` monta o vídeo a partir do `roteiro.txt` que sai
+> daqui (convertido no `roteiro.md` dela por `vam roteiro`). O `estilo-thales.md` que a `copy-whatsapp-ea` cita não está neste diretório: ficou na
+> versão arquivada, em `~/.claude/skills-arquivadas/copy-criativos-v1-2026-04/references/`.
+>
+> Para escrever o pacote, invoque explicitamente: dentro dele, a tática de cada hook sai de
+> `references/taticas-de-hook.md`, que é o catálogo que o gate valida. Para decidir ângulo,
+> estrutura ou abertura fora do pacote, use o trio.
+
 
 Esta skill escreve **copy de anúncio em vídeo pra qualquer produto ou serviço, pago ou orgânico**.
 Clínica, loja física, e-commerce, imobiliária, SaaS, serviço local, infoproduto de qualquer área:
@@ -25,7 +48,7 @@ legenda) e as coloca na fala; nunca o contrário.** Lettering que a voz não diz
 garrafal escolhida por caber está proibida.
 
 Esta skill é autossuficiente. Tudo que ela precisa está dentro deste diretório: as regras, os
-números, o gate, os três exemplos e os modelos. Ela não depende de nenhuma outra skill nem de
+números, o gate, os quatro exemplos e os modelos. Ela não depende de nenhuma outra skill nem de
 nenhum repositório externo.
 
 ---
@@ -41,7 +64,7 @@ histórica. Você não precisa conhecer nenhum deles para usar a skill em qualqu
   voz dele; **remeça na voz do seu** e ajuste `palavras_por_segundo` no `conceito.md`.
 - **Léo**: de onde vêm a regra **3-2-2** (3 hooks, 2 legendas, 2 formatos) e a biblioteca dos **78
   ângulos**, inteira em `references/angulos-e-estrutura.md`.
-- **esteira** (`creative-studio`): o motor de montagem que consome o `roteiro.txt`. **Opcional**:
+- **motor de vídeo** (`video-ads-machine`): monta o vídeo a partir do `roteiro.txt` (via `vam roteiro`). **Opcional**:
   sem ele o pacote continua sendo copy pronta pra produção manual, e o gate roda com os limiares
   embutidos.
 
@@ -123,14 +146,14 @@ Tudo dentro deste diretório:
 | `references/preset-oferta-exemplo.md` | um preset preenchido, fictício, que alimenta o exemplo limpo |
 | `references/calibracao-jheni.md` | **estudo de caso**: os anúncios de UM produto real (curso de I.A para empresário), ad a ad, com os moldes de hook, de enumeração, de mecanismo, de ponte e de CTA que o método importou. Serve pra ver o molde em ação. **Nenhuma frase de lá entra numa peça de cliente** |
 
-E os três exemplos, que têm papéis diferentes:
+E os quatro exemplos, que têm papéis diferentes:
 
 - **`exemplos/sem-contratar/`: o formato COMPLETO, num serviço.** Peça fictícia de 14 blocos, 265
   palavras, cerca de 64 segundos finais, de uma mentoria para donas de clínica de estética. É o
   molde de `references/modelo-mestre.md` inteiro, parte por parte, sem pular nenhuma. Leia este
   quando a peça for de conversão e precisar construir crença antes da oferta.
 - **`exemplos/casa-medida/`: o formato completo num PRODUTO FÍSICO.** Loja fictícia de móveis planejados, 10 blocos, 225 palavras, demonstração por antes e depois, oferta de visita técnica gratuita. Mostra que o molde serve fora de infoproduto. Gate: zero reprovação, um aviso (imagem parada).
-- **`exemplos/agenda-cheia/`: o formato CURTO, no mesmo produto.** Dez blocos, cerca de 30
+- **`exemplos/agenda-cheia/`: o formato CURTO, no mesmo produto do `sem-contratar`.** Dez blocos, cerca de 30
   segundos, passa no gate com **zero reprovações e três avisos assumidos** (custo declarado do
   bloco de oferta obrigatório antes do CTA). É o que você imita quando está aprendendo o formato.
   O `README.md` de lá mostra a tabela de blocos, as contas que fecharam a peça, e as correções que
@@ -161,9 +184,7 @@ E os três exemplos, que têm papéis diferentes:
 ```
 
 **Diretório de saída padrão: `./copy/<conceito>/`**, relativo ao diretório de trabalho atual. Se
-o cliente pedir outro lugar, use o que ele pedir. Se existir uma esteira `creative-studio`
-instalada e o fluxo for entregar direto nela, o padrão de lá é `~/creative-studio/copy/<conceito>/`
-(caminho **opcional**, só quando a esteira existe).
+o cliente pedir outro lugar, use o que ele pedir.
 
 Cada arquivo tem formato fixo (ver `references/formato-do-pacote.md`); o gate lê exatamente
 aquilo.
